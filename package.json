@@ -17,6 +17,7 @@
     "axios": "^0.27.2",
     "randomcolor": "^0.6.2",
     "react": "^18.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
     "react-redux": "^7",
     "react-router-dom": "^6.3.0",
@@ -54,6 +55,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-color": "^3.0.6",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.25"
   }

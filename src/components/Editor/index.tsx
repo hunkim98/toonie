@@ -14,7 +14,7 @@ import {
 import { syncPeer } from "../../store/slices/peerSlices";
 import Editor from "./Editor";
 
-export default function ({ docKey }: { docKey: string }) {
+export default ({ docKey }: { docKey: string }) => {
   const dispatch = useDispatch();
   const client = useSelector((state: RootState) => state.docState.client);
   const doc = useSelector((state: RootState) => state.docState.doc);
@@ -35,11 +35,12 @@ export default function ({ docKey }: { docKey: string }) {
     if (!client || !doc) {
       return () => {};
     }
-
+    console.log("hihihi,", "eidtor");
     const unsubscribe = client.subscribe((event) => {
       if (event.type === "peers-changed") {
         const documentKey = doc.getKey();
         const changedPeers = event.value[documentKey];
+        console.log("hihihih,from unsubscribe");
         dispatch(syncPeer({ myClientID: client.getID()!, changedPeers }));
       }
       if (
@@ -98,4 +99,4 @@ export default function ({ docKey }: { docKey: string }) {
     return <div>loading</div>;
   }
   return <Editor />;
-}
+};

@@ -38,6 +38,7 @@ export type Shape = EraserLine | Rect;
 export type ShapeType = Shape["type"];
 
 export type ToonieDoc = {
+  profiles: Record<string, string>;
   shapes: Array<Shape>;
   imgUrl: string;
 };
@@ -52,9 +53,9 @@ export interface Shapes {
   [Symbol.iterator](): IterableIterator<Shape>;
 }
 
-export interface Root {
-  shapes: Shapes & Array<Shape>;
-}
+// export interface Root {
+//   shapes: Shapes & Array<Shape>;
+// }
 
 export enum DocStatus {
   Disconnect = "disconnect",
@@ -110,6 +111,11 @@ export const attachDoc = createAsyncThunk<
     await client.attach(doc);
 
     doc.update((root) => {
+      const userId = client.getID()!;
+      if (!root.profiles) {
+        root.profiles = {};
+        root.profiles[userId] = randomColor();
+      }
       // codeEditor
       //   if (!root.content) {
       //     root.content = new yorkie.Text();

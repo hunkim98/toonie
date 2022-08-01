@@ -57,6 +57,7 @@ const peerSlice = createSlice({
             metadata,
             isMine: myClientID === clientID,
           };
+          console.log("peeers", peer);
           state.peers[clientID] = peer;
         }
       }

@@ -14,5 +14,6 @@ export const store = configureStore({
         ignoredActions: ["doc/attach/fulfilled", "doc/activate/fulfilled"],
         ignoredPaths: ["docState.client", "docState.doc"],
       },
-    }).concat(logger),
+    }),
+  // .concat(logger),
 });
