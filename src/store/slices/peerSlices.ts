@@ -48,8 +48,9 @@ const peerSlice = createSlice({
 
       for (const [clientID, metadata] of Object.entries(changedPeers)) {
         if (
-          !peers[clientID] ||
-          peers[clientID].status === ConnectionStatus.Disconnected
+          changedPeers[clientID]
+          // !peers[clientID] ||
+          // peers[clientID].status === ConnectionStatus.Disconnected
         ) {
           const peer = {
             id: clientID,

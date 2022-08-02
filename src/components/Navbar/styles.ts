@@ -5,6 +5,7 @@ import { device } from "../../utils/cssMedia";
 export const Container = styled(CommonPadding)`
   display: flex;
   align-items: center;
+  background-color: #f1f1f1;
   justify-content: space-between;
 `;
 

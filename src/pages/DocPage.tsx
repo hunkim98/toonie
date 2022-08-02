@@ -2,6 +2,7 @@ import React from "react";
 
 import { useParams } from "react-router-dom";
 import Editor from "../components/Editor";
+import { Footer } from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 type DocPageProps = {
@@ -15,9 +16,12 @@ const DocPage = () => {
     return null;
   }
   return (
-    <div>
+    <div
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
       <Navbar />
       <Editor docKey={docKey} />
+      <Footer />
     </div>
   );
 };

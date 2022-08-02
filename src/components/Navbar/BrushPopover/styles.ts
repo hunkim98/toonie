@@ -35,12 +35,20 @@ export const Arrow = styled.div`
   }
 `;
 
-export const SizesContainer = styled.div`
+export const SizesPicker = styled.div`
   align-items: flex-end;
   flex-grow: 1;
   color: black;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+`;
+
+export const SizeContainer = styled.div`
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
 `;
 
 export const Size = styled.div<{ size: number }>`
