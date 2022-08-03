@@ -19,3 +19,18 @@ export const CommonPadding = styled.div`
 `;
 
 export const ThemeColor = "#00CC52";
+
+export const ToolButton = styled.button`
+  border: none;
+  background: none;
+  font-size: 1em;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #f1f1f1;
+  margin-bottom: 15px;
+  cursor: pointer;
+`;

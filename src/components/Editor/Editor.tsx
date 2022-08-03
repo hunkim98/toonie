@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import DrawingBoard from "./DrawingBoard";
+import { Sidebars } from "./Sidebars";
 import * as S from "./styles";
 
 const Editor = () => {
@@ -14,6 +15,7 @@ const Editor = () => {
       }
 
       const rect = divRef.current?.getBoundingClientRect();
+      console.log(rect.width, rect.height);
       setWidth(rect.width);
       setHeight(rect.height);
     };
@@ -25,8 +27,11 @@ const Editor = () => {
     };
   }, []);
   return (
-    <S.Container ref={divRef}>
-      <DrawingBoard width={width} height={height} />
+    <S.Container>
+      <Sidebars />
+      <S.BoardContainer ref={divRef}>
+        <DrawingBoard width={width} height={height} />
+      </S.BoardContainer>
     </S.Container>
   );
 };

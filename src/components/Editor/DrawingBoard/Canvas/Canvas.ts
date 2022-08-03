@@ -52,10 +52,12 @@ export default class Canvas {
   setWidth(width: number) {
     this.width = width;
     this.element.width = width;
+    this.element.style.width = `${width}px`;
   }
 
   setHeight(height: number) {
     this.height = height;
     this.element.height = height;
+    this.element.style.height = `${height}px`;
   }
 }

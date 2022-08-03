@@ -2,11 +2,14 @@ import styled from "styled-components";
 import { CaveatFont, CommonPadding, ThemeColor } from "../../styles/common";
 import { device } from "../../utils/cssMedia";
 
+export const NavbarHeight = 50;
+
 export const Container = styled(CommonPadding)`
   display: flex;
   align-items: center;
   background-color: #f1f1f1;
   justify-content: space-between;
+  height: ${NavbarHeight}px;
 `;
 
 const SideWidthLaptop = 300;
