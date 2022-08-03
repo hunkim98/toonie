@@ -18,7 +18,7 @@ export const CommonPadding = styled.div`
   min-width: 300px;
 `;
 
-export const ThemeColor = "#00CC52";
+export const ThemeColor = "#78DEA1";
 
 export const ToolButton = styled.button`
   border: none;

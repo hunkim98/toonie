@@ -9,7 +9,11 @@ export const Container = styled.div`
 
 export const BoardContainer = styled.div`
   top: ${NavbarHeight}px;
-  height: calc(100vh - ${NavbarHeight}px - ${FooterHeight});
+  height: calc(100vh - ${NavbarHeight}px - ${FooterHeight}px);
   width: calc(100%);
   position: fixed;
+`;
+
+export const BottomButton = styled.button`
+  position: absolute;
 `;
