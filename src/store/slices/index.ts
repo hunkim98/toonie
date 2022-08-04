@@ -1,7 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import docReducer from "./docSlices";
 import peerReducer from "./peerSlices";
-import boardReducer from "./boardSlice";
+import boardReducer from "./boardSlices";
 
 const rootReducer = combineReducers({
   docState: docReducer,

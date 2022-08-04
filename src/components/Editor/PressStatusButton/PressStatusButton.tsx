@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
-import { activateTool, deactivateTool } from "../../../store/slices/boardSlice";
+import {
+  activateTool,
+  deactivateTool,
+} from "../../../store/slices/boardSlices";
 import * as S from "./styles";
 
 function PressStatusButton() {

@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store/slices";
-import { setTool, ToolType } from "../../../../store/slices/boardSlice";
+import { setTool, ToolType } from "../../../../store/slices/boardSlices";
 import * as S from "./styles";
 
 const Right = () => {

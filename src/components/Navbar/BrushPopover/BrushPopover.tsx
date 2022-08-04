@@ -46,7 +46,7 @@ const BrushPopover = ({ user }: Props) => {
       <S.SizesPicker>
         {sizes.map((size) => {
           return (
-            <S.SizeContainer>
+            <S.SizeContainer key={size}>
               <S.Size size={size} key={size}></S.Size>
             </S.SizeContainer>
           );

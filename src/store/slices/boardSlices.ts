@@ -8,12 +8,14 @@ export enum ToolType {
 
 export interface BoardState {
   toolType: ToolType;
+  color: string;
   isToolActivated: boolean;
   isSpacePressed: boolean;
 }
 
 const initialBoardState: BoardState = {
   toolType: ToolType.Pen,
+  color: "#000000",
   isToolActivated: false,
   isSpacePressed: false,
 };

@@ -9,9 +9,18 @@ export type Point = {
   x: number;
 };
 
+export interface Root {
+  shapes: Shapes & Array<Shape>;
+}
+
 export interface BaseShape {
   type: string;
   getID(): TimeTicket;
+}
+export interface Line extends BaseShape {
+  type: "line";
+  color: string;
+  points: Array<Point>;
 }
 
 export interface Box {
@@ -19,6 +28,12 @@ export interface Box {
   x: number;
   width: number;
   height: number;
+}
+
+export interface Line extends BaseShape {
+  type: "line";
+  color: string;
+  points: Array<Point>;
 }
 
 export interface Rect extends BaseShape {
@@ -33,7 +48,7 @@ export interface EraserLine extends BaseShape {
   points: Array<Point>;
 }
 
-export type Shape = EraserLine | Rect;
+export type Shape = Line | EraserLine | Rect;
 
 export type ShapeType = Shape["type"];
 

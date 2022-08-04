@@ -8,10 +8,11 @@ export const Container = styled.button<{ isToolActivated: boolean }>`
   left: 50%;
   transform: translate(-50%, 0);
   bottom: 35px;
-  padding: 10px 30px;
+  padding: 15px 30px;
   border-radius: 5px;
   font-weight: bold;
   font-size: 1em;
+  min-width: 180px;
   color: ${({ isToolActivated }) => (isToolActivated ? "#ffffff" : "#000000")};
   background-color: ${({ isToolActivated }) =>
     isToolActivated ? "#000000" : "#d9d9d9"};

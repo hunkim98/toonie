@@ -5,7 +5,7 @@ import {
   activateTool,
   deactivateSpaceKey,
   deactivateTool,
-} from "../../store/slices/boardSlice";
+} from "../../store/slices/boardSlices";
 import DrawingBoard from "./DrawingBoard";
 import { PressStatusButton } from "./PressStatusButton";
 import { Sidebars } from "./Sidebars";
