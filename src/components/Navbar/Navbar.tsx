@@ -6,7 +6,7 @@ import * as S from "./styles";
 
 interface Props {
   activePeers: Peer[];
-  user: Peer | undefined;
+  user: Peer;
 }
 
 const Navbar = ({ activePeers, user }: Props) => {
@@ -18,7 +18,7 @@ const Navbar = ({ activePeers, user }: Props) => {
         <S.LogoName>toonie</S.LogoName>
       </S.LogoContainer>
       <S.UserColor
-        color={user ? user.metadata.color : ""}
+        color={user.metadata.color}
         onClick={() => {
           setIsBrushPopoverVisible(true);
         }}

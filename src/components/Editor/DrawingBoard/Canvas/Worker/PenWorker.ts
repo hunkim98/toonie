@@ -24,7 +24,6 @@ class PenWorker extends Worker {
 
   mousedown(point: Point): void {
     let timeTicket: TimeTicket;
-
     this.update((root: Root) => {
       const shape = createLine(point, this.options?.color!);
       root.shapes.push(shape);

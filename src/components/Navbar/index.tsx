@@ -1,19 +1,18 @@
-import { useEffect, useMemo } from "react";
+import { stringify } from "querystring";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import usePeer from "../../hooks/usePeer";
 import { RootState } from "../../store/slices";
+import { ConnectionStatus, Peer } from "../../store/slices/peerSlices";
 import Navbar from "./Navbar";
 
 export default () => {
-  const { activePeers } = usePeer();
-  const peers = useSelector((state: RootState) => state.peerState.peers);
+  const [peers, setPeers] = useState<Peer[]>([]);
+  // const peers = useSelector((state: RootState) => state.peerState.peers);
   const client = useSelector((state: RootState) => state.docState.client);
   const doc = useSelector((root: RootState) => root.docState.doc);
-  const user = useMemo(() => activePeers.find((peer) => peer.isMine), [peers]);
-  const others = useMemo(
-    () => activePeers.filter((peer) => !peer.isMine),
-    [peers]
-  );
+  const user = useMemo(() => peers.find((peer) => peer.isMine), [peers]);
+  const others = useMemo(() => peers.filter((peer) => !peer.isMine), [peers]);
   useEffect(() => {
     if (!client || !doc) {
       return () => {};
@@ -22,16 +21,28 @@ export default () => {
       if (event.type === "peers-changed") {
         const documentKey = doc.getKey();
         const changedPeers = event.value[documentKey];
-
-        for (const peerKey of Object.keys(changedPeers)) {
-          console.log(peerKey);
-          //   boardRef.current?.updateMetadata(peerKey, changedPeers[peerKey]);
+        const tempPeers = [];
+        for (const [clientID, metadata] of Object.entries(changedPeers)) {
+          const tempPeer = {
+            id: clientID,
+            status: ConnectionStatus.Connected,
+            metadata,
+            isMine: client.getID() === clientID,
+          };
+          tempPeers.push(tempPeer);
         }
+        setPeers(tempPeers);
+        console.log(tempPeers);
       }
     });
     return () => {
       unsubscribe();
     };
-  }, [doc]);
-  return <Navbar activePeers={user ? [user, ...others] : others} user={user} />;
+  }, [doc, client]);
+
+  if (!user) {
+    return null;
+  }
+
+  return <Navbar activePeers={[user, ...others]} user={user} />;
 };

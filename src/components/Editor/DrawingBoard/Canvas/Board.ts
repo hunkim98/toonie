@@ -55,6 +55,10 @@ export default class Board extends EventDispatcher {
   createPresenceCanvasWrapper(): CanvasWrapper {
     const canvas = document.createElement("canvas");
     const wrapper = new CanvasWrapper(canvas);
+    canvas.style.position = "absolute";
+    canvas.style.top = "0";
+    canvas.style.left = "0";
+    canvas.style.zIndex = "1";
 
     wrapper.setWidth(this.documentCanvasWrapper.getWidth());
     wrapper.setHeight(this.documentCanvasWrapper.getHeight());
@@ -221,12 +225,15 @@ export default class Board extends EventDispatcher {
 
     const point = this.getPointFromTouchyEvent(evt);
 
-    this.worker.mousedown(point, (boardMetadata: BoardMetadata) => {
-      this.emit("mousedown", boardMetadata);
-    });
+    if (this.isToolActivated) {
+      this.worker.mousedown(point, (boardMetadata: BoardMetadata) => {
+        this.emit("mousedown", boardMetadata);
+      });
+    }
   }
 
   onMouseMove(evt: TouchyEvent) {
+    console.log("hihihihihi");
     const point = this.getPointFromTouchyEvent(evt);
     if (this.isOutside(point)) {
       this.onMouseUp();

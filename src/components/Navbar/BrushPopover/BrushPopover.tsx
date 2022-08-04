@@ -3,7 +3,7 @@ import * as S from "./styles";
 import { ChromePicker, ColorChangeHandler, ColorResult } from "react-color";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
-import { Peer, syncPeer } from "../../../store/slices/peerSlices";
+import { Peer } from "../../../store/slices/peerSlices";
 
 interface Props {
   user: Peer | undefined;
@@ -16,15 +16,19 @@ const BrushPopover = ({ user }: Props) => {
   const doc = useSelector((state: RootState) => state.docState.doc);
   const onChangeColor: ColorChangeHandler = (color: ColorResult) => {
     setBrushColor(color.hex);
-    if (client && doc) {
-      client.updatePresence("color", color.hex);
-    }
   };
+  useEffect(() => {
+    const handleUpdateColor = (color: string) => {
+      client?.updatePresence("color", color);
+    };
+    handleUpdateColor(brushColor);
+  }, [doc, brushColor]);
+
   const sizes = useMemo(() => {
     return [1, 3, 5, 8];
   }, []);
 
-  if (!user) {
+  if (!user || !client || !doc) {
     return null;
   }
   return (

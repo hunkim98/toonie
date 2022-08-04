@@ -40,7 +40,7 @@ export default ({ docKey }: { docKey: string }) => {
       if (event.type === "peers-changed") {
         const documentKey = doc.getKey();
         const changedPeers = event.value[documentKey];
-        console.log("hihihih,from unsubscribe");
+        console.log(changedPeers);
         dispatch(syncPeer({ myClientID: client.getID()!, changedPeers }));
       }
       if (
