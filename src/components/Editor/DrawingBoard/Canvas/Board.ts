@@ -41,13 +41,19 @@ export default class Board extends EventDispatcher {
   };
 
   update: Function;
+  updatePresence: Function;
   worker!: Worker;
 
-  constructor(element: HTMLCanvasElement, update: Function) {
+  constructor(
+    element: HTMLCanvasElement,
+    update: Function,
+    updatePresence: Function
+  ) {
     super();
     this.documentCanvasWrapper = new CanvasWrapper(element);
     this.presenceCanvasWrapper = this.createPresenceCanvasWrapper();
     this.update = update;
+    this.updatePresence = updatePresence;
     this.isToolActivated = false;
     this.initialize();
   }
@@ -85,7 +91,9 @@ export default class Board extends EventDispatcher {
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
 
-    this.worker = new PenWorker(this.update, this, { color: "#000000" });
+    this.worker = new PenWorker(this.updatePresence, this.update, this, {
+      color: "#000000",
+    });
 
     touchy(
       this.presenceCanvasWrapper.getCanvas(),
@@ -185,13 +193,17 @@ export default class Board extends EventDispatcher {
 
   createWorker(tool: ToolType) {
     if (tool === ToolType.Pen) {
-      return new PenWorker(this.update, this, { color: this.color });
+      return new PenWorker(this.updatePresence, this.update, this, {
+        color: this.color,
+      });
     }
     if (tool === ToolType.Eraser) {
-      return new EraserWorker(this.update, this);
+      return new EraserWorker(this.updatePresence, this.update, this);
     }
     if (tool === ToolType.Rect) {
-      return new RectWorker(this.update, this, { color: this.color });
+      return new RectWorker(this.updatePresence, this.update, this, {
+        color: this.color,
+      });
     }
     throw new TypeError(`Undefined tool: ${tool}`);
   }
@@ -233,7 +245,6 @@ export default class Board extends EventDispatcher {
   }
 
   onMouseMove(evt: TouchyEvent) {
-    console.log("hihihihihi");
     const point = this.getPointFromTouchyEvent(evt);
     if (this.isOutside(point)) {
       this.onMouseUp();

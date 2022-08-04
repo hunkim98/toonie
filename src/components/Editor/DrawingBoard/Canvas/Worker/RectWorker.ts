@@ -12,12 +12,20 @@ class RectWorker extends Worker {
 
   update: Function;
 
+  updatePresence: Function;
+
   board: Board;
 
   private createID?: TimeTicket;
 
-  constructor(update: Function, board: Board, options: Options) {
+  constructor(
+    updatePresence: Function,
+    update: Function,
+    board: Board,
+    options: Options
+  ) {
     super(options);
+    this.updatePresence = updatePresence;
     this.update = update;
     this.board = board;
   }

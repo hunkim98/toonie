@@ -6,20 +6,29 @@ import Board from "../Board";
 import { createLine } from "../line";
 import Worker, { Options } from "./Worker";
 import * as scheduler from "../../../../../utils/scheduler";
+import { compressPoints } from "../../../../../utils/canvas.line";
 
 class PenWorker extends Worker {
   type = ToolType.Pen;
 
   update: Function; //this is doc update
 
+  updatePresence: Function;
+
   board: Board;
 
   private createID?: TimeTicket;
 
-  constructor(update: Function, board: Board, options: Options) {
+  constructor(
+    updatePresence: Function,
+    update: Function,
+    board: Board,
+    options: Options
+  ) {
     super(options);
     this.update = update;
     this.board = board;
+    this.updatePresence = updatePresence;
   }
 
   mousedown(point: Point): void {
@@ -36,23 +45,25 @@ class PenWorker extends Worker {
   }
 
   mousemove(point: Point) {
-    // scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
-    //   const points = compressPoints(tasks);
-    //   if (tasks.length < 2) {
-    //     return;
-    //   }
-    //   this.update((root: Root) => {
-    //     const lastShape = this.getElementByID(root, this.createID!);
-    //     if (!lastShape) {
-    //       return;
-    //     }
-    //     lastShape.points.push(...points);
-    //     this.board.drawAll(root.shapes);
-    //   });
-    // });
+    scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
+      const points = compressPoints(tasks);
+      if (tasks.length < 2) {
+        return;
+      }
+      this.updatePresence("lines", {});
+      this.update((root: Root) => {
+        const lastShape = this.getElementByID(root, this.createID!);
+        if (!lastShape) {
+          return;
+        }
+        lastShape.points.push(...points);
+        this.board.drawAll(root.shapes);
+      });
+    });
   }
 
   mouseup() {
+    //send data from presence to document
     this.flushTask();
   }
 

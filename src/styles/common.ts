@@ -33,4 +33,5 @@ export const ToolButton = styled.button`
   background-color: #f1f1f1;
   margin-bottom: 15px;
   cursor: pointer;
+  pointer-events: auto;
 `;

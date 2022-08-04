@@ -3,6 +3,7 @@ import { ToolButton } from "../../../../styles/common";
 
 export const Delete = styled(ToolButton)`
   background-color: black;
+  pointer-events: auto;
 `;
 
 export const ScaleContainer = styled.div`
@@ -17,6 +18,7 @@ const ZoomButton = styled.button`
   width: 30px;
   height: 30px;
   background: none;
+  pointer-events: auto;
 `;
 
 export const ZoomIn = styled(ZoomButton)``;

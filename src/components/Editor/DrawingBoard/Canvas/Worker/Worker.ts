@@ -1,11 +1,18 @@
 import { TimeTicket } from "yorkie-js-sdk";
 import { ToolType } from "../../../../../store/slices/boardSlices";
-import { Root, Shape, Point } from "../../../../../store/slices/docSlices";
+import {
+  Root,
+  Shape,
+  Point,
+  Rect,
+} from "../../../../../store/slices/docSlices";
 
 export type Options = { color: string };
 
 export type BoardMetadata = {
   eraserPoints?: Point[];
+  penPoints?: Point[];
+  rectShapes?: Rect[];
 };
 
 export type MouseDownCallback = (boardMetadata: BoardMetadata) => void;
@@ -22,6 +29,8 @@ abstract class Worker {
   abstract type: ToolType;
 
   abstract update: Function;
+
+  abstract updatePresence: Function;
 
   abstract mousedown(point: Point, callback?: MouseDownCallback): void;
 

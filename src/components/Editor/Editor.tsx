@@ -23,7 +23,6 @@ const Editor = () => {
         return;
       }
       const rect = divRef.current?.getBoundingClientRect();
-      console.log(rect.width, rect.height);
       setWidth(rect.width);
       setHeight(rect.height);
     };

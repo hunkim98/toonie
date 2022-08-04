@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const RightContainer = styled.div`
+  pointer-events: none;
   font-size: 2em;
   position: absolute;
   top: 25px;
@@ -10,6 +11,7 @@ export const RightContainer = styled.div`
 `;
 
 export const LeftContainer = styled.div`
+  pointer-events: none;
   font-size: 2em;
   position: absolute;
   top: 25px;

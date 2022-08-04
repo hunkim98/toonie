@@ -1,10 +1,14 @@
 import { ActorID } from "yorkie-js-sdk";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Box, EraserLine, Line, Rect } from "./docSlices";
 
 export interface Metadata {
   username: string;
   color: string;
   board: string;
+  penLines?: Line[];
+  rects?: Rect[];
+  eraserLines?: EraserLine[];
 }
 
 export enum ConnectionStatus {

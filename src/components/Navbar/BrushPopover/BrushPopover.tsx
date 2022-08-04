@@ -10,8 +10,7 @@ interface Props {
 }
 
 const BrushPopover = ({ user }: Props) => {
-  const dispatch = useDispatch();
-  const [brushColor, setBrushColor] = useState("#ff0000");
+  const [brushColor, setBrushColor] = useState(user!.metadata.color);
   const client = useSelector((state: RootState) => state.docState.client);
   const doc = useSelector((state: RootState) => state.docState.doc);
   const onChangeColor: ColorChangeHandler = (color: ColorResult) => {

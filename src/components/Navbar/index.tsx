@@ -32,7 +32,6 @@ export default () => {
           tempPeers.push(tempPeer);
         }
         setPeers(tempPeers);
-        console.log(tempPeers);
       }
     });
     return () => {

@@ -16,14 +16,18 @@ class EraserWorker extends Worker {
 
   update: Function;
 
+  updatePresence: Function;
+
   board: Board;
 
   private eraserBoxSize: number = 24;
 
   private selectPoint: Point[] = [];
-  constructor(update: Function, board: Board) {
+
+  constructor(updatePresence: Function, update: Function, board: Board) {
     super();
     this.update = update;
+    this.updatePresence = updatePresence;
     this.board = board;
   }
 
@@ -41,6 +45,7 @@ class EraserWorker extends Worker {
         return;
       }
 
+      //this should be changed to using metadata
       this.update((root: Root) => {
         const pointStart = fixEraserPoint(points[0]);
         const pointEnd = fixEraserPoint(points[points.length - 1]);

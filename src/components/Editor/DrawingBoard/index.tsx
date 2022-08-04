@@ -23,7 +23,11 @@ export default ({ width, height }: { width: number; height: number }) => {
     if (!canvasRef.current) {
       return () => {};
     }
-    const board = new Board(canvasRef.current, doc!.update.bind(doc));
+    const board = new Board(
+      canvasRef.current,
+      doc!.update.bind(doc),
+      client!.updatePresence.bind(client)
+    );
     boardRef.current = board;
     return () => {
       board.destroy();
@@ -63,11 +67,14 @@ export default ({ width, height }: { width: number; height: number }) => {
 
     const clientId = client.getID()!;
     const handleUpdateMeta = (data: BoardMetadata) => {
-      const board = JSON.stringify(data || "");
-      boardRef.current?.updateMetadata(clientId, {
-        board,
-      } as Metadata);
-      client?.updatePresence("board", board);
+      if (isToolActivated) {
+        //for zooming and panning we don't update
+        const board = JSON.stringify(data || "");
+        boardRef.current?.updateMetadata(clientId, {
+          board,
+        } as Metadata);
+        client?.updatePresence("board", board);
+      }
     };
 
     boardRef.current?.addEventListener("mousemove", handleUpdateMeta);
@@ -90,6 +97,7 @@ export default ({ width, height }: { width: number; height: number }) => {
     }
     boardRef.current?.setWidth(width);
     boardRef.current?.setHeight(height);
+    //this has to do with drawing what is in doc
     boardRef.current?.drawAll(doc!.getRoot().shapes);
   }, [doc, width, height]);
 
