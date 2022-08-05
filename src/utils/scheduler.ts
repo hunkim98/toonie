@@ -2,7 +2,7 @@ import { Point } from "../types/canvasTypes";
 
 export type Task = Point;
 
-const INTERVAL_TIME = 50;
+const INTERVAL_TIME = 30;
 let tasks: Array<Task> = [];
 let timeout: ReturnType<typeof setTimeout>;
 let work: Function | undefined;

@@ -53,7 +53,7 @@ export default ({ width, height }: { width: number; height: number }) => {
     if (!client || !doc) {
       return () => {};
     }
-
+    //this is for tracking remote change (presence-change)
     const unsubscribe = client.subscribe((event) => {
       if (event.type === "peers-changed") {
         const documentKey = doc.getKey();
@@ -67,14 +67,13 @@ export default ({ width, height }: { width: number; height: number }) => {
 
     const clientId = client.getID()!;
     const handleUpdateMeta = (data: BoardMetadata) => {
-      if (isToolActivated) {
-        //for zooming and panning we don't update
-        const board = JSON.stringify(data || "");
-        boardRef.current?.updateMetadata(clientId, {
-          board,
-        } as Metadata);
-        client?.updatePresence("board", board);
-      }
+      //for zooming and panning we don't update
+      const board = JSON.stringify(data || "");
+      boardRef.current?.updateMetadata(clientId, {
+        board,
+      } as Metadata);
+      console.log("board", board);
+      client?.updatePresence("board", board);
     };
 
     boardRef.current?.addEventListener("mousemove", handleUpdateMeta);

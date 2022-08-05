@@ -68,11 +68,11 @@ function douglasPeucker(points: Array<Point>, tolerance: number): Array<Point> {
   const first = 0;
   const last = points.length - 1;
   const simplified = [];
-
+  console.log(points);
   simplified.push(points[first]);
   douglasPeuckerStep(points, first, last, tolerance, simplified);
   simplified.push(points[last]);
-
+  console.log(simplified, "simplified!!");
   return simplified;
 }
 
@@ -102,7 +102,7 @@ function simplifyRadialDist(points: Array<Point>, tolerance: number) {
  */
 export function compressPoints(
   points: Array<Point>,
-  tolerance: number = 10
+  tolerance: number = 2 //this is the rate we would compress points - smaller means more data
 ): Array<Point> {
   return douglasPeucker(simplifyRadialDist(points, tolerance), tolerance);
 }

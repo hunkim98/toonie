@@ -19,6 +19,8 @@ export type MouseDownCallback = (boardMetadata: BoardMetadata) => void;
 
 export type MouseMoveCallback = (boardMetadata: BoardMetadata) => void;
 
+export type MouseUpCallback = (BoardMetadata: BoardMetadata) => void;
+
 abstract class Worker {
   constructor(options?: Options) {
     this.options = options;
@@ -36,7 +38,7 @@ abstract class Worker {
 
   abstract mousemove(point: Point, callback?: MouseMoveCallback): void;
 
-  abstract mouseup(): void;
+  abstract mouseup(callback?: MouseUpCallback): void;
 
   abstract flushTask(): void;
 

@@ -274,7 +274,9 @@ export default class Board extends EventDispatcher {
     this.dragStatus = DragStatus.Stop;
 
     if (this.isToolActivated) {
-      this.worker.mouseup();
+      this.worker.mouseup((boardMetadata: BoardMetadata) => {
+        this.emit("mouseup", boardMetadata);
+      });
     } else {
       //panZoom
     }
@@ -290,21 +292,37 @@ export default class Board extends EventDispatcher {
   }
 
   updateMetadata(peerKey: string, metadata: Metadata) {
-    this.clear(this.documentCanvasWrapper);
+    // this.clear(this.presenceCanvasWrapper);
 
-    this.update((root: Root) => {
-      this.drawAll(root.shapes);
-    });
+    // this.update((root: Root) => {
+    //   this.drawAll(root.shapes);
+    // });
 
+    //JSON.parse changes string value board to an array
+    //anything can be passed to board meta data
     this.metadataMap.set(peerKey, JSON.parse(metadata.board || "{}"));
-
     for (const boardMetadata of Array.from(this.metadataMap.values())) {
-      const { eraserPoints } = boardMetadata;
-      // if (eraserPoints && eraserPoints.length > 0) {
-      //   drawEraser(this.lowerWrapper.getContext(), {
-      //     type: "eraser",
-      //     points: eraserPoints,
-      //   });
+      const { eraserPoints, penPoints } = boardMetadata;
+      if (eraserPoints && eraserPoints.length > 0) {
+        drawEraser(this.presenceCanvasWrapper.getContext(), {
+          type: "eraser",
+          points: eraserPoints,
+        });
+      }
+
+      if (penPoints && penPoints.length > 0) {
+        if (penPoints.length === 0) {
+          // this.presenceCanvasWrapper.clear();
+        } else {
+          drawLine(this.presenceCanvasWrapper.getContext(), {
+            type: "line",
+            points: penPoints,
+            color: "#000000",
+          });
+        }
+      }
+      // if (!penPoints) {
+      //   this.presenceCanvasWrapper.clear();
       // }
     }
   }
@@ -327,6 +345,7 @@ export default class Board extends EventDispatcher {
     wrapper: CanvasWrapper = this.documentCanvasWrapper
   ) {
     this.clear(wrapper);
+    this.clear(this.presenceCanvasWrapper);
     for (const shape of shapes) {
       if (shape.type === "line") {
         drawLine(wrapper.getContext(), shape);
@@ -334,6 +353,18 @@ export default class Board extends EventDispatcher {
         drawEraser(wrapper.getContext(), shape);
       } else if (shape.type === "rect") {
         drawRect(wrapper.getContext(), shape);
+      }
+    }
+  }
+
+  drawAllPreview(
+    shapes: Array<Shape>,
+    wrapper: CanvasWrapper = this.presenceCanvasWrapper
+  ) {
+    this.clear(wrapper);
+    for (const shape of shapes) {
+      if (shape.type === "line") {
+        drawLine(wrapper.getContext(), shape);
       }
     }
   }

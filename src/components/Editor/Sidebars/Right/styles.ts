@@ -9,7 +9,7 @@ export const SelectableTool = styled(ToolButton)<{
   isSelected: boolean;
   isToolActivated: boolean;
 }>`
-  pointer-events: auto;
+
   background-color: ${({ isSelected }) => isSelected && ThemeColor};
   opacity: ${({ isToolActivated }) => (isToolActivated ? 1 : 0.5)};
 `;
