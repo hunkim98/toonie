@@ -1,5 +1,5 @@
 import { TimeTicket } from "yorkie-js-sdk";
-import Worker, { Options } from "./Worker";
+import Worker, { MouseDownCallback, Options } from "./Worker";
 import * as scheduler from "../../../../../utils/scheduler";
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import Board from "../Board";
@@ -18,6 +18,10 @@ class RectWorker extends Worker {
 
   private createID?: TimeTicket;
 
+  private previewRect: Rect | undefined;
+
+  private previewRectExtendPoint: Point | undefined;
+
   constructor(
     updatePresence: Function,
     update: Function,
@@ -31,46 +35,68 @@ class RectWorker extends Worker {
   }
 
   mousedown(point: Point): void {
-    let timeTicket: TimeTicket;
+    this.previewRect = createRect(point, this.options!);
+    // let timeTicket: TimeTicket;
 
-    this.update((root: Root) => {
-      const shape = createRect(point, this.options!);
-      root.shapes.push(shape);
+    // this.update((root: Root) => {
+    //   const shape = createRect(point, this.options!);
+    //   root.shapes.push(shape);
 
-      const lastShape = root.shapes.getLast();
-      timeTicket = lastShape.getID();
-    });
+    //   const lastShape = root.shapes.getLast();
+    //   timeTicket = lastShape.getID();
+    // });
 
-    this.createID = timeTicket!;
+    // this.createID = timeTicket!;
   }
 
-  mousemove(point: Point) {
+  mousemove(point: Point, callback: MouseDownCallback) {
+    this.previewRectExtendPoint = point;
     scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
-      if (tasks.length < 2) {
-        return;
-      }
-
-      this.update((root: Root) => {
-        const lastPoint = tasks[tasks.length - 1];
-        const lastShape = this.getElementByID(root, this.createID!) as Rect;
-        if (!lastShape) {
-          return;
-        }
-
-        const box = adjustRectBox(lastShape, lastPoint);
-        lastShape.box = box;
-
-        this.board.drawAll(root.shapes);
-      });
+      this.previewRect!.box = adjustRectBox(
+        this.previewRect!,
+        this.previewRectExtendPoint!
+      );
+      callback({ rectShape: { ...this.previewRect! } });
     });
+
+    // scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
+    //   if (tasks.length < 2) {
+    //     return;
+    //   }
+
+    //   this.update((root: Root) => {
+    //     const lastPoint = tasks[tasks.length - 1];
+    //     const lastShape = this.getElementByID(root, this.createID!) as Rect;
+    //     if (!lastShape) {
+    //       return;
+    //     }
+
+    //     const box = adjustRectBox(lastShape, lastPoint);
+    //     lastShape.box = box;
+
+    //     this.board.drawAll(root.shapes);
+    //   });
+    // });
   }
 
-  mouseup() {
+  mouseup(callback: MouseDownCallback) {
     this.flushTask();
+    callback({});
   }
 
   flushTask() {
     scheduler.flushTask();
+
+    if (this.previewRect) {
+      this.update((root: Root) => {
+        let timeTicket: TimeTicket;
+        root.shapes.push({ ...this.previewRect! });
+        const lastShape = root.shapes.getLast();
+        timeTicket = lastShape.getID();
+        this.createID = timeTicket;
+        this.board.drawAll(root.shapes);
+      });
+    }
   }
 }
 

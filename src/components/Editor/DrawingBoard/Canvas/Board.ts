@@ -11,7 +11,7 @@ import {
 import EventDispatcher from "../../../../utils/eventDispatcher";
 import CanvasWrapper from "./CanvasWrapper";
 import { drawEraser } from "./eraser";
-import { drawLine } from "./line";
+import { drawLine, drawSmoothLine } from "./line";
 import { drawRect } from "./rect";
 import EraserWorker from "./Worker/EraserWorker";
 import PenWorker from "./Worker/PenWorker";
@@ -281,6 +281,7 @@ export default class Board extends EventDispatcher {
       //panZoom
     }
     this.emit("mouseup");
+    this.presenceCanvasWrapper.clear();
   }
 
   onMouseOut() {
@@ -302,28 +303,27 @@ export default class Board extends EventDispatcher {
     //anything can be passed to board meta data
     this.metadataMap.set(peerKey, JSON.parse(metadata.board || "{}"));
     for (const boardMetadata of Array.from(this.metadataMap.values())) {
-      const { eraserPoints, penPoints } = boardMetadata;
+      const { eraserPoints, penPoints, rectShape } = boardMetadata;
       if (eraserPoints && eraserPoints.length > 0) {
+        this.presenceCanvasWrapper.clear();
         drawEraser(this.presenceCanvasWrapper.getContext(), {
           type: "eraser",
           points: eraserPoints,
         });
       }
 
-      if (penPoints && penPoints.length > 0) {
-        if (penPoints.length === 0) {
-          // this.presenceCanvasWrapper.clear();
-        } else {
-          drawLine(this.presenceCanvasWrapper.getContext(), {
-            type: "line",
-            points: penPoints,
-            color: "#000000",
-          });
-        }
+      if (penPoints && penPoints.points.length > 0) {
+        drawLine(this.presenceCanvasWrapper.getContext(), {
+          type: "line",
+          points: penPoints.points,
+          color: penPoints.color,
+        });
       }
-      // if (!penPoints) {
-      //   this.presenceCanvasWrapper.clear();
-      // }
+
+      if (rectShape) {
+        this.presenceCanvasWrapper.clear();
+        drawRect(this.presenceCanvasWrapper.getContext(), { ...rectShape });
+      }
     }
   }
 
@@ -348,7 +348,7 @@ export default class Board extends EventDispatcher {
     this.clear(this.presenceCanvasWrapper);
     for (const shape of shapes) {
       if (shape.type === "line") {
-        drawLine(wrapper.getContext(), shape);
+        drawSmoothLine(wrapper.getContext(), shape);
       } else if (shape.type === "eraser") {
         drawEraser(wrapper.getContext(), shape);
       } else if (shape.type === "rect") {
@@ -365,6 +365,8 @@ export default class Board extends EventDispatcher {
     for (const shape of shapes) {
       if (shape.type === "line") {
         drawLine(wrapper.getContext(), shape);
+      } else if (shape.type === "rect") {
+        drawRect(wrapper.getContext(), shape);
       }
     }
   }

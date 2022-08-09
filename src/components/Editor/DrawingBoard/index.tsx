@@ -61,6 +61,10 @@ export default ({ width, height }: { width: number; height: number }) => {
 
         for (const peerKey of Object.keys(changedPeers)) {
           boardRef.current?.updateMetadata(peerKey, changedPeers[peerKey]);
+          if (client.getID() === peerKey) {
+            console.log(changedPeers[peerKey].color);
+            boardRef.current?.setColor(changedPeers[peerKey].color);
+          }
         }
       }
     });
@@ -72,7 +76,7 @@ export default ({ width, height }: { width: number; height: number }) => {
       boardRef.current?.updateMetadata(clientId, {
         board,
       } as Metadata);
-      console.log("board", board);
+      // console.log("board", board);
       client?.updatePresence("board", board);
     };
 

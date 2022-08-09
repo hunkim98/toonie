@@ -21,7 +21,7 @@ class PenWorker extends Worker {
 
   private selectPoint: Point[] = [];
 
-  private previewPoints: Point[];
+  private previewPoints: { points: Point[]; color: string };
 
   constructor(
     updatePresence: Function,
@@ -33,16 +33,17 @@ class PenWorker extends Worker {
     this.update = update;
     this.board = board;
     this.updatePresence = updatePresence;
-    this.previewPoints = [];
+    console.log(this.options!.color);
+    this.previewPoints = { points: [], color: this.options!.color };
   }
 
   mousedown(point: Point, callback: MouseDownCallback): void {
     // let timeTicket: TimeTicket;
     this.selectPoint = [point, point];
-    this.previewPoints = [point, point];
+    this.previewPoints = { points: [point, point], color: this.options!.color };
     // callback({ penPoints: [...this.selectPoint] });
     // this.update((root: Root) => {
-    //   const shape = createLine(point, this.options?.color!);
+    // const shape = createLine(point, this.options?.color!);
     //   root.shapes.push(shape);
 
     //   const lastShape = root.shapes.getLast();
@@ -57,8 +58,19 @@ class PenWorker extends Worker {
     // this.board.drawAllPreview([
     //   { type: "line", points: this.previewPoints, color: "#000000" } as Line,
     // ]);
-    this.previewPoints.push(point);
-    callback({ penPoints: [...this.previewPoints] });
+    this.previewPoints.points.push(point);
+    // callback({ penPoints: [...this.previewPoints] });
+    scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
+      callback({ penPoints: { ...this.previewPoints } });
+    });
+    // scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
+    //   const points = compressPoints(tasks);
+    //   if (tasks.length < 1) {
+    //     return;
+    //   }
+    //   this.previewPoints.concat(points);
+    //   callback({ penPoints: [...this.previewPoints] });
+    // });
     // scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
     // compressPoints(tasks);
     // if (tasks.length < 1) {
@@ -79,30 +91,25 @@ class PenWorker extends Worker {
   mouseup(callback: MouseDownCallback) {
     //send data from presence to document
     this.flushTask();
-    this.previewPoints = [];
+    this.previewPoints = { ...this.previewPoints, points: [] };
     callback({}); //initialize
   }
 
   flushTask() {
-    // scheduler.flushTask();
+    scheduler.flushTask();
 
-    if (this.previewPoints.length !== 0) {
-      const points = compressPoints(this.previewPoints);
+    if (this.previewPoints.points.length !== 0) {
+      const points = compressPoints(this.previewPoints.points);
       this.update((root: Root) => {
         let timeTicket: TimeTicket;
-        console.log(this.previewPoints);
         root.shapes.push({
           type: "line",
-          color: "#000000",
+          color: this.previewPoints.color,
           points: points,
         } as Line);
         const lastShape = root.shapes.getLast();
-        console.log(points);
         timeTicket = lastShape.getID();
         this.createID = timeTicket;
-        root.shapes[root.shapes.length - 1].points.map((element) => {
-          console.log(element);
-        });
         this.board.drawAll(root.shapes);
       });
     }
@@ -124,7 +131,7 @@ class PenWorker extends Worker {
 
     //   this.board.drawAll(root.shapes);
     // });
-    this.previewPoints = [];
+    this.previewPoints = { ...this.previewPoints, points: [] };
   }
 }
 

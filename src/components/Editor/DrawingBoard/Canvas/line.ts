@@ -29,7 +29,7 @@ export function drawSmoothLine(
   }
   context.save();
   context.beginPath();
-  context.strokeStyle = "#000000";
+  context.strokeStyle = line.color;
 
   const firstCurve = curves[0];
 
@@ -66,7 +66,7 @@ export function drawLine(context: CanvasRenderingContext2D, line: CanvasLine) {
   context.save();
 
   context.beginPath();
-  context.strokeStyle = "#000000";
+  context.strokeStyle = line.color;
   context.moveTo(points[0][0], points[0][1]);
   for (let i = 1; i < points.length; i++) {
     context.lineTo(points[i][0], points[i][1]);

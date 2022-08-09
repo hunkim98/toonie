@@ -5,14 +5,15 @@ import {
   Shape,
   Point,
   Rect,
+  Line,
 } from "../../../../../store/slices/docSlices";
 
 export type Options = { color: string };
 
 export type BoardMetadata = {
   eraserPoints?: Point[];
-  penPoints?: Point[];
-  rectShapes?: Rect[];
+  penPoints?: { points: Point[]; color: string };
+  rectShape?: Rect;
 };
 
 export type MouseDownCallback = (boardMetadata: BoardMetadata) => void;
