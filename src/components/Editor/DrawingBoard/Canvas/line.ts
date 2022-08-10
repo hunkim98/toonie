@@ -1,10 +1,12 @@
 import fitCurve from "fit-curve";
 import { Line } from "../../../../store/slices/docSlices";
-import { Point } from "../../../../types/canvasTypes";
+import { PanZoom, Point } from "../../../../types/canvasTypes";
+import { getScreenPoint } from "../../../../utils/canvas";
+import Board from "./Board";
 
 type CanvasLine = Pick<Line, "type" | "points" | "color">;
 
-export function createLine(point: Point, color: string): Line {
+export function createLine(board: Board, point: Point, color: string): Line {
   return {
     type: "line",
     color,
@@ -14,14 +16,16 @@ export function createLine(point: Point, color: string): Line {
 
 export function drawSmoothLine(
   context: CanvasRenderingContext2D,
-  line: CanvasLine
+  line: CanvasLine,
+  panZoom: PanZoom
 ) {
   if (line.points.length < 3) {
     return;
   }
   const points = [];
   for (const p of line.points) {
-    points.push([p.x, p.y]);
+    const screenPos = getScreenPoint({ x: p.x, y: p.y }, panZoom);
+    points.push([screenPos.x, screenPos.y]);
   }
   const curves = fitCurve(points, 2);
   if (!curves.length) {
@@ -49,7 +53,11 @@ export function drawSmoothLine(
   context.restore();
 }
 
-export function drawLine(context: CanvasRenderingContext2D, line: CanvasLine) {
+export function drawLine(
+  context: CanvasRenderingContext2D,
+  line: CanvasLine,
+  panZoom: PanZoom
+) {
   if (line.points.length < 3) {
     return;
   }
@@ -64,12 +72,19 @@ export function drawLine(context: CanvasRenderingContext2D, line: CanvasLine) {
   }
 
   context.save();
-
   context.beginPath();
   context.strokeStyle = line.color;
-  context.moveTo(points[0][0], points[0][1]);
+  const initialScreenPos = getScreenPoint(
+    { x: points[0][0], y: points[0][1] },
+    panZoom
+  );
+  context.moveTo(initialScreenPos.x, initialScreenPos.y);
   for (let i = 1; i < points.length; i++) {
-    context.lineTo(points[i][0], points[i][1]);
+    const screenPos = getScreenPoint(
+      { x: points[i][0], y: points[i][1] },
+      panZoom
+    );
+    context.lineTo(screenPos.x, screenPos.y);
   }
   // const firstCurve = curves[0];
 

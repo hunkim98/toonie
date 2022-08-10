@@ -20,3 +20,8 @@ export type OptionalFragment = {
 };
 
 export type Fragment = RequireFragment & Partial<OptionalFragment>;
+
+export type Panzoom = {
+  scale: number;
+  offset: Point;
+};

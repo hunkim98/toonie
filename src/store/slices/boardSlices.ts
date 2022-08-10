@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PanZoom } from "../../types/canvasTypes";
 
 export enum ToolType {
   Pen = "Pen",
@@ -11,6 +12,7 @@ export interface BoardState {
   color: string;
   isToolActivated: boolean;
   isSpacePressed: boolean;
+  panZoom: PanZoom;
 }
 
 const initialBoardState: BoardState = {
@@ -18,6 +20,10 @@ const initialBoardState: BoardState = {
   color: "#000000",
   isToolActivated: false,
   isSpacePressed: false,
+  panZoom: {
+    scale: 1,
+    offset: { x: 0, y: 0 },
+  },
 };
 
 const boardSlice = createSlice({
@@ -39,6 +45,9 @@ const boardSlice = createSlice({
     deactivateSpaceKey(state) {
       state.isSpacePressed = false;
     },
+    setPanZoom(state, action: PayloadAction<PanZoom>) {
+      state.panZoom = action.payload;
+    },
   },
 });
 
@@ -48,5 +57,6 @@ export const {
   deactivateTool,
   activateSpaceKey,
   deactivateSpaceKey,
+  setPanZoom,
 } = boardSlice.actions;
 export default boardSlice.reducer;

@@ -1,4 +1,5 @@
 import { PanZoom } from "../../../../types/canvasTypes";
+import { diffPoints, scalePoint } from "../../../../utils/canvas";
 
 export default class CanvasWrapper {
   private canvas: HTMLCanvasElement;
@@ -6,6 +7,13 @@ export default class CanvasWrapper {
   private width = 0;
   private height = 0;
   private lineWidth;
+  panZoom: PanZoom = {
+    scale: 1,
+    offset: {
+      x: 0,
+      y: 0,
+    },
+  };
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -14,6 +22,19 @@ export default class CanvasWrapper {
     this.lineWidth = 3;
     this.context.lineWidth = 3;
     this.context.lineCap = "round";
+  }
+
+  setPanZoom(param: Partial<PanZoom>) {
+    const { scale, offset } = param;
+
+    if (scale) {
+      this.panZoom.scale = scale;
+    }
+    if (offset) {
+      this.panZoom.offset = offset;
+    }
+
+    // this.getContext().translate()
   }
 
   changeLineWidth(lineWidth: number) {

@@ -1,5 +1,6 @@
 import { EraserLine } from "../../../../store/slices/docSlices";
-import { Point } from "../../../../types/canvasTypes";
+import { PanZoom, Point } from "../../../../types/canvasTypes";
+import { getScreenPoint } from "../../../../utils/canvas";
 
 type CanvasEraser = Pick<EraserLine, "type" | "points">;
 /**
@@ -7,7 +8,8 @@ type CanvasEraser = Pick<EraserLine, "type" | "points">;
  */
 export function drawEraser(
   context: CanvasRenderingContext2D,
-  line: CanvasEraser
+  line: CanvasEraser,
+  panZoom: PanZoom
 ) {
   context.save();
   context.beginPath();
@@ -16,11 +18,12 @@ export function drawEraser(
 
   let isMoved = false;
   for (const p of line.points) {
+    const screenPos = getScreenPoint({ x: p.x, y: p.y }, panZoom);
     if (isMoved === false) {
       isMoved = true;
-      context.moveTo(p.x, p.y);
+      context.moveTo(screenPos.x, screenPos.y);
     } else {
-      context.lineTo(p.x, p.y);
+      context.lineTo(screenPos.x, screenPos.y);
     }
   }
   context.stroke();

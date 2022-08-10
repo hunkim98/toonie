@@ -1,5 +1,7 @@
 import { Box, Rect } from "../../../../store/slices/docSlices";
-import { Point } from "../../../../types/canvasTypes";
+import { PanZoom, Point } from "../../../../types/canvasTypes";
+import { getScreenPoint } from "../../../../utils/canvas";
+import Board from "./Board";
 
 export interface RectOptions {
   color: string;
@@ -25,10 +27,25 @@ export function createRect(point: Point, options: RectOptions): Rect {
 /**
  * Draw a rect on the canvas.
  */
-export function drawRect(context: CanvasRenderingContext2D, rect: Rect) {
+export function drawRect(
+  context: CanvasRenderingContext2D,
+  rect: Rect,
+  panZoom: PanZoom
+) {
   context.save();
+  const x = rect.box.x;
+  const y = rect.box.y;
+  const width = rect.box.width;
+  const height = rect.box.height;
+  const screenPos = getScreenPoint({ x, y }, panZoom);
+
   context.strokeStyle = rect.color;
-  context.strokeRect(rect.box.x, rect.box.y, rect.box.width, rect.box.height);
+  context.strokeRect(
+    screenPos.x,
+    screenPos.y,
+    width * panZoom.scale,
+    height * panZoom.scale
+  );
   context.restore();
 }
 

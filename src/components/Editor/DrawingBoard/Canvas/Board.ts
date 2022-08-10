@@ -2,6 +2,7 @@ import { ToolType } from "../../../../store/slices/boardSlices";
 import { Root, Shape } from "../../../../store/slices/docSlices";
 import { Metadata } from "../../../../store/slices/peerSlices";
 import { PanZoom, Point } from "../../../../types/canvasTypes";
+import { diffPoints, scalePoint } from "../../../../utils/canvas";
 import {
   addEvent,
   removeEvent,
@@ -35,10 +36,18 @@ export default class Board extends EventDispatcher {
 
   private metadataMap: Map<string, BoardMetadata> = new Map();
 
+  //camearOffset
   panZoom: PanZoom = {
     scale: 1,
     offset: { x: 0, y: 0 },
   };
+
+  panPoint: { mousePos: Point; lastMousePos: Point } = {
+    mousePos: { x: 0, y: 0 },
+    lastMousePos: { x: 0, y: 0 },
+  };
+
+  updatePanZoomStore?: (panzoom: PanZoom) => void;
 
   update: Function;
   updatePresence: Function;
@@ -56,6 +65,15 @@ export default class Board extends EventDispatcher {
     this.updatePresence = updatePresence;
     this.isToolActivated = false;
     this.initialize();
+  }
+
+  setPanZoomStoreHandler(handler: (panzoom: PanZoom) => void) {
+    this.updatePanZoomStore = handler;
+  }
+
+  translate(x: number, y: number) {
+    this.presenceCanvasWrapper.getContext().translate(x, y);
+    this.documentCanvasWrapper.getContext().translate(x, y);
   }
 
   createPresenceCanvasWrapper(): CanvasWrapper {
@@ -226,6 +244,19 @@ export default class Board extends EventDispatcher {
     };
   }
 
+  handlePanning = (e: MouseEvent) => {
+    const lastMousePos = this.panPoint.lastMousePos;
+    const currentMousePos: Point = { x: e.offsetX, y: e.offsetY };
+    this.panPoint.lastMousePos = currentMousePos;
+    const mouseDiff = diffPoints(lastMousePos, currentMousePos);
+    const offset = diffPoints(this.panZoom.offset, mouseDiff);
+    this.panZoom.offset = offset;
+    this.presenceCanvasWrapper.setPanZoom({ offset });
+    this.documentCanvasWrapper.setPanZoom({ offset });
+    this.updatePanZoomStore!({ ...this.panZoom, offset });
+    return;
+  };
+
   onMouseDown(evt: TouchyEvent) {
     touchy(
       this.presenceCanvasWrapper.getCanvas(),
@@ -241,6 +272,18 @@ export default class Board extends EventDispatcher {
       this.worker.mousedown(point, (boardMetadata: BoardMetadata) => {
         this.emit("mousedown", boardMetadata);
       });
+    } else {
+      const mousePos = {
+        x: evt.offsetX,
+        y: evt.offsetY,
+      };
+      this.panPoint.lastMousePos = mousePos;
+      touchy(
+        this.presenceCanvasWrapper.getCanvas(),
+        addEvent,
+        "mousemove",
+        this.handlePanning as EventListener
+      );
     }
   }
 
@@ -261,6 +304,14 @@ export default class Board extends EventDispatcher {
       });
     } else {
       //pan control, zoom
+      // const lastMousePos = this.panPoint.lastMousePos;
+      // const currentMousePos: Point = { x: evt.pageX, y: evt.pageY };
+      // this.panPoint.lastMousePos = currentMousePos;
+      // const mouseDiff = diffPoints(currentMousePos, lastMousePos);
+      // this.panZoom.offset = {
+      //   x: this.panZoom.offset.x + mouseDiff.x,
+      //   y: this.panZoom.offset.y + mouseDiff.y,
+      // };
     }
   }
 
@@ -270,6 +321,12 @@ export default class Board extends EventDispatcher {
       removeEvent,
       "mousemove",
       this.onMouseMove
+    );
+    touchy(
+      this.presenceCanvasWrapper.getCanvas(),
+      removeEvent,
+      "mousemove",
+      this.handlePanning
     );
     this.dragStatus = DragStatus.Stop;
 
@@ -306,23 +363,35 @@ export default class Board extends EventDispatcher {
       const { eraserPoints, penPoints, rectShape } = boardMetadata;
       if (eraserPoints && eraserPoints.length > 0) {
         this.presenceCanvasWrapper.clear();
-        drawEraser(this.presenceCanvasWrapper.getContext(), {
-          type: "eraser",
-          points: eraserPoints,
-        });
+        drawEraser(
+          this.presenceCanvasWrapper.getContext(),
+          {
+            type: "eraser",
+            points: eraserPoints,
+          },
+          this.panZoom
+        );
       }
 
       if (penPoints && penPoints.points.length > 0) {
-        drawLine(this.presenceCanvasWrapper.getContext(), {
-          type: "line",
-          points: penPoints.points,
-          color: penPoints.color,
-        });
+        drawLine(
+          this.presenceCanvasWrapper.getContext(),
+          {
+            type: "line",
+            points: penPoints.points,
+            color: penPoints.color,
+          },
+          this.panZoom
+        );
       }
 
       if (rectShape) {
         this.presenceCanvasWrapper.clear();
-        drawRect(this.presenceCanvasWrapper.getContext(), { ...rectShape });
+        drawRect(
+          this.presenceCanvasWrapper.getContext(),
+          { ...rectShape },
+          this.panZoom
+        );
       }
     }
   }
@@ -348,11 +417,11 @@ export default class Board extends EventDispatcher {
     this.clear(this.presenceCanvasWrapper);
     for (const shape of shapes) {
       if (shape.type === "line") {
-        drawSmoothLine(wrapper.getContext(), shape);
+        drawSmoothLine(wrapper.getContext(), shape, this.panZoom);
       } else if (shape.type === "eraser") {
-        drawEraser(wrapper.getContext(), shape);
+        drawEraser(wrapper.getContext(), shape, this.panZoom);
       } else if (shape.type === "rect") {
-        drawRect(wrapper.getContext(), shape);
+        drawRect(wrapper.getContext(), shape, this.panZoom);
       }
     }
   }
@@ -364,9 +433,9 @@ export default class Board extends EventDispatcher {
     this.clear(wrapper);
     for (const shape of shapes) {
       if (shape.type === "line") {
-        drawLine(wrapper.getContext(), shape);
+        drawLine(wrapper.getContext(), shape, this.panZoom);
       } else if (shape.type === "rect") {
-        drawRect(wrapper.getContext(), shape);
+        drawRect(wrapper.getContext(), shape, this.panZoom);
       }
     }
   }

@@ -55,16 +55,7 @@ class EraserWorker extends Worker {
             if (shape.type === "eraser") {
               continue;
             }
-            console.log(
-              "this is shape",
-              shape.type,
-              shape.points.map((element) => {
-                console.log(element);
-              })
-            );
-
             if (isSelectable(shape)) {
-              console.log(shape, "this is shape is selectable!");
               if (isInnerBox(shape.box, point2)) {
                 this.deleteByID(root, shape.getID());
               }
@@ -72,13 +63,6 @@ class EraserWorker extends Worker {
               for (let i = 1; i < shape.points.length; i += 1) {
                 const shapePoint1 = shape.points[i - 1];
                 const shapePoint2 = shape.points[i];
-                console.log(
-                  shape.points.length,
-                  point2,
-                  shapePoint1,
-                  shapePoint2,
-                  "this is shape is selectable!"
-                );
                 if (isInnerBox(this.eraserBox(point2), shapePoint2)) {
                   this.deleteByID(root, shape.getID());
                   break;

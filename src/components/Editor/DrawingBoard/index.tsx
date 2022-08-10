@@ -1,8 +1,14 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
-import { setTool, ToolType } from "../../../store/slices/boardSlices";
+import {
+  BoardState,
+  setPanZoom,
+  setTool,
+  ToolType,
+} from "../../../store/slices/boardSlices";
 import { Metadata } from "../../../store/slices/peerSlices";
+import { PanZoom } from "../../../types/canvasTypes";
 import Board from "./Canvas/Board";
 import { BoardMetadata } from "./Canvas/Worker/Worker";
 
@@ -15,6 +21,7 @@ export default ({ width, height }: { width: number; height: number }) => {
   const client = useSelector((state: RootState) => state.docState.client);
   const doc = useSelector((state: RootState) => state.docState.doc);
   const tool = useSelector((state: RootState) => state.boardState.toolType);
+  const panZoom = useSelector((state: RootState) => state.boardState.panZoom);
   const isToolActivated = useSelector(
     (state: RootState) => state.boardState.isToolActivated
   );
@@ -80,6 +87,10 @@ export default ({ width, height }: { width: number; height: number }) => {
       client?.updatePresence("board", board);
     };
 
+    boardRef.current?.setPanZoomStoreHandler((canvasPanZoom: PanZoom) => {
+      dispatch(setPanZoom(canvasPanZoom));
+    });
+
     boardRef.current?.addEventListener("mousemove", handleUpdateMeta);
     boardRef.current?.addEventListener("mousedown", handleUpdateMeta);
     boardRef.current?.addEventListener("mouseout", handleUpdateMeta);
@@ -102,7 +113,7 @@ export default ({ width, height }: { width: number; height: number }) => {
     boardRef.current?.setHeight(height);
     //this has to do with drawing what is in doc
     boardRef.current?.drawAll(doc!.getRoot().shapes);
-  }, [doc, width, height]);
+  }, [doc, width, height, panZoom]);
 
   useEffect(() => {
     boardRef.current?.setTool(tool);
