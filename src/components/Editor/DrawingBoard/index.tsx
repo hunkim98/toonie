@@ -22,6 +22,9 @@ export default ({ width, height }: { width: number; height: number }) => {
   const doc = useSelector((state: RootState) => state.docState.doc);
   const tool = useSelector((state: RootState) => state.boardState.toolType);
   const panZoom = useSelector((state: RootState) => state.boardState.panZoom);
+  const strokeWidth = useSelector(
+    (state: RootState) => state.boardState.strokeWidth
+  );
   const isToolActivated = useSelector(
     (state: RootState) => state.boardState.isToolActivated
   );
@@ -121,6 +124,10 @@ export default ({ width, height }: { width: number; height: number }) => {
     }
     boardRef.current?.drawAll(doc!.getRoot().shapes);
   }, [doc, panZoom]);
+
+  useEffect(() => {
+    boardRef.current?.setStrokeWith(strokeWidth);
+  }, [doc, strokeWidth]);
 
   useEffect(() => {
     boardRef.current?.setTool(tool);

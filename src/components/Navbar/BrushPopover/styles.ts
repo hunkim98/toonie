@@ -44,13 +44,27 @@ export const SizesPicker = styled.div`
   justify-content: space-between;
 `;
 
-export const SizeContainer = styled.div`
+export const SizeContainer = styled.div<{ isSelected: boolean }>`
   width: 50px;
   height: 50px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: ${({ isSelected }) => {
+    return isSelected ? "rgba(0, 0, 0, 255)" : "rgba(0, 0, 0, 0.1)";
+  }};
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-export const Size = styled.div<{ size: number }>`
-  background-color: rgba(0, 0, 0, 0.1);
+export const Size = styled.div<{ size: number; isSelected: boolean }>`
+  background-color: ${({ isSelected }) => {
+    return isSelected ? "rgba(255, 255, 255, 255)" : "rgba(0, 0, 0, 255)";
+  }};
+  width: ${({ size }) => {
+    return `${size}px`;
+  }};
+  height: ${({ size }) => {
+    return `${size}px`;
+  }};
+  border-radius: 50%;
 `;

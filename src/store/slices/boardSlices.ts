@@ -7,12 +7,15 @@ export enum ToolType {
   Rect = "Rect",
 }
 
+export const StrokeWidthType = [3, 5, 10, 20];
+
 export interface BoardState {
   toolType: ToolType;
   color: string;
   isToolActivated: boolean;
   isSpacePressed: boolean;
   panZoom: PanZoom;
+  strokeWidth: number;
 }
 
 const initialBoardState: BoardState = {
@@ -24,6 +27,7 @@ const initialBoardState: BoardState = {
     scale: 1,
     offset: { x: 0, y: 0 },
   },
+  strokeWidth: StrokeWidthType[0],
 };
 
 const boardSlice = createSlice({
@@ -48,6 +52,9 @@ const boardSlice = createSlice({
     setPanZoom(state, action: PayloadAction<PanZoom>) {
       state.panZoom = action.payload;
     },
+    setStrokeWidth(state, action: PayloadAction<number>) {
+      state.strokeWidth = action.payload;
+    },
   },
 });
 
@@ -57,6 +64,7 @@ export const {
   deactivateTool,
   activateSpaceKey,
   deactivateSpaceKey,
+  setStrokeWidth,
   setPanZoom,
 } = boardSlice.actions;
 export default boardSlice.reducer;

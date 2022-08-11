@@ -9,11 +9,11 @@ import {
 } from "../../../../../store/slices/docSlices";
 import { PanZoom } from "../../../../../types/canvasTypes";
 
-export type Options = { color: string };
+export type Options = { color: string; strokeWidth: number };
 
 export type BoardMetadata = {
   eraserPoints?: Point[];
-  penPoints?: { points: Point[]; color: string };
+  penPoints?: { points: Point[]; color: string; strokeWidth: number };
   rectShape?: Rect;
 };
 

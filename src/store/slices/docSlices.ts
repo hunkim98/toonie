@@ -17,12 +17,6 @@ export interface BaseShape {
   type: string;
   getID(): TimeTicket;
 }
-export interface Line extends BaseShape {
-  type: "line";
-  color: string;
-  points: Array<Point>;
-}
-
 export interface Box {
   y: number;
   x: number;
@@ -33,12 +27,14 @@ export interface Box {
 export interface Line extends BaseShape {
   type: "line";
   color: string;
+  strokeWidth: number;
   points: Array<Point>;
 }
 
 export interface Rect extends BaseShape {
   type: "rect";
   color: string;
+  strokeWidth: number;
   points: Array<Point>;
   box: Box;
 }

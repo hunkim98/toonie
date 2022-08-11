@@ -20,7 +20,11 @@ class PenWorker extends Worker {
 
   private createID?: TimeTicket;
 
-  private previewPoints: { points: Point[]; color: string };
+  private previewPoints: {
+    points: Point[];
+    color: string;
+    strokeWidth: number;
+  };
 
   constructor(
     updatePresence: Function,
@@ -33,7 +37,11 @@ class PenWorker extends Worker {
     this.board = board;
     this.updatePresence = updatePresence;
     console.log(this.options!.color);
-    this.previewPoints = { points: [], color: this.options!.color };
+    this.previewPoints = {
+      points: [],
+      color: this.options!.color,
+      strokeWidth: this.options!.strokeWidth,
+    };
   }
 
   mousedown(point: Point, panZoom: PanZoom, callback: MouseDownCallback): void {
@@ -43,6 +51,7 @@ class PenWorker extends Worker {
         scalePoint(point, panZoom.scale),
       ],
       color: this.options!.color,
+      strokeWidth: this.options!.strokeWidth,
     };
   }
 
@@ -66,6 +75,7 @@ class PenWorker extends Worker {
         root.shapes.push({
           type: "line",
           color: this.previewPoints.color,
+          strokeWidth: this.previewPoints.strokeWidth,
           points: points,
         } as Line);
         const lastShape = root.shapes.getLast();

@@ -19,8 +19,8 @@ export default class CanvasWrapper {
     this.canvas = canvas;
     this.context = canvas.getContext("2d")!;
 
-    this.lineWidth = 3;
-    this.context.lineWidth = 3;
+    this.lineWidth = 30;
+    this.context.lineWidth = 30;
     this.context.lineCap = "round";
   }
 

@@ -1,4 +1,7 @@
-import { ToolType } from "../../../../store/slices/boardSlices";
+import {
+  StrokeWidthType,
+  ToolType,
+} from "../../../../store/slices/boardSlices";
 import { Root, Shape } from "../../../../store/slices/docSlices";
 import { Metadata } from "../../../../store/slices/peerSlices";
 import { PanZoom, Point } from "../../../../types/canvasTypes";
@@ -19,7 +22,7 @@ import EventDispatcher from "../../../../utils/eventDispatcher";
 import CanvasWrapper from "./CanvasWrapper";
 import { drawEraser } from "./eraser";
 import { drawLine, drawSmoothLine } from "./line";
-import { drawNewRect, drawRect } from "./rect";
+import { drawRect } from "./rect";
 import EraserWorker from "./Worker/EraserWorker";
 import PenWorker from "./Worker/PenWorker";
 import RectWorker from "./Worker/RectWorker";
@@ -34,6 +37,7 @@ export default class Board extends EventDispatcher {
   private offSetY: number = 0;
   private offSetX: number = 0;
   private color: string = "#000000";
+  private strokeWidth: number = StrokeWidthType[0];
   private isToolActivated: boolean;
   private dragStatus: DragStatus = DragStatus.Stop;
 
@@ -111,7 +115,8 @@ export default class Board extends EventDispatcher {
     this.onMouseMove = this.onMouseMove.bind(this);
 
     this.worker = new PenWorker(this.updatePresence, this.update, this, {
-      color: "#000000",
+      color: this.color,
+      strokeWidth: this.strokeWidth,
     });
 
     touchy(
@@ -183,9 +188,13 @@ export default class Board extends EventDispatcher {
     }
   }
 
+  setStrokeWith(strokeWidth: number) {
+    this.strokeWidth = strokeWidth;
+    this.worker.setOption({ color: this.color, strokeWidth });
+  }
   setColor(color: string) {
     this.color = color;
-    this.worker.setOption({ color });
+    this.worker.setOption({ color, strokeWidth: this.strokeWidth });
   }
 
   setWidth(width: number) {
@@ -217,6 +226,7 @@ export default class Board extends EventDispatcher {
     if (tool === ToolType.Pen) {
       return new PenWorker(this.updatePresence, this.update, this, {
         color: this.color,
+        strokeWidth: this.strokeWidth,
       });
     }
     if (tool === ToolType.Eraser) {
@@ -225,6 +235,7 @@ export default class Board extends EventDispatcher {
     if (tool === ToolType.Rect) {
       return new RectWorker(this.updatePresence, this.update, this, {
         color: this.color,
+        strokeWidth: this.strokeWidth,
       });
     }
     throw new TypeError(`Undefined tool: ${tool}`);
@@ -429,6 +440,7 @@ export default class Board extends EventDispatcher {
             type: "line",
             points: penPoints.points,
             color: penPoints.color,
+            strokeWidth: penPoints.strokeWidth,
           },
           this.panZoom
         );

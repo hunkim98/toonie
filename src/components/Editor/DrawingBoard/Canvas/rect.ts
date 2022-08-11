@@ -5,19 +5,17 @@ import Board from "./Board";
 
 export interface RectOptions {
   color: string;
+  strokeWidth: number;
 }
 
 /**
  * Create the basic object of the rect with point.
  */
-export function createRect(
-  point: Point,
-  options: RectOptions,
-  panZoom: PanZoom
-): Rect {
+export function createRect(point: Point, options: RectOptions): Rect {
   return {
     type: "rect",
     color: options.color,
+    strokeWidth: options.strokeWidth,
     box: {
       x: point.x,
       y: point.y,
@@ -43,6 +41,7 @@ export function drawRect(
   const height = rect.box.height;
   const screenPos = getScreenPoint({ x, y }, panZoom);
 
+  context.lineWidth = rect.strokeWidth * panZoom.scale;
   context.strokeStyle = rect.color;
   context.strokeRect(
     screenPos.x,
@@ -50,25 +49,6 @@ export function drawRect(
     width * panZoom.scale,
     height * panZoom.scale
   );
-  context.restore();
-}
-
-/**
- * Draw a rect on the presence canvas.
- */
-export function drawNewRect(
-  context: CanvasRenderingContext2D,
-  rect: Rect,
-  panZoom: PanZoom
-) {
-  context.save();
-  const x = rect.box.x;
-  const y = rect.box.y;
-  const width = rect.box.width;
-  const height = rect.box.height;
-  const screenPos = getScreenPoint({ x, y }, { ...panZoom, scale: 1 });
-  context.strokeStyle = rect.color;
-  context.strokeRect(screenPos.x, screenPos.y, width, height);
   context.restore();
 }
 

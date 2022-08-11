@@ -38,8 +38,7 @@ class RectWorker extends Worker {
   mousedown(point: Point, panZoom: PanZoom): void {
     this.previewRect = createRect(
       scalePoint(point, panZoom.scale),
-      this.options!,
-      panZoom
+      this.options!
     );
     // let timeTicket: TimeTicket;
 

@@ -4,9 +4,9 @@ import { PanZoom, Point } from "../../../../types/canvasTypes";
 import { getScreenPoint } from "../../../../utils/canvas";
 import Board from "./Board";
 
-type CanvasLine = Pick<Line, "type" | "points" | "color">;
+type CanvasLine = Pick<Line, "type" | "points" | "color" | "strokeWidth">;
 
-export function createLine(board: Board, point: Point, color: string): Line {
+export function createLine(point: Point, color: string): Line {
   return {
     type: "line",
     color,
@@ -19,9 +19,9 @@ export function drawSmoothLine(
   line: CanvasLine,
   panZoom: PanZoom
 ) {
-  if (line.points.length < 3) {
-    return;
-  }
+  // if (line.points.length < 3) {
+  //   return;
+  // }
   const points = [];
   for (const p of line.points) {
     const screenPos = getScreenPoint({ x: p.x, y: p.y }, panZoom);
@@ -34,6 +34,7 @@ export function drawSmoothLine(
   context.save();
   context.beginPath();
   context.strokeStyle = line.color;
+  context.lineWidth = line.strokeWidth * panZoom.scale;
 
   const firstCurve = curves[0];
 
@@ -58,15 +59,16 @@ export function drawLine(
   line: CanvasLine,
   panZoom: PanZoom
 ) {
-  if (line.points.length < 3) {
-    return;
-  }
+  // if (line.points.length < 3) {
+  //   return;
+  // }
   const points = [];
   for (const p of line.points) {
     points.push([p.x, p.y]);
   }
   context.save();
   context.beginPath();
+  context.lineWidth = line.strokeWidth * panZoom.scale;
   context.strokeStyle = line.color;
   const initialScreenPos = getScreenPoint(
     { x: points[0][0], y: points[0][1] },
