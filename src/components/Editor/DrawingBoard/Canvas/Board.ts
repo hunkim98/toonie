@@ -350,12 +350,6 @@ export default class Board extends EventDispatcher {
   }
 
   updateMetadata(peerKey: string, metadata: Metadata) {
-    // this.clear(this.presenceCanvasWrapper);
-
-    // this.update((root: Root) => {
-    //   this.drawAll(root.shapes);
-    // });
-
     //JSON.parse changes string value board to an array
     //anything can be passed to board meta data
     this.metadataMap.set(peerKey, JSON.parse(metadata.board || "{}"));

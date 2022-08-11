@@ -65,12 +65,6 @@ export function drawLine(
   for (const p of line.points) {
     points.push([p.x, p.y]);
   }
-
-  const curves = fitCurve(points, 2);
-  if (!curves.length) {
-    return;
-  }
-
   context.save();
   context.beginPath();
   context.strokeStyle = line.color;
@@ -86,19 +80,6 @@ export function drawLine(
     );
     context.lineTo(screenPos.x, screenPos.y);
   }
-  // const firstCurve = curves[0];
-
-  // context.moveTo(firstCurve[0][0], firstCurve[0][1]);
-  // for (const curve of curves) {
-  //   context.bezierCurveTo(
-  //     curve[1][0],
-  //     curve[1][1],
-  //     curve[2][0],
-  //     curve[2][1],
-  //     curve[3][0],
-  //     curve[3][1]
-  //   );
-  // }
   context.stroke();
   context.closePath();
   context.restore();

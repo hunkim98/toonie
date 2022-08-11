@@ -38,54 +38,13 @@ class PenWorker extends Worker {
   }
 
   mousedown(point: Point, callback: MouseDownCallback): void {
-    // let timeTicket: TimeTicket;
     this.selectPoint = [point, point];
     this.previewPoints = { points: [point, point], color: this.options!.color };
-    // callback({ penPoints: [...this.selectPoint] });
-    // this.update((root: Root) => {
-    // const shape = createLine(point, this.options?.color!);
-    //   root.shapes.push(shape);
-
-    //   const lastShape = root.shapes.getLast();
-    //   timeTicket = lastShape.getID();
-    // });
-
-    // this.createID = timeTicket!;
   }
 
   mousemove(point: Point, callback: MouseDownCallback) {
-    // this.previewPoints.push(point);
-    // this.board.drawAllPreview([
-    //   { type: "line", points: this.previewPoints, color: "#000000" } as Line,
-    // ]);
     this.previewPoints.points.push(point);
-    // callback({ penPoints: [...this.previewPoints] });
-    scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
-      callback({ penPoints: { ...this.previewPoints } });
-    });
-    // scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
-    //   const points = compressPoints(tasks);
-    //   if (tasks.length < 1) {
-    //     return;
-    //   }
-    //   this.previewPoints.concat(points);
-    //   callback({ penPoints: [...this.previewPoints] });
-    // });
-    // scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
-    // compressPoints(tasks);
-    // if (tasks.length < 1) {
-    //   return;
-    // }
-    // this.board.drawAllPreview(points);
-    // this.update((root: Root) => {
-    //   const lastShape = this.getElementByID(root, this.createID!);
-    //   if (!lastShape) {
-    //     return;
-    //   }
-    //   lastShape.points.push(...points);
-    //   this.board.drawAll(root.shapes);
-    // });
-    // });
+    callback({ penPoints: { ...this.previewPoints } });
   }
 
   mouseup(callback: MouseDownCallback) {
@@ -96,8 +55,6 @@ class PenWorker extends Worker {
   }
 
   flushTask() {
-    scheduler.flushTask();
-
     if (this.previewPoints.points.length !== 0) {
       const points = compressPoints(this.previewPoints.points);
       this.update((root: Root) => {
@@ -114,23 +71,6 @@ class PenWorker extends Worker {
       });
     }
 
-    // this.update((root: Root) => {
-    //   if (!this.createID) {
-    //     return;
-    //   }
-
-    //   const shape = this.getElementByID(root, this.createID!);
-    //   if (!shape) {
-    //     return;
-    //   }
-
-    //   // When erasing a line, it checks that the lines overlap, so do not save if there are two points below
-    //   if (shape.points.length < 2) {
-    //     this.deleteByID(root, this.createID!);
-    //   }
-
-    //   this.board.drawAll(root.shapes);
-    // });
     this.previewPoints = { ...this.previewPoints, points: [] };
   }
 }
