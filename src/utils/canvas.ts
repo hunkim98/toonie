@@ -21,3 +21,19 @@ export function getScreenPoint(point: Point, panZoom: PanZoom) {
     y: point.y * scale + offset.y - NavbarHeight,
   };
 }
+
+export function getWorldPoint(point: Point, panZoom: PanZoom) {
+  const { offset, scale } = panZoom;
+
+  return {
+    x: (point.x - offset.x) / scale,
+    y: (point.y - offset.y) / scale,
+  };
+}
+
+export function addPoints(p1: Point, p2: Point): Point {
+  return {
+    x: p1.x + p2.x,
+    y: p1.y + p2.y,
+  };
+}

@@ -7,6 +7,7 @@ import {
   Rect,
   Line,
 } from "../../../../../store/slices/docSlices";
+import { PanZoom } from "../../../../../types/canvasTypes";
 
 export type Options = { color: string };
 
@@ -35,9 +36,17 @@ abstract class Worker {
 
   abstract updatePresence: Function;
 
-  abstract mousedown(point: Point, callback?: MouseDownCallback): void;
+  abstract mousedown(
+    point: Point,
+    panZoom: PanZoom,
+    callback?: MouseDownCallback
+  ): void;
 
-  abstract mousemove(point: Point, callback?: MouseMoveCallback): void;
+  abstract mousemove(
+    point: Point,
+    panZoom: PanZoom,
+    callback?: MouseMoveCallback
+  ): void;
 
   abstract mouseup(callback?: MouseUpCallback): void;
 

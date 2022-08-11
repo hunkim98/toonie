@@ -2,7 +2,13 @@ import { ToolType } from "../../../../store/slices/boardSlices";
 import { Root, Shape } from "../../../../store/slices/docSlices";
 import { Metadata } from "../../../../store/slices/peerSlices";
 import { PanZoom, Point } from "../../../../types/canvasTypes";
-import { diffPoints, scalePoint } from "../../../../utils/canvas";
+import {
+  addPoints,
+  diffPoints,
+  getScreenPoint,
+  getWorldPoint,
+  scalePoint,
+} from "../../../../utils/canvas";
 import {
   addEvent,
   removeEvent,
@@ -13,7 +19,7 @@ import EventDispatcher from "../../../../utils/eventDispatcher";
 import CanvasWrapper from "./CanvasWrapper";
 import { drawEraser } from "./eraser";
 import { drawLine, drawSmoothLine } from "./line";
-import { drawRect } from "./rect";
+import { drawNewRect, drawRect } from "./rect";
 import EraserWorker from "./Worker/EraserWorker";
 import PenWorker from "./Worker/PenWorker";
 import RectWorker from "./Worker/RectWorker";
@@ -126,7 +132,9 @@ export default class Board extends EventDispatcher {
       "mousedown",
       this.onMouseDown
     );
-
+    this.presenceCanvasWrapper
+      .getCanvas()
+      .addEventListener("wheel", this.handleWheel);
     this.addEventListener("renderAll", this.drawAll);
   }
 
@@ -164,6 +172,7 @@ export default class Board extends EventDispatcher {
     );
     this.destroyPresenceCanvas();
     this.removeEventListener("renderAll");
+    this.removeEventListener("wheel");
   }
 
   destroyPresenceCanvas() {
@@ -252,6 +261,57 @@ export default class Board extends EventDispatcher {
     return;
   };
 
+  handleWheel = (e: WheelEvent) => {
+    console.log(this.panZoom.scale);
+    e.preventDefault();
+    const MAX_SCALE = 5;
+    const MIN_SCALE = 0.6;
+
+    const ZOOM_SENSITIVITY = 300;
+    if (e.ctrlKey) {
+      const zoom = 1 - e.deltaY / ZOOM_SENSITIVITY;
+      const newScale = this.panZoom.scale * zoom;
+
+      if (MIN_SCALE > newScale || newScale > MAX_SCALE) {
+        return;
+      }
+
+      const mousePos = { x: e.offsetX, y: e.offsetY };
+      const worldPos = getWorldPoint(mousePos, {
+        scale: this.panZoom.scale,
+        offset: this.panZoom.offset,
+      });
+      const newMousePos = getScreenPoint(worldPos, {
+        scale: newScale,
+        offset: this.panZoom.offset,
+      });
+      const scaleOffset = diffPoints(mousePos, newMousePos);
+      const offset = addPoints(this.panZoom.offset, scaleOffset);
+      this.panZoom.offset = offset;
+      this.panZoom.scale = newScale;
+      this.presenceCanvasWrapper.setPanZoom({
+        offset,
+      });
+      this.documentCanvasWrapper.setPanZoom({
+        offset,
+      });
+      this.updatePanZoomStore!({ ...this.panZoom, scale: newScale });
+    } else {
+      const offset = diffPoints(this.panZoom.offset, {
+        x: e.deltaX,
+        y: e.deltaY,
+      });
+      this.panZoom.offset = offset;
+      this.presenceCanvasWrapper.setPanZoom({
+        offset,
+      });
+      this.documentCanvasWrapper.setPanZoom({
+        offset,
+      });
+      this.updatePanZoomStore!({ ...this.panZoom, offset });
+    }
+  };
+
   onMouseDown(evt: TouchyEvent) {
     touchy(
       this.presenceCanvasWrapper.getCanvas(),
@@ -264,10 +324,15 @@ export default class Board extends EventDispatcher {
     const point = this.getPointFromTouchyEvent(evt);
 
     if (this.isToolActivated) {
-      this.worker.mousedown(point, (boardMetadata: BoardMetadata) => {
-        this.emit("mousedown", boardMetadata);
-      });
+      this.worker.mousedown(
+        point,
+        this.panZoom,
+        (boardMetadata: BoardMetadata) => {
+          this.emit("mousedown", boardMetadata);
+        }
+      );
     } else {
+      //this part is necessary for panning
       const mousePos = {
         x: evt.offsetX,
         y: evt.offsetY,
@@ -294,19 +359,14 @@ export default class Board extends EventDispatcher {
     }
 
     if (this.isToolActivated) {
-      this.worker.mousemove(point, (boardMetadata: BoardMetadata) => {
-        this.emit("mousemove", boardMetadata);
-      });
+      this.worker.mousemove(
+        point,
+        this.panZoom,
+        (boardMetadata: BoardMetadata) => {
+          this.emit("mousemove", boardMetadata);
+        }
+      );
     } else {
-      //pan control, zoom
-      // const lastMousePos = this.panPoint.lastMousePos;
-      // const currentMousePos: Point = { x: evt.pageX, y: evt.pageY };
-      // this.panPoint.lastMousePos = currentMousePos;
-      // const mouseDiff = diffPoints(currentMousePos, lastMousePos);
-      // this.panZoom.offset = {
-      //   x: this.panZoom.offset.x + mouseDiff.x,
-      //   y: this.panZoom.offset.y + mouseDiff.y,
-      // };
     }
   }
 

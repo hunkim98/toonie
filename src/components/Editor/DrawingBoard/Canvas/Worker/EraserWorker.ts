@@ -1,6 +1,7 @@
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import { Box, Root } from "../../../../../store/slices/docSlices";
-import { Point } from "../../../../../types/canvasTypes";
+import { PanZoom, Point } from "../../../../../types/canvasTypes";
+import { scalePoint } from "../../../../../utils/canvas";
 import { isInnerBox, isSelectable } from "../../../../../utils/canvas.box";
 import {
   checkLineIntersection,
@@ -31,13 +32,15 @@ class EraserWorker extends Worker {
     this.board = board;
   }
 
-  mousedown(point: Point, callback: MouseDownCallback): void {
-    this.selectPoint = [point, point];
-    console.log(this.selectPoint, "mousedown callbakc");
+  mousedown(point: Point, panZoom: PanZoom, callback: MouseDownCallback): void {
+    this.selectPoint = [
+      scalePoint(point, panZoom.scale),
+      scalePoint(point, panZoom.scale),
+    ];
     callback({ eraserPoints: [...this.selectPoint] });
   }
 
-  mousemove(point: Point, callback: MouseMoveCallback) {
+  mousemove(point: Point, panZoom: PanZoom, callback: MouseMoveCallback) {
     scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
       const points = compressPoints(tasks);
 
@@ -47,8 +50,10 @@ class EraserWorker extends Worker {
 
       //this should be changed to using metadata
       this.update((root: Root) => {
-        const pointStart = fixEraserPoint(points[0]);
-        const pointEnd = fixEraserPoint(points[points.length - 1]);
+        const pointStart = fixEraserPoint(scalePoint(points[0], panZoom.scale));
+        const pointEnd = fixEraserPoint(
+          scalePoint(points[points.length - 1], panZoom.scale)
+        );
 
         const findAndRemoveShape = (point1: Point, point2: Point) => {
           for (const shape of root.shapes) {

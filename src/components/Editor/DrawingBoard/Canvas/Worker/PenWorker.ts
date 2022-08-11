@@ -1,12 +1,13 @@
 import { TimeTicket } from "yorkie-js-sdk";
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import { Line, Root } from "../../../../../store/slices/docSlices";
-import { Point } from "../../../../../types/canvasTypes";
+import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import Board from "../Board";
 import { createLine, drawLine } from "../line";
 import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
 import * as scheduler from "../../../../../utils/scheduler";
 import { compressPoints } from "../../../../../utils/canvas.line";
+import { scalePoint } from "../../../../../utils/canvas";
 
 class PenWorker extends Worker {
   type = ToolType.Pen;
@@ -18,8 +19,6 @@ class PenWorker extends Worker {
   board: Board;
 
   private createID?: TimeTicket;
-
-  private selectPoint: Point[] = [];
 
   private previewPoints: { points: Point[]; color: string };
 
@@ -37,13 +36,18 @@ class PenWorker extends Worker {
     this.previewPoints = { points: [], color: this.options!.color };
   }
 
-  mousedown(point: Point, callback: MouseDownCallback): void {
-    this.selectPoint = [point, point];
-    this.previewPoints = { points: [point, point], color: this.options!.color };
+  mousedown(point: Point, panZoom: PanZoom, callback: MouseDownCallback): void {
+    this.previewPoints = {
+      points: [
+        scalePoint(point, panZoom.scale),
+        scalePoint(point, panZoom.scale),
+      ],
+      color: this.options!.color,
+    };
   }
 
-  mousemove(point: Point, callback: MouseDownCallback) {
-    this.previewPoints.points.push(point);
+  mousemove(point: Point, panZoom: PanZoom, callback: MouseDownCallback) {
+    this.previewPoints.points.push(scalePoint(point, panZoom.scale));
     callback({ penPoints: { ...this.previewPoints } });
   }
 

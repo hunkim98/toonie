@@ -3,9 +3,10 @@ import Worker, { MouseDownCallback, Options } from "./Worker";
 import * as scheduler from "../../../../../utils/scheduler";
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import Board from "../Board";
-import { Point } from "../../../../../types/canvasTypes";
+import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import { adjustRectBox, createRect } from "../rect";
 import { Rect, Root } from "../../../../../store/slices/docSlices";
+import { scalePoint } from "../../../../../utils/canvas";
 
 class RectWorker extends Worker {
   type = ToolType.Rect;
@@ -34,8 +35,12 @@ class RectWorker extends Worker {
     this.board = board;
   }
 
-  mousedown(point: Point): void {
-    this.previewRect = createRect(point, this.options!);
+  mousedown(point: Point, panZoom: PanZoom): void {
+    this.previewRect = createRect(
+      scalePoint(point, panZoom.scale),
+      this.options!,
+      panZoom
+    );
     // let timeTicket: TimeTicket;
 
     // this.update((root: Root) => {
@@ -49,33 +54,19 @@ class RectWorker extends Worker {
     // this.createID = timeTicket!;
   }
 
-  mousemove(point: Point, callback: MouseDownCallback) {
-    this.previewRectExtendPoint = point;
-    scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
-      this.previewRect!.box = adjustRectBox(
-        this.previewRect!,
-        this.previewRectExtendPoint!
-      );
-      callback({ rectShape: { ...this.previewRect! } });
-    });
-
+  mousemove(point: Point, panZoom: PanZoom, callback: MouseDownCallback) {
+    this.previewRectExtendPoint = scalePoint(point, panZoom.scale);
+    this.previewRect!.box = adjustRectBox(
+      this.previewRect!,
+      this.previewRectExtendPoint!
+    );
+    callback({ rectShape: { ...this.previewRect! } });
     // scheduler.reserveTask(point, (tasks: Array<scheduler.Task>) => {
-    //   if (tasks.length < 2) {
-    //     return;
-    //   }
-
-    //   this.update((root: Root) => {
-    //     const lastPoint = tasks[tasks.length - 1];
-    //     const lastShape = this.getElementByID(root, this.createID!) as Rect;
-    //     if (!lastShape) {
-    //       return;
-    //     }
-
-    //     const box = adjustRectBox(lastShape, lastPoint);
-    //     lastShape.box = box;
-
-    //     this.board.drawAll(root.shapes);
-    //   });
+    //   this.previewRect!.box = adjustRectBox(
+    //     this.previewRect!,
+    //     this.previewRectExtendPoint!
+    //   );
+    //   callback({ rectShape: { ...this.previewRect! } });
     // });
   }
 
@@ -85,7 +76,7 @@ class RectWorker extends Worker {
   }
 
   flushTask() {
-    scheduler.flushTask();
+    // scheduler.flushTask();
 
     if (this.previewRect) {
       this.update((root: Root) => {
