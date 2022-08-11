@@ -47,7 +47,7 @@ export default class Board extends EventDispatcher {
     lastMousePos: { x: 0, y: 0 },
   };
 
-  updatePanZoomStore?: (panzoom: PanZoom) => void;
+  updatePanZoomStore?: (panZoom: PanZoom) => void;
 
   update: Function;
   updatePresence: Function;
@@ -69,11 +69,6 @@ export default class Board extends EventDispatcher {
 
   setPanZoomStoreHandler(handler: (panzoom: PanZoom) => void) {
     this.updatePanZoomStore = handler;
-  }
-
-  translate(x: number, y: number) {
-    this.presenceCanvasWrapper.getContext().translate(x, y);
-    this.documentCanvasWrapper.getContext().translate(x, y);
   }
 
   createPresenceCanvasWrapper(): CanvasWrapper {
@@ -289,10 +284,10 @@ export default class Board extends EventDispatcher {
 
   onMouseMove(evt: TouchyEvent) {
     const point = this.getPointFromTouchyEvent(evt);
-    if (this.isOutside(point)) {
-      this.onMouseUp();
-      return;
-    }
+    // if (this.isOutside(point)) {
+    //   this.onMouseUp();
+    //   return;
+    // }
 
     if (this.dragStatus === DragStatus.Stop) {
       return;

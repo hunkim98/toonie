@@ -80,7 +80,8 @@ export default class CanvasWrapper {
   }
 
   resize() {
-    const { devicePixelRatio } = window;
+    const { devicePixelRatio: ratio = 1 } = window;
+    this.setSize(this.width, this.height);
     if (devicePixelRatio) {
       this.setSize(this.width, this.height, devicePixelRatio);
       this.context.scale(devicePixelRatio, devicePixelRatio);

@@ -113,7 +113,14 @@ export default ({ width, height }: { width: number; height: number }) => {
     boardRef.current?.setHeight(height);
     //this has to do with drawing what is in doc
     boardRef.current?.drawAll(doc!.getRoot().shapes);
-  }, [doc, width, height, panZoom]);
+  }, [doc, width, height]);
+
+  useEffect(() => {
+    if (!canvasRef.current) {
+      return;
+    }
+    boardRef.current?.drawAll(doc!.getRoot().shapes);
+  }, [doc, panZoom]);
 
   useEffect(() => {
     boardRef.current?.setTool(tool);

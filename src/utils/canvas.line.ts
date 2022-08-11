@@ -71,7 +71,6 @@ function douglasPeucker(points: Array<Point>, tolerance: number): Array<Point> {
   simplified.push(points[first]);
   douglasPeuckerStep(points, first, last, tolerance, simplified);
   simplified.push(points[last]);
-  console.log(simplified, "simplified!!");
   return simplified;
 }
 
