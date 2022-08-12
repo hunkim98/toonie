@@ -108,8 +108,9 @@ class EraserWorker extends Worker {
     });
   }
 
-  mouseup() {
+  mouseup(callback: MouseMoveCallback) {
     this.flushTask();
+    callback({});
   }
 
   flushTask() {

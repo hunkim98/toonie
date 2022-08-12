@@ -60,7 +60,7 @@ class PenWorker extends Worker {
     callback({ penPoints: { ...this.previewPoints } });
   }
 
-  mouseup(callback: MouseDownCallback) {
+  mouseup(callback: MouseUpCallback) {
     //send data from presence to document
     this.flushTask();
     this.previewPoints = { ...this.previewPoints, points: [] };

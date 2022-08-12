@@ -1,5 +1,5 @@
 import { TimeTicket } from "yorkie-js-sdk";
-import Worker, { MouseDownCallback, Options } from "./Worker";
+import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
 import * as scheduler from "../../../../../utils/scheduler";
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import Board from "../Board";
@@ -69,7 +69,7 @@ class RectWorker extends Worker {
     // });
   }
 
-  mouseup(callback: MouseDownCallback) {
+  mouseup(callback: MouseUpCallback) {
     this.flushTask();
     callback({});
   }

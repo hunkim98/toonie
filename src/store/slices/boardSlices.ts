@@ -16,6 +16,7 @@ export interface BoardState {
   isSpacePressed: boolean;
   panZoom: PanZoom;
   strokeWidth: number;
+  imgUrl: string | undefined;
 }
 
 const initialBoardState: BoardState = {
@@ -28,6 +29,7 @@ const initialBoardState: BoardState = {
     offset: { x: 0, y: 0 },
   },
   strokeWidth: StrokeWidthType[0],
+  imgUrl: "https://cataas.com/cat",
 };
 
 const boardSlice = createSlice({
@@ -55,6 +57,9 @@ const boardSlice = createSlice({
     setStrokeWidth(state, action: PayloadAction<number>) {
       state.strokeWidth = action.payload;
     },
+    setImgUrl(state, action: PayloadAction<string | undefined>) {
+      state.imgUrl = action.payload;
+    },
   },
 });
 
@@ -65,6 +70,7 @@ export const {
   activateSpaceKey,
   deactivateSpaceKey,
   setStrokeWidth,
+  setImgUrl,
   setPanZoom,
 } = boardSlice.actions;
 export default boardSlice.reducer;

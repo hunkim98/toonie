@@ -395,23 +395,18 @@ export default class Board extends EventDispatcher {
       this.handlePanning
     );
     this.dragStatus = DragStatus.Stop;
+    this.worker.mouseup((boardMetadata: BoardMetadata) => {
+      this.emit("mouseup", boardMetadata);
+    });
 
-    if (this.isToolActivated) {
-      this.worker.mouseup((boardMetadata: BoardMetadata) => {
-        this.emit("mouseup", boardMetadata);
-      });
-    } else {
-      //panZoom
-    }
     this.emit("mouseup");
     this.presenceCanvasWrapper.clear();
   }
 
   onMouseOut() {
     this.dragStatus = DragStatus.Stop;
-    if (this.isToolActivated) {
-      this.worker.flushTask();
-    }
+    this.presenceCanvasWrapper.clear();
+    this.worker.flushTask();
     this.emit("mouseout");
   }
 
@@ -421,16 +416,20 @@ export default class Board extends EventDispatcher {
     this.metadataMap.set(peerKey, JSON.parse(metadata.board || "{}"));
     for (const boardMetadata of Array.from(this.metadataMap.values())) {
       const { eraserPoints, penPoints, rectShape } = boardMetadata;
-      if (eraserPoints && eraserPoints.length > 0) {
-        this.presenceCanvasWrapper.clear();
-        drawEraser(
-          this.presenceCanvasWrapper.getContext(),
-          {
-            type: "eraser",
-            points: eraserPoints,
-          },
-          this.panZoom
-        );
+      if (eraserPoints) {
+        if (eraserPoints.length === 0) {
+          this.presenceCanvasWrapper.clear();
+        } else {
+          this.presenceCanvasWrapper.clear();
+          drawEraser(
+            this.presenceCanvasWrapper.getContext(),
+            {
+              type: "eraser",
+              points: eraserPoints,
+            },
+            this.panZoom
+          );
+        }
       }
 
       if (penPoints && penPoints.points.length > 0) {
@@ -481,20 +480,6 @@ export default class Board extends EventDispatcher {
         drawSmoothLine(wrapper.getContext(), shape, this.panZoom);
       } else if (shape.type === "eraser") {
         drawEraser(wrapper.getContext(), shape, this.panZoom);
-      } else if (shape.type === "rect") {
-        drawRect(wrapper.getContext(), shape, this.panZoom);
-      }
-    }
-  }
-
-  drawAllPreview(
-    shapes: Array<Shape>,
-    wrapper: CanvasWrapper = this.presenceCanvasWrapper
-  ) {
-    this.clear(wrapper);
-    for (const shape of shapes) {
-      if (shape.type === "line") {
-        drawLine(wrapper.getContext(), shape, this.panZoom);
       } else if (shape.type === "rect") {
         drawRect(wrapper.getContext(), shape, this.panZoom);
       }
