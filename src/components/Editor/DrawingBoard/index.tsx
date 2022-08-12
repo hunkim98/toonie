@@ -44,11 +44,19 @@ export default ({ width, height }: { width: number; height: number }) => {
     );
     boardRef.current = board;
     const docImgUrl = doc!.getRoot().imgUrl;
-    boardRef.current.initializeImg("https://cataas.com/cat");
+    if (docImgUrl) {
+      boardRef.current?.initializeImg(docImgUrl);
+    }
     return () => {
       board.destroy();
     };
   }, [doc]);
+
+  useEffect(() => {
+    if (doc) {
+      boardRef.current?.initializeImg(imgUrl);
+    }
+  }, [imgUrl, doc]);
 
   useEffect(() => {
     //this is for tracking remote change (doc-change)

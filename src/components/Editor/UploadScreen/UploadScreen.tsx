@@ -1,13 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import * as S from "./styles";
 import Dropzone, { useDropzone } from "react-dropzone";
 import { useDispatch } from "react-redux";
 import { setImgUrl } from "../../../store/slices/boardSlices";
+import axios from "axios";
+import { CloudinaryResponse } from "../../../utils/cloudinary.dto";
+import { uuidv4 } from "../../../utils/uuid";
 
-const UploadScreen = ({}) => {
+interface Props {}
+
+const UploadScreen: React.FC<Props> = () => {
   const dispatch = useDispatch();
+  const cloudinary_url = useMemo(
+    () =>
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    []
+  );
   const uploadImgToServer = (file: File) => {
-    dispatch(setImgUrl("https://cataas.com/cat"));
+    var fd = new FormData();
+    fd.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET_NAME!);
+    fd.append("file", file);
+    axios
+      .post(cloudinary_url, fd, {
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      })
+      .then((res) => {
+        const data = res.data as CloudinaryResponse;
+        console.log(data);
+        const url = data.url;
+        dispatch(setImgUrl(url));
+      });
   };
   const {
     getRootProps,
@@ -43,8 +65,6 @@ const UploadScreen = ({}) => {
         <S.StartAsBlank
           onClick={(e) => {
             e.stopPropagation();
-
-            console.log("hihih");
           }}
         >
           Use blank paper
