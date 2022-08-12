@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
   BoardState,
+  setImgUrl,
   setPanZoom,
   setTool,
   ToolType,
 } from "../../../store/slices/boardSlices";
 import { Metadata } from "../../../store/slices/peerSlices";
 import { PanZoom } from "../../../types/canvasTypes";
+import { urlToObject } from "../../../utils/images";
 import Board from "./Canvas/Board";
 import { BoardMetadata } from "./Canvas/Worker/Worker";
 
@@ -28,17 +30,21 @@ export default ({ width, height }: { width: number; height: number }) => {
   const isToolActivated = useSelector(
     (state: RootState) => state.boardState.isToolActivated
   );
+  const imgUrl = useSelector((state: RootState) => state.boardState.imgUrl);
 
   useEffect(() => {
     if (!canvasRef.current) {
       return () => {};
     }
+
     const board = new Board(
       canvasRef.current,
       doc!.update.bind(doc),
       client!.updatePresence.bind(client)
     );
     boardRef.current = board;
+    const docImgUrl = doc!.getRoot().imgUrl;
+    boardRef.current.initializeImg("https://cataas.com/cat");
     return () => {
       board.destroy();
     };
@@ -50,8 +56,15 @@ export default ({ width, height }: { width: number; height: number }) => {
       return () => {};
     }
     const unsubscribe = doc.subscribe((event) => {
+      const docImgUrl = doc.getRoot().imgUrl;
       if (event.type === "remote-change") {
         boardRef.current?.drawAll(doc.getRoot().shapes);
+        if (docImgUrl !== undefined) {
+          boardRef.current?.setImgUrl(docImgUrl); //can be empty string
+          boardRef.current?.drawBaseImage(docImgUrl);
+        } else {
+          boardRef.current?.setImgUrl(undefined);
+        }
       }
     });
     return () => {
@@ -116,6 +129,8 @@ export default ({ width, height }: { width: number; height: number }) => {
     boardRef.current?.setHeight(height);
     //this has to do with drawing what is in doc
     boardRef.current?.drawAll(doc!.getRoot().shapes);
+    boardRef.current?.setImgUrl("https://cataas.com/cat"); //can be empty string
+    boardRef.current?.drawBaseImage("https://cataas.com/cat");
   }, [doc, width, height]);
 
   useEffect(() => {

@@ -21,6 +21,7 @@ import {
 import EventDispatcher from "../../../../utils/eventDispatcher";
 import CanvasWrapper from "./CanvasWrapper";
 import { drawEraser } from "./eraser";
+import { drawImage } from "./image";
 import { drawLine, drawSmoothLine } from "./line";
 import { drawRect } from "./rect";
 import EraserWorker from "./Worker/EraserWorker";
@@ -37,6 +38,8 @@ export default class Board extends EventDispatcher {
   private offSetY: number = 0;
   private offSetX: number = 0;
   private color: string = "#000000";
+  private imgUrl: string | undefined;
+  private imageElement: HTMLImageElement | undefined;
   private strokeWidth: number = StrokeWidthType[0];
   private isToolActivated: boolean;
   private dragStatus: DragStatus = DragStatus.Stop;
@@ -103,6 +106,25 @@ export default class Board extends EventDispatcher {
   deactivateTools() {
     this.isToolActivated = false;
     this.worker.flushTask();
+  }
+
+  initializeImg(imgUrl: string | undefined) {
+    if (imgUrl) {
+      this.imgUrl = imgUrl;
+      const img = new Image();
+      this.imageElement = img;
+      img.onload = () => {
+        drawImage(this.documentCanvasWrapper.getContext(), img, this.panZoom);
+      };
+      img.src = imgUrl;
+      console.log(img);
+    } else {
+      if (imgUrl === undefined) {
+        this.imgUrl = undefined;
+      } else {
+        this.imgUrl = "";
+      }
+    }
   }
 
   initialize() {
@@ -212,6 +234,10 @@ export default class Board extends EventDispatcher {
   resize() {
     this.documentCanvasWrapper.resize();
     this.presenceCanvasWrapper.resize();
+  }
+
+  setImgUrl(imgUrl: string | undefined) {
+    this.imgUrl = imgUrl;
   }
 
   setTool(tool: ToolType) {
@@ -468,6 +494,14 @@ export default class Board extends EventDispatcher {
     return false;
   }
 
+  drawBaseImage(url: string) {
+    if (url) {
+      console.log(url);
+
+      // drawImage(this.documentCanvasWrapper.getContext(), , this.panZoom);
+    }
+  }
+
   drawAll(
     shapes: Array<Shape>,
     //remember we drawAll only on the document canvas not the presence canvas
@@ -475,6 +509,14 @@ export default class Board extends EventDispatcher {
   ) {
     this.clear(wrapper);
     this.clear(this.presenceCanvasWrapper);
+    if (this.imageElement) {
+      console.log("image drawing");
+      drawImage(
+        this.documentCanvasWrapper.getContext(),
+        this.imageElement,
+        this.panZoom
+      );
+    }
     for (const shape of shapes) {
       if (shape.type === "line") {
         drawSmoothLine(wrapper.getContext(), shape, this.panZoom);
