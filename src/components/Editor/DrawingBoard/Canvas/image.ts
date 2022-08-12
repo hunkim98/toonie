@@ -7,11 +7,26 @@ export function drawImage(
   panZoom: PanZoom
 ) {
   const screenPos = getScreenPoint({ x: 0, y: 0 }, panZoom);
+  const maxSideLength = 1000;
+  let imageWidth = image.naturalWidth;
+  let imageHeight = image.naturalHeight;
+  const isWidthLonger = imageWidth > imageHeight;
+  if (isWidthLonger) {
+    if (imageWidth > maxSideLength) {
+      imageHeight = (maxSideLength * imageHeight) / imageWidth;
+      imageWidth = maxSideLength;
+    }
+  } else {
+    if (imageHeight > maxSideLength) {
+      imageWidth = (maxSideLength * imageWidth) / imageHeight;
+      imageHeight = maxSideLength;
+    }
+  }
   context.drawImage(
     image,
     screenPos.x,
     screenPos.y,
-    image.naturalWidth * panZoom.scale,
-    image.naturalHeight * panZoom.scale
+    imageWidth * panZoom.scale,
+    imageHeight * panZoom.scale
   );
 }

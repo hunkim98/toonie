@@ -46,6 +46,7 @@ export default ({ width, height }: { width: number; height: number }) => {
     const docImgUrl = doc!.getRoot().imgUrl;
     if (docImgUrl) {
       boardRef.current?.initializeImg(docImgUrl);
+      dispatch(setImgUrl(docImgUrl));
     }
     return () => {
       board.destroy();
@@ -54,7 +55,12 @@ export default ({ width, height }: { width: number; height: number }) => {
 
   useEffect(() => {
     if (doc) {
-      boardRef.current?.initializeImg(imgUrl);
+      if (imgUrl) {
+        boardRef.current?.initializeImg(imgUrl);
+        doc.update((root) => {
+          root.imgUrl = imgUrl;
+        });
+      }
     }
   }, [imgUrl, doc]);
 
@@ -67,12 +73,6 @@ export default ({ width, height }: { width: number; height: number }) => {
       const docImgUrl = doc.getRoot().imgUrl;
       if (event.type === "remote-change") {
         boardRef.current?.drawAll(doc.getRoot().shapes);
-        if (docImgUrl !== undefined) {
-          boardRef.current?.setImgUrl(docImgUrl); //can be empty string
-          boardRef.current?.drawBaseImage(docImgUrl);
-        } else {
-          boardRef.current?.setImgUrl(undefined);
-        }
       }
     });
     return () => {
