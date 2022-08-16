@@ -138,6 +138,7 @@ export default ({ width, height }: { width: number; height: number }) => {
     if (!canvasRef.current) {
       return;
     }
+    boardRef.current?.updateWrapperPanZoom(panZoom.scale, panZoom.offset);
     boardRef.current?.drawAll(doc!.getRoot().shapes);
   }, [doc, panZoom]);
 

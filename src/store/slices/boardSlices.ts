@@ -17,6 +17,7 @@ export interface BoardState {
   panZoom: PanZoom;
   strokeWidth: number;
   imgUrl: string | undefined;
+  isDownloadClicked: boolean;
 }
 
 const initialBoardState: BoardState = {
@@ -30,6 +31,7 @@ const initialBoardState: BoardState = {
   },
   strokeWidth: StrokeWidthType[0],
   imgUrl: "",
+  isDownloadClicked: false,
 };
 
 const boardSlice = createSlice({
@@ -60,6 +62,9 @@ const boardSlice = createSlice({
     setImgUrl(state, action: PayloadAction<string | undefined>) {
       state.imgUrl = action.payload;
     },
+    setIsDownloadClicked(state, action: PayloadAction<boolean>) {
+      state.isDownloadClicked = action.payload;
+    },
   },
 });
 
@@ -72,5 +77,6 @@ export const {
   setStrokeWidth,
   setImgUrl,
   setPanZoom,
+  setIsDownloadClicked,
 } = boardSlice.actions;
 export default boardSlice.reducer;

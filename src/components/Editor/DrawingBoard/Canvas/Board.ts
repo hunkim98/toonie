@@ -10,6 +10,8 @@ import {
   diffPoints,
   getScreenPoint,
   getWorldPoint,
+  MAX_SCALE,
+  MIN_SCALE,
   scalePoint,
 } from "../../../../utils/canvas";
 import {
@@ -296,8 +298,93 @@ export default class Board extends EventDispatcher {
     return;
   };
 
+  updatePanZoom = (
+    mouseX: number,
+    mouseY: number,
+    newMouseX: number,
+    newMouseY: number,
+    newScale: number
+  ) => {
+    {
+      const mousePos = { x: mouseX, y: mouseY };
+      const worldPos = getWorldPoint(mousePos, {
+        scale: this.panZoom.scale,
+        offset: this.panZoom.offset,
+      });
+      const newMousePos = getScreenPoint(worldPos, {
+        scale: newScale,
+        offset: this.panZoom.offset,
+      });
+      const scaleOffset = diffPoints(mousePos, newMousePos);
+      const offset = addPoints(this.panZoom.offset, scaleOffset);
+      this.panZoom.offset = offset;
+      this.panZoom.scale = newScale;
+      this.presenceCanvasWrapper.setPanZoom({
+        offset,
+      });
+      this.documentCanvasWrapper.setPanZoom({
+        offset,
+      });
+    }
+  };
+
+  handleScroll = (e: WheelEvent) => {
+    const offset = diffPoints(this.panZoom.offset, {
+      x: e.deltaX,
+      y: e.deltaY,
+    });
+    this.panZoom.offset = offset;
+    this.presenceCanvasWrapper.setPanZoom({
+      offset,
+    });
+    this.documentCanvasWrapper.setPanZoom({
+      offset,
+    });
+    return offset;
+  };
+
+  handleCtrlScroll = (e: WheelEvent) => {
+    const ZOOM_SENSITIVITY = 300;
+    const zoom = 1 - e.deltaY / ZOOM_SENSITIVITY;
+    const newScale = this.panZoom.scale * zoom;
+
+    if (MIN_SCALE > newScale || newScale > MAX_SCALE) {
+      return;
+    }
+    const mousePos = { x: e.offsetX, y: e.offsetY };
+    const worldPos = getWorldPoint(mousePos, {
+      scale: this.panZoom.scale,
+      offset: this.panZoom.offset,
+    });
+    const newMousePos = getScreenPoint(worldPos, {
+      scale: newScale,
+      offset: this.panZoom.offset,
+    });
+
+    const scaleOffset = diffPoints(mousePos, newMousePos);
+    const offset = addPoints(this.panZoom.offset, scaleOffset);
+    this.panZoom.offset = offset;
+    this.panZoom.scale = newScale;
+    this.presenceCanvasWrapper.setPanZoom({
+      offset,
+    });
+    this.documentCanvasWrapper.setPanZoom({
+      offset,
+    });
+  };
+
+  updateWrapperPanZoom(scale: number, offset: Point) {
+    this.panZoom.offset = offset;
+    this.panZoom.scale = scale;
+    this.presenceCanvasWrapper.setPanZoom({
+      offset,
+    });
+    this.documentCanvasWrapper.setPanZoom({
+      offset,
+    });
+  }
+
   handleWheel = (e: WheelEvent) => {
-    console.log(this.panZoom.scale);
     e.preventDefault();
     const MAX_SCALE = 5;
     const MIN_SCALE = 0.6;
@@ -322,27 +409,14 @@ export default class Board extends EventDispatcher {
       });
       const scaleOffset = diffPoints(mousePos, newMousePos);
       const offset = addPoints(this.panZoom.offset, scaleOffset);
-      this.panZoom.offset = offset;
-      this.panZoom.scale = newScale;
-      this.presenceCanvasWrapper.setPanZoom({
-        offset,
-      });
-      this.documentCanvasWrapper.setPanZoom({
-        offset,
-      });
+      this.updateWrapperPanZoom(newScale, offset);
       this.updatePanZoomStore!({ ...this.panZoom, scale: newScale });
     } else {
       const offset = diffPoints(this.panZoom.offset, {
         x: e.deltaX,
         y: e.deltaY,
       });
-      this.panZoom.offset = offset;
-      this.presenceCanvasWrapper.setPanZoom({
-        offset,
-      });
-      this.documentCanvasWrapper.setPanZoom({
-        offset,
-      });
+      this.updateWrapperPanZoom(this.panZoom.scale, offset);
       this.updatePanZoomStore!({ ...this.panZoom, offset });
     }
   };

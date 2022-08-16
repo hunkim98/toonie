@@ -1,6 +1,9 @@
 import { NavbarHeight } from "../components/Navbar/styles";
 import { PanZoom, Point } from "../types/canvasTypes";
 
+export const MAX_SCALE = 5;
+export const MIN_SCALE = 0.6;
+
 export function diffPoints(p1: Point, p2: Point): Point {
   return {
     x: p1.x - p2.x,
