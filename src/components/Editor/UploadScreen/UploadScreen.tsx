@@ -1,15 +1,17 @@
 import React, { useEffect, useMemo } from "react";
 import * as S from "./styles";
 import Dropzone, { useDropzone } from "react-dropzone";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setImgUrl } from "../../../store/slices/boardSlices";
 import axios from "axios";
 import { CloudinaryResponse } from "../../../utils/cloudinary.dto";
 import { uuidv4 } from "../../../utils/uuid";
+import { RootState } from "../../../store/slices";
 
 interface Props {}
 
 const UploadScreen: React.FC<Props> = () => {
+  const doc = useSelector((state: RootState) => state.docState.doc);
   const dispatch = useDispatch();
   const cloudinary_url = useMemo(
     () =>
@@ -29,6 +31,9 @@ const UploadScreen: React.FC<Props> = () => {
         console.log(data);
         const url = data.url;
         dispatch(setImgUrl(url));
+        doc?.update((root) => {
+          root.imgUrl = url;
+        });
       });
   };
   const {
@@ -65,6 +70,9 @@ const UploadScreen: React.FC<Props> = () => {
         <S.StartAsBlank
           onClick={(e) => {
             e.stopPropagation();
+            doc?.update((root) => {
+              root.imgUrl = "";
+            });
           }}
         >
           Use blank paper

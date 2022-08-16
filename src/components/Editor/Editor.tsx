@@ -23,12 +23,29 @@ const Editor = () => {
   const imgUrl = useSelector((state: RootState) => state.boardState.imgUrl);
 
   useEffect(() => {
-    if (doc) {
-      const imgSrc = doc.getRoot().imgUrl;
-      if (imgSrc) {
-        dispatch(setImgUrl(imgSrc));
-      }
+    if (!doc) {
+      return () => {};
     }
+    const imgOriginal = doc.getRoot().imgUrl;
+    dispatch(setImgUrl(imgOriginal));
+
+    const unsubscribe = doc.subscribe((event) => {
+      if (event.type === "remote-change" || event.type === "local-change") {
+        const imgSrc = doc.getRoot().imgUrl;
+        if (imgSrc) {
+          dispatch(setImgUrl(imgSrc));
+        } else {
+          if (imgSrc === null || imgSrc === undefined) {
+            dispatch(setImgUrl(undefined));
+          } else {
+            dispatch(setImgUrl(""));
+          }
+        }
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
   }, [doc]);
 
   useEffect(() => {

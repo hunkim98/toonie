@@ -51,7 +51,7 @@ export type ShapeType = Shape["type"];
 export type ToonieDoc = {
   profiles: Record<string, string>;
   shapes: Array<Shape>;
-  imgUrl: string;
+  imgUrl: string | undefined;
 };
 
 export interface Shapes {

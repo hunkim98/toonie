@@ -35,8 +35,6 @@ enum DragStatus {
 }
 
 export default class Board extends EventDispatcher {
-  private offSetY: number = 0;
-  private offSetX: number = 0;
   private color: string = "#000000";
   private imgUrl: string | undefined;
   private imageElement: HTMLImageElement | undefined;
@@ -431,8 +429,8 @@ export default class Board extends EventDispatcher {
 
   onMouseOut() {
     this.dragStatus = DragStatus.Stop;
-    this.presenceCanvasWrapper.clear();
     this.worker.flushTask();
+    this.presenceCanvasWrapper.clear();
     this.emit("mouseout");
   }
 
@@ -492,14 +490,6 @@ export default class Board extends EventDispatcher {
       return true;
     }
     return false;
-  }
-
-  drawBaseImage(url: string) {
-    if (url) {
-      console.log(url);
-
-      // drawImage(this.documentCanvasWrapper.getContext(), , this.panZoom);
-    }
   }
 
   drawAll(

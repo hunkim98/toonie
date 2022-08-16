@@ -30,7 +30,6 @@ export default ({ width, height }: { width: number; height: number }) => {
   const isToolActivated = useSelector(
     (state: RootState) => state.boardState.isToolActivated
   );
-  const imgUrl = useSelector((state: RootState) => state.boardState.imgUrl);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -43,34 +42,17 @@ export default ({ width, height }: { width: number; height: number }) => {
       client!.updatePresence.bind(client)
     );
     boardRef.current = board;
-    const docImgUrl = doc!.getRoot().imgUrl;
-    if (docImgUrl) {
-      boardRef.current?.initializeImg(docImgUrl);
-      dispatch(setImgUrl(docImgUrl));
-    }
+
     return () => {
       board.destroy();
     };
   }, [doc]);
 
   useEffect(() => {
-    if (doc) {
-      if (imgUrl) {
-        boardRef.current?.initializeImg(imgUrl);
-        doc.update((root) => {
-          root.imgUrl = imgUrl;
-        });
-      }
-    }
-  }, [imgUrl, doc]);
-
-  useEffect(() => {
-    //this is for tracking remote change (doc-change)
     if (!doc) {
       return () => {};
     }
     const unsubscribe = doc.subscribe((event) => {
-      const docImgUrl = doc.getRoot().imgUrl;
       if (event.type === "remote-change") {
         boardRef.current?.drawAll(doc.getRoot().shapes);
       }
@@ -93,7 +75,6 @@ export default ({ width, height }: { width: number; height: number }) => {
         for (const peerKey of Object.keys(changedPeers)) {
           boardRef.current?.updateMetadata(peerKey, changedPeers[peerKey]);
           if (client.getID() === peerKey) {
-            console.log(changedPeers[peerKey].color);
             boardRef.current?.setColor(changedPeers[peerKey].color);
           }
         }
@@ -136,9 +117,21 @@ export default ({ width, height }: { width: number; height: number }) => {
     boardRef.current?.setWidth(width);
     boardRef.current?.setHeight(height);
     //this has to do with drawing what is in doc
+
+    const docImgUrl = doc!.getRoot().imgUrl;
+    console.log(docImgUrl, "docimgurl");
+    if (docImgUrl) {
+      boardRef.current?.initializeImg(docImgUrl);
+      dispatch(setImgUrl(docImgUrl));
+    } else {
+      if (docImgUrl === undefined) {
+        dispatch(setImgUrl(undefined));
+        console.log("undefined set");
+      } else {
+        dispatch(setImgUrl(""));
+      }
+    }
     boardRef.current?.drawAll(doc!.getRoot().shapes);
-    boardRef.current?.setImgUrl("https://cataas.com/cat"); //can be empty string
-    boardRef.current?.drawBaseImage("https://cataas.com/cat");
   }, [doc, width, height]);
 
   useEffect(() => {

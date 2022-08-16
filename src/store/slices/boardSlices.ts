@@ -29,7 +29,7 @@ const initialBoardState: BoardState = {
     offset: { x: 0, y: 0 },
   },
   strokeWidth: StrokeWidthType[0],
-  imgUrl: undefined,
+  imgUrl: "",
 };
 
 const boardSlice = createSlice({
