@@ -65,16 +65,19 @@ export default class Board extends EventDispatcher {
   update: Function;
   updatePresence: Function;
   worker!: Worker;
+  getRoot: Function;
 
   constructor(
     element: HTMLCanvasElement,
     update: Function,
-    updatePresence: Function
+    updatePresence: Function,
+    getRoot: Function
   ) {
     super();
     this.documentCanvasWrapper = new CanvasWrapper(element);
     this.presenceCanvasWrapper = this.createPresenceCanvasWrapper();
     this.update = update;
+    this.getRoot = getRoot;
     this.updatePresence = updatePresence;
     this.isToolActivated = false;
     this.initialize();
@@ -115,6 +118,7 @@ export default class Board extends EventDispatcher {
       this.imageElement = img;
       img.onload = () => {
         drawImage(this.documentCanvasWrapper.getContext(), img, this.panZoom);
+        this.render();
       };
       img.src = imgUrl;
       console.log(img);
@@ -296,81 +300,6 @@ export default class Board extends EventDispatcher {
     this.documentCanvasWrapper.setPanZoom({ offset });
     this.updatePanZoomStore!({ ...this.panZoom, offset });
     return;
-  };
-
-  updatePanZoom = (
-    mouseX: number,
-    mouseY: number,
-    newMouseX: number,
-    newMouseY: number,
-    newScale: number
-  ) => {
-    {
-      const mousePos = { x: mouseX, y: mouseY };
-      const worldPos = getWorldPoint(mousePos, {
-        scale: this.panZoom.scale,
-        offset: this.panZoom.offset,
-      });
-      const newMousePos = getScreenPoint(worldPos, {
-        scale: newScale,
-        offset: this.panZoom.offset,
-      });
-      const scaleOffset = diffPoints(mousePos, newMousePos);
-      const offset = addPoints(this.panZoom.offset, scaleOffset);
-      this.panZoom.offset = offset;
-      this.panZoom.scale = newScale;
-      this.presenceCanvasWrapper.setPanZoom({
-        offset,
-      });
-      this.documentCanvasWrapper.setPanZoom({
-        offset,
-      });
-    }
-  };
-
-  handleScroll = (e: WheelEvent) => {
-    const offset = diffPoints(this.panZoom.offset, {
-      x: e.deltaX,
-      y: e.deltaY,
-    });
-    this.panZoom.offset = offset;
-    this.presenceCanvasWrapper.setPanZoom({
-      offset,
-    });
-    this.documentCanvasWrapper.setPanZoom({
-      offset,
-    });
-    return offset;
-  };
-
-  handleCtrlScroll = (e: WheelEvent) => {
-    const ZOOM_SENSITIVITY = 300;
-    const zoom = 1 - e.deltaY / ZOOM_SENSITIVITY;
-    const newScale = this.panZoom.scale * zoom;
-
-    if (MIN_SCALE > newScale || newScale > MAX_SCALE) {
-      return;
-    }
-    const mousePos = { x: e.offsetX, y: e.offsetY };
-    const worldPos = getWorldPoint(mousePos, {
-      scale: this.panZoom.scale,
-      offset: this.panZoom.offset,
-    });
-    const newMousePos = getScreenPoint(worldPos, {
-      scale: newScale,
-      offset: this.panZoom.offset,
-    });
-
-    const scaleOffset = diffPoints(mousePos, newMousePos);
-    const offset = addPoints(this.panZoom.offset, scaleOffset);
-    this.panZoom.offset = offset;
-    this.panZoom.scale = newScale;
-    this.presenceCanvasWrapper.setPanZoom({
-      offset,
-    });
-    this.documentCanvasWrapper.setPanZoom({
-      offset,
-    });
   };
 
   updateWrapperPanZoom(scale: number, offset: Point) {
@@ -566,6 +495,10 @@ export default class Board extends EventDispatcher {
     return false;
   }
 
+  render() {
+    this.drawAll(this.getRoot().shapes);
+  }
+
   drawAll(
     shapes: Array<Shape>,
     //remember we drawAll only on the document canvas not the presence canvas
@@ -595,6 +528,4 @@ export default class Board extends EventDispatcher {
   clear(wrapper: CanvasWrapper = this.documentCanvasWrapper) {
     wrapper.clear();
   }
-
-  clearBoard() {}
 }

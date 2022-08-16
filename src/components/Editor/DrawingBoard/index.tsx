@@ -39,7 +39,8 @@ export default ({ width, height }: { width: number; height: number }) => {
     const board = new Board(
       canvasRef.current,
       doc!.update.bind(doc),
-      client!.updatePresence.bind(client)
+      client!.updatePresence.bind(client),
+      doc!.getRoot.bind(doc)
     );
     boardRef.current = board;
 
