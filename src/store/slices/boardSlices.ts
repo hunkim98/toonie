@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { NavbarHeight } from "../../components/Navbar/styles";
 import { PanZoom } from "../../types/canvasTypes";
 
 export enum ToolType {
@@ -27,7 +28,7 @@ const initialBoardState: BoardState = {
   isSpacePressed: false,
   panZoom: {
     scale: 1,
-    offset: { x: 0, y: 0 },
+    offset: { x: 0, y: NavbarHeight },
   },
   strokeWidth: StrokeWidthType[0],
   imgUrl: "",

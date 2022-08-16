@@ -21,6 +21,7 @@ import {
   TouchyEvent,
 } from "../../../../utils/dom";
 import EventDispatcher from "../../../../utils/eventDispatcher";
+import { NavbarHeight } from "../../../Navbar/styles";
 import CanvasWrapper from "./CanvasWrapper";
 import { drawEraser } from "./eraser";
 import { drawImage } from "./image";
@@ -43,6 +44,9 @@ export default class Board extends EventDispatcher {
   private strokeWidth: number = StrokeWidthType[0];
   private isToolActivated: boolean;
   private dragStatus: DragStatus = DragStatus.Stop;
+  private imageInfo:
+    | { x: number; y: number; width: number; height: number }
+    | undefined;
 
   private documentCanvasWrapper: CanvasWrapper;
   private presenceCanvasWrapper: CanvasWrapper;
@@ -83,6 +87,10 @@ export default class Board extends EventDispatcher {
     this.initialize();
   }
 
+  setImageInfo(info: { x: number; y: number; width: number; height: number }) {
+    this.imageInfo = info;
+  }
+
   setPanZoomStoreHandler(handler: (panzoom: PanZoom) => void) {
     this.updatePanZoomStore = handler;
   }
@@ -116,8 +124,11 @@ export default class Board extends EventDispatcher {
       this.imgUrl = imgUrl;
       const img = new Image();
       this.imageElement = img;
+      img.crossOrigin = "Anonymous";
       img.onload = () => {
-        drawImage(this.documentCanvasWrapper.getContext(), img, this.panZoom);
+        this.setImageInfo(
+          drawImage(this.documentCanvasWrapper.getContext(), img, this.panZoom)
+        );
         this.render();
       };
       img.src = imgUrl;
@@ -299,6 +310,11 @@ export default class Board extends EventDispatcher {
     this.presenceCanvasWrapper.setPanZoom({ offset });
     this.documentCanvasWrapper.setPanZoom({ offset });
     this.updatePanZoomStore!({ ...this.panZoom, offset });
+    console.log(
+      offset,
+      this.documentCanvasWrapper.getWidth(),
+      this.documentCanvasWrapper.getHeight()
+    );
     return;
   };
 
@@ -506,12 +522,13 @@ export default class Board extends EventDispatcher {
   ) {
     this.clear(wrapper);
     this.clear(this.presenceCanvasWrapper);
+    const context = wrapper.getContext();
+    const canvas = wrapper.getCanvas();
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
     if (this.imageElement) {
-      console.log("image drawing");
-      drawImage(
-        this.documentCanvasWrapper.getContext(),
-        this.imageElement,
-        this.panZoom
+      this.setImageInfo(
+        drawImage(wrapper.getContext(), this.imageElement, this.panZoom)
       );
     }
     for (const shape of shapes) {
@@ -522,6 +539,43 @@ export default class Board extends EventDispatcher {
       } else if (shape.type === "rect") {
         drawRect(wrapper.getContext(), shape, this.panZoom);
       }
+    }
+  }
+
+  downloadImage() {
+    if (this.imgUrl && this.imageElement && this.imageInfo) {
+      const imageCanvas = document.createElement("canvas");
+      imageCanvas.width = this.imageInfo?.width;
+      imageCanvas.height = this.imageInfo?.height;
+      const imageContext = imageCanvas.getContext("2d")!;
+      const customizedPanZoom = {
+        scale: this.panZoom.scale,
+        offset: { x: 0, y: NavbarHeight },
+      };
+      if (this.imageElement) {
+        drawImage(imageContext, this.imageElement, customizedPanZoom);
+      }
+      const shapes = this.getRoot().shapes;
+      for (const shape of shapes) {
+        if (shape.type === "line") {
+          drawSmoothLine(imageContext, shape, customizedPanZoom);
+        } else if (shape.type === "eraser") {
+          drawEraser(imageContext, shape, customizedPanZoom);
+        } else if (shape.type === "rect") {
+          drawRect(imageContext, shape, customizedPanZoom);
+        }
+      }
+      const anchor = document.createElement("a");
+      anchor.href = imageCanvas.toDataURL("image/png");
+      anchor.download = "toonie.png";
+      anchor.click();
+    } else {
+      const anchor = document.createElement("a");
+      anchor.href = this.documentCanvasWrapper
+        .getCanvas()
+        .toDataURL("image/png");
+      anchor.download = "toonie.png";
+      anchor.click();
     }
   }
 

@@ -29,4 +29,10 @@ export function drawImage(
     imageWidth * panZoom.scale,
     imageHeight * panZoom.scale
   );
+  return {
+    x: screenPos.x,
+    y: screenPos.y,
+    width: imageWidth * panZoom.scale,
+    height: imageHeight * panZoom.scale,
+  };
 }

@@ -1,7 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store/slices";
-import { setTool, ToolType } from "../../../../store/slices/boardSlices";
+import {
+  setIsDownloadClicked,
+  setTool,
+  ToolType,
+} from "../../../../store/slices/boardSlices";
 import * as S from "./styles";
 
 const Right = () => {
@@ -41,7 +45,13 @@ const Right = () => {
           🀰
         </S.Eraser>
       </S.TopTools>
-      <S.Download>📁</S.Download>
+      <S.Download
+        onClick={() => {
+          dispatch(setIsDownloadClicked(true));
+        }}
+      >
+        📁
+      </S.Download>
     </>
   );
 };

@@ -4,6 +4,7 @@ import { RootState } from "../../../store/slices";
 import {
   BoardState,
   setImgUrl,
+  setIsDownloadClicked,
   setPanZoom,
   setTool,
   ToolType,
@@ -30,6 +31,16 @@ export default ({ width, height }: { width: number; height: number }) => {
   const isToolActivated = useSelector(
     (state: RootState) => state.boardState.isToolActivated
   );
+  const isDownloadClicked = useSelector(
+    (state: RootState) => state.boardState.isDownloadClicked
+  );
+
+  useEffect(() => {
+    if (isDownloadClicked) {
+      dispatch(setIsDownloadClicked(false));
+      boardRef.current?.downloadImage();
+    }
+  }, [isDownloadClicked]);
 
   useEffect(() => {
     if (!canvasRef.current) {
