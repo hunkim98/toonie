@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Peer } from "../../store/slices/peerSlices";
-import { generateRandomParams } from "../../utils/generateRandomParams";
 import { PopoverContainer } from "../Common/PopoverContainer";
 import { BrushPopover } from "./BrushPopover";
 import * as S from "./styles";

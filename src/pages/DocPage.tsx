@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Editor from "../components/Editor";
 import { Footer } from "../components/Footer";
