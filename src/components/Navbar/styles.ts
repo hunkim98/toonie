@@ -25,6 +25,7 @@ export const LogoContainer = styled(SideContainer)``;
 export const LogoName = styled(CaveatFont)`
   font-size: 2.5em;
   font-weight: bold;
+  cursor: pointer;
 `;
 
 export const UserColor = styled.div<{ color: string }>`

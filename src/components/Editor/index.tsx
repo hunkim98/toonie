@@ -29,7 +29,7 @@ const EditorComponent = ({ docKey }: { docKey: string }) => {
     return () => {
       dispatch(deactivateClient());
     };
-  }, [dispatch]);
+  }, [dispatch, docKey]);
 
   useEffect(() => {
     if (!client || !doc) {
@@ -64,7 +64,7 @@ const EditorComponent = ({ docKey }: { docKey: string }) => {
     return () => {
       unsubscribe();
     };
-  }, [client, doc, status, dispatch]);
+  }, [client, doc, status, dispatch, docKey]);
 
   useEffect(() => {
     dispatch(createDocument(docKey));
