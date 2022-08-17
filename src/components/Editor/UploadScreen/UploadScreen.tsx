@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import * as S from "./styles";
-import Dropzone, { useDropzone } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 import { setImgUrl } from "../../../store/slices/boardSlices";
 import axios from "axios";
 import { CloudinaryResponse } from "../../../utils/cloudinary.dto";
-import { uuidv4 } from "../../../utils/uuid";
 import { RootState } from "../../../store/slices";
 
 interface Props {}
@@ -36,27 +35,19 @@ const UploadScreen: React.FC<Props> = () => {
         });
       });
   };
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    isDragAccept,
-    isDragReject,
-    acceptedFiles,
-    fileRejections,
-  } = useDropzone({
-    accept: {
-      "image/jpeg": [".jpeg", ".png"],
-    },
-    maxFiles: 1,
-    maxSize: 3 * 1000000,
-  });
+  const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
+    useDropzone({
+      accept: {
+        "image/jpeg": [".jpeg", ".png"],
+      },
+      maxFiles: 1,
+      maxSize: 3 * 1000000,
+    });
 
-  const accepted = acceptedFiles.map((file) => {
-    uploadImgToServer(file);
-    console.log(file.name);
+  acceptedFiles.map((file) => {
+    return uploadImgToServer(file);
   });
-  const rejected = fileRejections.map((file) =>
+  fileRejections.map((file) =>
     alert(`${file.file.name}의 용량이 3MB를 초과합니다`)
   );
 

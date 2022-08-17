@@ -1,4 +1,4 @@
-import styled, { css, keyframes } from "styled-components";
+import styled from "styled-components";
 import { FadeInOutSettings } from "../../../utils/fadeInOut";
 
 export const Container = styled.div<{

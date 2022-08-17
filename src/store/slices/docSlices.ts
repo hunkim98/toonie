@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import yorkie, { Client, Document, Text, TimeTicket } from "yorkie-js-sdk";
+import yorkie, { Client, Document, TimeTicket } from "yorkie-js-sdk";
 import { Metadata } from "./peerSlices";
 import randomColor from "randomcolor";
 import anonymous from "anonymous-animals-gen";
@@ -87,7 +87,7 @@ export const activateClient = createAsyncThunk<
   { rejectValue: string }
 >("doc/activate", async (_: undefined, thunkApi) => {
   try {
-    const { name, animal } = anonymous.generate();
+    const { name } = anonymous.generate();
     const options = {
       apiKey: "",
       presence: {

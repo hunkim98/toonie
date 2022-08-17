@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as S from "./styles";
 
 interface Props {
@@ -31,7 +31,7 @@ const Popover = ({
       // Unbind the event listener on clean up
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [wrapperRef]);
+  }, [wrapperRef, setIsVisible]);
 
   return (
     <S.Container

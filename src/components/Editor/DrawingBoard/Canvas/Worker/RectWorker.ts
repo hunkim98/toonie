@@ -1,6 +1,5 @@
 import { TimeTicket } from "yorkie-js-sdk";
 import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
-import * as scheduler from "../../../../../utils/scheduler";
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import Board from "../Board";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";

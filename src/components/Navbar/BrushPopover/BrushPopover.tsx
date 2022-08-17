@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import * as S from "./styles";
 import { ChromePicker, ColorChangeHandler, ColorResult } from "react-color";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +29,7 @@ const BrushPopover = ({ user }: Props) => {
       client?.updatePresence("color", color);
     };
     handleUpdateColor(brushColor);
-  }, [doc, brushColor]);
+  }, [doc, brushColor, client]);
 
   const sizes = StrokeWidthType;
 

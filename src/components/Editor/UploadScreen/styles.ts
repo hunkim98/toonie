@@ -3,7 +3,6 @@ import { CaveatFont, ThemeColor } from "../../../styles/common";
 import { FooterHeight } from "../../Footer/styles";
 import { NavbarHeight } from "../../Navbar/styles";
 
-const ContainerPadding = 15;
 export const Container = styled.section`
   display: flex;
   height: calc(100vh - ${FooterHeight}px - ${NavbarHeight}px);

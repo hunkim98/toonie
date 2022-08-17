@@ -1,7 +1,5 @@
 import { ActorID } from "yorkie-js-sdk";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Box, EraserLine, Line, Rect } from "./docSlices";
-import { Point } from "../../types/canvasTypes";
 
 export interface Metadata {
   username: string;

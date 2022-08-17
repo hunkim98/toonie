@@ -3,9 +3,7 @@ import { ToolType } from "../../../../../store/slices/boardSlices";
 import { Line, Root } from "../../../../../store/slices/docSlices";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import Board from "../Board";
-import { createLine, drawLine } from "../line";
 import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
-import * as scheduler from "../../../../../utils/scheduler";
 import { compressPoints } from "../../../../../utils/canvas.line";
 import { scalePoint } from "../../../../../utils/canvas";
 

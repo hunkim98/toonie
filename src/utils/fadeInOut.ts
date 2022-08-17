@@ -1,4 +1,4 @@
-import styled, { css, keyframes } from "styled-components";
+import { css, keyframes } from "styled-components";
 
 export const FadeInOutSettings = (isVisible: boolean) => css`
   transition: visibility 0.15s linear;

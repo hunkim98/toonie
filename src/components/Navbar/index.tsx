@@ -1,12 +1,10 @@
-import { stringify } from "querystring";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import usePeer from "../../hooks/usePeer";
 import { RootState } from "../../store/slices";
 import { ConnectionStatus, Peer } from "../../store/slices/peerSlices";
 import Navbar from "./Navbar";
 
-export default () => {
+const NavbarComponent = () => {
   const [peers, setPeers] = useState<Peer[]>([]);
   // const peers = useSelector((state: RootState) => state.peerState.peers);
   const client = useSelector((state: RootState) => state.docState.client);
@@ -45,3 +43,5 @@ export default () => {
 
   return <Navbar activePeers={[user, ...others]} user={user} />;
 };
+
+export default NavbarComponent;

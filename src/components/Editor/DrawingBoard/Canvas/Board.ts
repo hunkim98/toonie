@@ -2,7 +2,7 @@ import {
   StrokeWidthType,
   ToolType,
 } from "../../../../store/slices/boardSlices";
-import { Root, Shape } from "../../../../store/slices/docSlices";
+import { Shape } from "../../../../store/slices/docSlices";
 import { Metadata } from "../../../../store/slices/peerSlices";
 import { PanZoom, Point } from "../../../../types/canvasTypes";
 import {
@@ -10,9 +10,6 @@ import {
   diffPoints,
   getScreenPoint,
   getWorldPoint,
-  MAX_SCALE,
-  MIN_SCALE,
-  scalePoint,
 } from "../../../../utils/canvas";
 import {
   addEvent,

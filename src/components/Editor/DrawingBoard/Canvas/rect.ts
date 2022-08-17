@@ -1,7 +1,6 @@
 import { Box, Rect } from "../../../../store/slices/docSlices";
 import { PanZoom, Point } from "../../../../types/canvasTypes";
-import { getScreenPoint, scalePoint } from "../../../../utils/canvas";
-import Board from "./Board";
+import { getScreenPoint } from "../../../../utils/canvas";
 
 export interface RectOptions {
   color: string;

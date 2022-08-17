@@ -1,13 +1,11 @@
-import React from "react";
-
 import { useParams } from "react-router-dom";
 import Editor from "../components/Editor";
 import { Footer } from "../components/Footer";
 import Navbar from "../components/Navbar";
 
-type DocPageProps = {
-  docKey: string;
-};
+// type DocPageProps = {
+//   docKey: string;
+// };
 const DocPage = () => {
   const params = useParams();
   const docKey = params.docKey;

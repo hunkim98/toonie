@@ -2,7 +2,6 @@ import fitCurve from "fit-curve";
 import { Line } from "../../../../store/slices/docSlices";
 import { PanZoom, Point } from "../../../../types/canvasTypes";
 import { getScreenPoint } from "../../../../utils/canvas";
-import Board from "./Board";
 
 type CanvasLine = Pick<Line, "type" | "points" | "color" | "strokeWidth">;
 

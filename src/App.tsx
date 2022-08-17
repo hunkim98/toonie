@@ -1,5 +1,4 @@
-import React, { useCallback } from "react";
-import logo from "./logo.svg";
+import { useCallback } from "react";
 import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import DocPage from "./pages/DocPage";

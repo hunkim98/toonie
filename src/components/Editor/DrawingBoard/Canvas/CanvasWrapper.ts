@@ -1,5 +1,4 @@
 import { PanZoom } from "../../../../types/canvasTypes";
-import { diffPoints, scalePoint } from "../../../../utils/canvas";
 
 export default class CanvasWrapper {
   private canvas: HTMLCanvasElement;
@@ -80,7 +79,7 @@ export default class CanvasWrapper {
   }
 
   resize() {
-    const { devicePixelRatio: ratio = 1 } = window;
+    const { devicePixelRatio } = window;
     this.setSize(this.width, this.height);
     if (devicePixelRatio) {
       this.setSize(this.width, this.height, devicePixelRatio);

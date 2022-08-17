@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/slices";
 import {
@@ -46,7 +46,7 @@ const Editor = () => {
     return () => {
       unsubscribe();
     };
-  }, [doc]);
+  }, [doc, dispatch]);
 
   useEffect(() => {
     const onResize = () => {
@@ -81,7 +81,7 @@ const Editor = () => {
       window.removeEventListener("keydown", activateToolEvent);
       window.removeEventListener("keyup", deactivateToolEvent);
     };
-  }, []);
+  }, [dispatch]);
   return (
     <S.Container>
       {imgUrl === undefined ? (

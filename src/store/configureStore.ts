@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import axios from "axios";
-import logger from "redux-logger";
+// import logger from "redux-logger";
 import rootReducer from "./slices";
 
 export const store = configureStore({

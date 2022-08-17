@@ -2,20 +2,16 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
-  BoardState,
   setImgUrl,
   setIsDownloadClicked,
   setPanZoom,
-  setTool,
-  ToolType,
 } from "../../../store/slices/boardSlices";
 import { Metadata } from "../../../store/slices/peerSlices";
 import { PanZoom } from "../../../types/canvasTypes";
-import { urlToObject } from "../../../utils/images";
 import Board from "./Canvas/Board";
 import { BoardMetadata } from "./Canvas/Worker/Worker";
 
-export default ({ width, height }: { width: number; height: number }) => {
+const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const boardRef = useRef<Board | null>(null);
   const color = useSelector((state: RootState) => state.boardState.color);
@@ -40,7 +36,7 @@ export default ({ width, height }: { width: number; height: number }) => {
       dispatch(setIsDownloadClicked(false));
       boardRef.current?.downloadImage();
     }
-  }, [isDownloadClicked]);
+  }, [isDownloadClicked, dispatch]);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -58,7 +54,7 @@ export default ({ width, height }: { width: number; height: number }) => {
     return () => {
       board.destroy();
     };
-  }, [doc]);
+  }, [doc, client]);
 
   useEffect(() => {
     if (!doc) {
@@ -120,7 +116,7 @@ export default ({ width, height }: { width: number; height: number }) => {
       boardRef.current?.removeEventListener("mouseout", handleUpdateMeta);
       boardRef.current?.removeEventListener("mouseup", handleUpdateMeta);
     };
-  }, [doc]);
+  }, [doc, client, dispatch]);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -144,7 +140,7 @@ export default ({ width, height }: { width: number; height: number }) => {
       }
     }
     boardRef.current?.drawAll(doc!.getRoot().shapes);
-  }, [doc, width, height]);
+  }, [doc, width, height, dispatch]);
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -176,3 +172,5 @@ export default ({ width, height }: { width: number; height: number }) => {
 
   return <canvas style={{ position: "absolute", zIndex: 0 }} ref={canvasRef} />;
 };
+
+export default DrawingBoard;

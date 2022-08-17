@@ -14,7 +14,7 @@ import {
 import { syncPeer } from "../../store/slices/peerSlices";
 import Editor from "./Editor";
 
-export default ({ docKey }: { docKey: string }) => {
+const EditorComponent = ({ docKey }: { docKey: string }) => {
   const dispatch = useDispatch();
   const client = useSelector((state: RootState) => state.docState.client);
   const doc = useSelector((state: RootState) => state.docState.doc);
@@ -29,7 +29,7 @@ export default ({ docKey }: { docKey: string }) => {
     return () => {
       dispatch(deactivateClient());
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!client || !doc) {
@@ -64,14 +64,14 @@ export default ({ docKey }: { docKey: string }) => {
     return () => {
       unsubscribe();
     };
-  }, [client, doc, status]);
+  }, [client, doc, status, dispatch]);
 
   useEffect(() => {
     dispatch(createDocument(docKey));
     return () => {
       dispatch(detachDocument());
     };
-  }, [docKey]);
+  }, [docKey, dispatch]);
 
   useEffect(() => {
     async function attachDocAsync() {
@@ -88,7 +88,7 @@ export default ({ docKey }: { docKey: string }) => {
     return () => {
       dispatch(attachDocLoading(true));
     };
-  }, [docKey, client, doc]);
+  }, [docKey, client, doc, dispatch]);
 
   if (errorMessage) {
     return <div>{errorMessage}</div>;
@@ -98,3 +98,5 @@ export default ({ docKey }: { docKey: string }) => {
   }
   return <Editor />;
 };
+
+export default EditorComponent;

@@ -5,7 +5,6 @@ import {
   Shape,
   Point,
   Rect,
-  Line,
 } from "../../../../../store/slices/docSlices";
 import { PanZoom } from "../../../../../types/canvasTypes";
 
