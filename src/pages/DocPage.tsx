@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Editor from "../components/Editor";
 import { Footer } from "../components/Footer";
@@ -13,6 +14,7 @@ const DocPage = () => {
   if (!docKey) {
     return null;
   }
+
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}

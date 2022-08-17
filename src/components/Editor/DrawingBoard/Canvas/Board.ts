@@ -129,7 +129,6 @@ export default class Board extends EventDispatcher {
         this.render();
       };
       img.src = imgUrl;
-      console.log(img);
     } else {
       if (imgUrl === undefined) {
         this.imgUrl = undefined;
@@ -307,11 +306,6 @@ export default class Board extends EventDispatcher {
     this.presenceCanvasWrapper.setPanZoom({ offset });
     this.documentCanvasWrapper.setPanZoom({ offset });
     this.updatePanZoomStore!({ ...this.panZoom, offset });
-    console.log(
-      offset,
-      this.documentCanvasWrapper.getWidth(),
-      this.documentCanvasWrapper.getHeight()
-    );
     return;
   };
 
@@ -454,6 +448,7 @@ export default class Board extends EventDispatcher {
     //JSON.parse changes string value board to an array
     //anything can be passed to board meta data
     this.metadataMap.set(peerKey, JSON.parse(metadata.board || "{}"));
+    // this.presenceCanvasWrapper.clear();
     for (const boardMetadata of Array.from(this.metadataMap.values())) {
       const { eraserPoints, penPoints, rectShape } = boardMetadata;
       if (eraserPoints) {

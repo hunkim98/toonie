@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Peer } from "../../store/slices/peerSlices";
+import { generateRandomParams } from "../../utils/generateRandomParams";
 import { PopoverContainer } from "../Common/PopoverContainer";
 import { BrushPopover } from "./BrushPopover";
 import * as S from "./styles";
-
 interface Props {
   activePeers: Peer[];
   user: Peer;
@@ -12,10 +14,20 @@ interface Props {
 const Navbar = ({ activePeers, user }: Props) => {
   const [isBrushPopoverVisible, setIsBrushPopoverVisible] =
     useState<boolean>(false);
+  const navigateTo = useNavigate();
   return (
     <S.Container>
       <S.LogoContainer>
-        <S.LogoName>toonie</S.LogoName>
+        <S.LogoName
+          onClick={() => {
+            navigateTo("/");
+            window.location.reload();
+          }}
+        >
+          {/* <Link to="/" style={{ textDecoration: "none", color: "#000000" }}> */}
+          toonie
+          {/* </Link> */}
+        </S.LogoName>
       </S.LogoContainer>
       <S.UserColor
         color={user.metadata.color}
@@ -33,7 +45,20 @@ const Navbar = ({ activePeers, user }: Props) => {
         </PopoverContainer>
       </S.UserColor>
       <S.PeersControlContainer>
-        <S.ShareButton></S.ShareButton>
+        <S.ShareButton
+          onClick={() => {
+            const dummy = document.createElement("input"),
+              text = window.location.href;
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            alert(
+              "The share link has been copied. Please deliver it to your peer!"
+            );
+          }}
+        ></S.ShareButton>
         <S.PeersContainer>
           {activePeers
             .filter((element, index) => index < 3)

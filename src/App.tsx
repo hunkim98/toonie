@@ -1,11 +1,12 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import DocPage from "./pages/DocPage";
+import { generateRandomParams } from "./utils/generateRandomParams";
 
 function App() {
   const handleRender = useCallback(() => {
-    return <Navigate to={`/${Math.random().toString(36).substring(7)}`} />;
+    return <Navigate to={generateRandomParams()} />;
   }, []);
   return (
     <BrowserRouter>
