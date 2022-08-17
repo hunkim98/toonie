@@ -17,5 +17,6 @@ export const Copyright = styled.div`
 `;
 
 export const About = styled.div`
+  cursor: pointer;
   padding: 10px 0;
 `;
