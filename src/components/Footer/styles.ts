@@ -13,6 +13,7 @@ export const Container = styled(CommonPadding)`
 `;
 
 export const Copyright = styled.div`
+  cursor: pointer;
   padding: 10px 0;
 `;
 

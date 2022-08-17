@@ -27,7 +27,6 @@ const UploadScreen: React.FC<Props> = () => {
       })
       .then((res) => {
         const data = res.data as CloudinaryResponse;
-        console.log(data);
         const url = data.url;
         dispatch(setImgUrl(url));
         doc?.update((root) => {

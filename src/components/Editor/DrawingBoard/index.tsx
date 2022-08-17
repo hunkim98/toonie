@@ -127,14 +127,12 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
     //this has to do with drawing what is in doc
 
     const docImgUrl = doc!.getRoot().imgUrl;
-    console.log(docImgUrl, "docimgurl");
     if (docImgUrl) {
       boardRef.current?.initializeImg(docImgUrl);
       dispatch(setImgUrl(docImgUrl));
     } else {
       if (docImgUrl === undefined) {
         dispatch(setImgUrl(undefined));
-        console.log("undefined set");
       } else {
         dispatch(setImgUrl(""));
       }

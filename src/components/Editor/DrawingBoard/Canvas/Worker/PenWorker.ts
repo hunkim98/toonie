@@ -34,7 +34,6 @@ class PenWorker extends Worker {
     this.update = update;
     this.board = board;
     this.updatePresence = updatePresence;
-    console.log(this.options!.color);
     this.previewPoints = {
       points: [],
       color: this.options!.color,

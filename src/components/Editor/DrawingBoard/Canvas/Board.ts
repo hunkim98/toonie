@@ -129,7 +129,6 @@ export default class Board extends EventDispatcher {
         this.render();
       };
       img.src = imgUrl;
-      console.log(img);
     } else {
       if (imgUrl === undefined) {
         this.imgUrl = undefined;
@@ -307,11 +306,6 @@ export default class Board extends EventDispatcher {
     this.presenceCanvasWrapper.setPanZoom({ offset });
     this.documentCanvasWrapper.setPanZoom({ offset });
     this.updatePanZoomStore!({ ...this.panZoom, offset });
-    console.log(
-      offset,
-      this.documentCanvasWrapper.getWidth(),
-      this.documentCanvasWrapper.getHeight()
-    );
     return;
   };
 
