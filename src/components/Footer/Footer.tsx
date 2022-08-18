@@ -15,7 +15,7 @@ const Footer = () => {
           window.open("https://github.com/yorkie-team/toonie");
         }}
       >
-        Github
+        GitHub
       </S.About>
     </S.Container>
   );
