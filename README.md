@@ -32,4 +32,3 @@ Toonie is deployed to AWS and the configuration is shown below. This repository 
  ㄴ toonie.yorkie.dev - [gh-pages] # for serving static pages
  ㄴ api.yorkie.dev      - [EKS]      # for serving API
 ```
-
