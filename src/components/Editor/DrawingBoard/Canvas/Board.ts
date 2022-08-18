@@ -96,6 +96,7 @@ export default class Board extends EventDispatcher {
     const canvas = document.createElement("canvas");
     const wrapper = new CanvasWrapper(canvas);
     canvas.style.position = "absolute";
+    canvas.style.touchAction = "none";
     canvas.style.top = "0";
     canvas.style.left = "0";
     canvas.style.zIndex = "1";
@@ -278,27 +279,98 @@ export default class Board extends EventDispatcher {
     throw new TypeError(`Undefined tool: ${tool}`);
   }
 
-  getPointFromTouchyEvent(evt: TouchyEvent): Point {
+  getCanvasPointFromTouch(evt: TouchyEvent) {
+    if (window.TouchEvent && evt instanceof TouchEvent) {
+    } else {
+    }
+  }
+
+  getCanvasPointsFromTouches(evt: TouchyEvent) {
+    const tempArray = [];
+    if (window.TouchEvent && evt instanceof TouchEvent) {
+      if (evt.touches.length > 1) {
+        for (let i = 0; i < evt.touches.length; i++) {
+          const target = evt.touches.item(i)!.target;
+          if (target instanceof HTMLCanvasElement) {
+            const r = this.presenceCanvasWrapper
+              .getCanvas()
+              .getBoundingClientRect();
+            let originY = evt.touches[i].clientY;
+            let originX = evt.touches[i].clientX;
+            const offsetX = evt.touches[i].clientX - r.left;
+            const offsetY = evt.touches[i].clientY - r.top;
+            originY += window.scrollY;
+            originX += window.scrollX;
+            tempArray.push({
+              x: originX - this.panZoom.offset.x,
+              y: originY - this.panZoom.offset.y,
+              offsetX: offsetX,
+              offsetY: offsetY,
+            });
+          }
+        }
+      }
+    } else {
+    }
+    return tempArray;
+  }
+
+  getPointFromTouchyEvent(
+    evt: TouchyEvent
+  ): Point & { offsetX: number; offsetY: number } {
     let originY;
     let originX;
+    let offsetX;
+    let offsetY;
+    const r = this.presenceCanvasWrapper.getCanvas().getBoundingClientRect();
+
     if (window.TouchEvent && evt instanceof TouchEvent) {
-      originY = evt.touches[0].clientY;
-      originX = evt.touches[0].clientX;
+      // alert("touchevent");
+      //this is for mobile
+      let isCanvasTouchIncluded = false;
+      let firstCanvasTouchIndex = 0;
+      for (let i = 0; i < evt.touches.length; i++) {
+        const target = evt.touches.item(i)!.target;
+        // alert(target);
+        if (target instanceof HTMLCanvasElement) {
+          isCanvasTouchIncluded = true;
+          firstCanvasTouchIndex = i;
+          break;
+        }
+      }
+      if (isCanvasTouchIncluded) {
+        originY = evt.touches[firstCanvasTouchIndex].clientY;
+        originX = evt.touches[firstCanvasTouchIndex].clientX;
+        offsetX = evt.touches[firstCanvasTouchIndex].clientX - r.left;
+        offsetY = evt.touches[firstCanvasTouchIndex].clientY - r.top;
+        // alert("number of touches" + tempArray);
+      } else {
+        originY = evt.touches[0].clientY;
+        originX = evt.touches[0].clientX;
+        offsetX = evt.touches[0].clientX - r.left;
+        offsetY = evt.touches[0].clientY - r.top;
+      }
     } else {
+      //this is for PC or pen
       originY = evt.clientY;
       originX = evt.clientX;
+      offsetX = evt.offsetX;
+      offsetY = evt.offsetY;
     }
     originY += window.scrollY;
     originX += window.scrollX;
     return {
       y: originY - this.panZoom.offset.y,
       x: originX - this.panZoom.offset.x,
+      offsetX: offsetX,
+      offsetY: offsetY,
     };
   }
 
-  handlePanning = (e: MouseEvent) => {
+  handlePanning = (evt: TouchyEvent) => {
     const lastMousePos = this.panPoint.lastMousePos;
-    const currentMousePos: Point = { x: e.offsetX, y: e.offsetY };
+    const point = this.getPointFromTouchyEvent(evt);
+    const currentMousePos: Point = { x: point.offsetX, y: point.offsetY };
     this.panPoint.lastMousePos = currentMousePos;
     const mouseDiff = diffPoints(lastMousePos, currentMousePos);
     const offset = diffPoints(this.panZoom.offset, mouseDiff);
@@ -377,17 +449,17 @@ export default class Board extends EventDispatcher {
         }
       );
     } else {
-      //this part is necessary for panning
+      // this part is necessary for panning
       const mousePos = {
-        x: evt.offsetX,
-        y: evt.offsetY,
+        x: point.offsetX,
+        y: point.offsetY,
       };
       this.panPoint.lastMousePos = mousePos;
       touchy(
         this.presenceCanvasWrapper.getCanvas(),
         addEvent,
         "mousemove",
-        this.handlePanning as EventListener
+        this.handlePanning
       );
     }
   }

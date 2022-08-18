@@ -109,7 +109,6 @@ export const activateClient = createAsyncThunk<
     await client.activate();
     return { client };
   } catch (err: any) {
-    console.log(err, "hihihihihi");
     return thunkApi.rejectWithValue(err.message);
   }
 });

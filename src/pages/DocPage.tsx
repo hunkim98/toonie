@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import Editor from "../components/Editor";
 import { Footer } from "../components/Footer";
 import Navbar from "../components/Navbar";
+import "../App.css";
 
 // type DocPageProps = {
 //   docKey: string;
@@ -15,9 +16,7 @@ const DocPage = () => {
   }
 
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-    >
+    <div className="fillScreen">
       <Navbar />
       <Editor docKey={docKey} />
       <Footer />

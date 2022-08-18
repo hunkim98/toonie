@@ -168,7 +168,12 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
     }
   }, [doc, isToolActivated]);
 
-  return <canvas style={{ position: "absolute", zIndex: 0 }} ref={canvasRef} />;
+  return (
+    <canvas
+      style={{ position: "absolute", zIndex: 0, touchAction: "none" }}
+      ref={canvasRef}
+    />
+  );
 };
 
 export default DrawingBoard;

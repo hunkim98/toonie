@@ -2,6 +2,16 @@ import styled, { css } from "styled-components";
 import { device } from "../../../utils/cssMedia";
 
 export const Container = styled.button<{ isToolActivated: boolean }>`
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+
+  /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+  -ms-user-select: none;
+  user-select: none;
   background: none;
   border: none;
   position: absolute;

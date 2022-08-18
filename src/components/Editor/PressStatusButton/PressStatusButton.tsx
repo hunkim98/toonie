@@ -23,6 +23,7 @@ function PressStatusButton() {
   return (
     <S.Container
       ref={buttonRef}
+      draggable="false"
       onMouseLeave={() => {
         if (!isSpacePressed) {
           dispatch(deactivateTool());
@@ -33,10 +34,12 @@ function PressStatusButton() {
           dispatch(deactivateTool());
         }
       }}
-      onMouseDown={() => {
+      onMouseDown={(e) => {
+        e.preventDefault();
         dispatch(activateTool());
       }}
-      onTouchStart={() => {
+      onTouchStart={(e) => {
+        e.preventDefault();
         dispatch(activateTool());
       }}
       onTouchEnd={() => {
