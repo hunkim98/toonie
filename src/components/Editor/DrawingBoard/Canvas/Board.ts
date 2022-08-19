@@ -520,14 +520,12 @@ export default class Board extends EventDispatcher {
     //JSON.parse changes string value board to an array
     //anything can be passed to board meta data
     this.metadataMap.set(peerKey, JSON.parse(metadata.board || "{}"));
-    // this.presenceCanvasWrapper.clear();
+    this.presenceCanvasWrapper.clear();
     for (const boardMetadata of Array.from(this.metadataMap.values())) {
       const { eraserPoints, penPoints, rectShape } = boardMetadata;
       if (eraserPoints) {
         if (eraserPoints.length === 0) {
-          this.presenceCanvasWrapper.clear();
         } else {
-          this.presenceCanvasWrapper.clear();
           drawEraser(
             this.presenceCanvasWrapper.getContext(),
             {
@@ -553,7 +551,6 @@ export default class Board extends EventDispatcher {
       }
 
       if (rectShape) {
-        this.presenceCanvasWrapper.clear();
         drawRect(
           this.presenceCanvasWrapper.getContext(),
           { ...rectShape },
