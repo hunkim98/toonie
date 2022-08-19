@@ -4,6 +4,8 @@ import { RootState } from "../../../../store/slices";
 import { setPanZoom } from "../../../../store/slices/boardSlices";
 import { MAX_SCALE, MIN_SCALE } from "../../../../utils/canvas";
 import * as S from "./styles";
+import { FaTrashAlt } from "react-icons/fa";
+import { HiTrash } from "react-icons/hi";
 
 function Left() {
   const doc = useSelector((state: RootState) => state.docState.doc);
@@ -21,6 +23,7 @@ function Left() {
         }}
       >
         🗑
+        {/* <FaTrashAlt color={"#FFFFFF"} /> */}
       </S.Delete>
       <S.ScaleContainer>
         <S.ZoomIn

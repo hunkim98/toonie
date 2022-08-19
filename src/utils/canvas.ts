@@ -30,7 +30,7 @@ export function getWorldPoint(point: Point, panZoom: PanZoom) {
 
   return {
     x: (point.x - offset.x) / scale,
-    y: (point.y - offset.y) / scale,
+    y: (point.y - offset.y + NavbarHeight) / scale,
   };
 }
 
