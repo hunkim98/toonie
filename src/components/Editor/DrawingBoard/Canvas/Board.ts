@@ -35,6 +35,9 @@ enum DragStatus {
 }
 
 export default class Board extends EventDispatcher {
+  private MAX_SCALE = 5;
+  private MIN_SCALE = 0.6;
+  private ZOOM_SENSITIVITY = 300;
   private color: string = "#000000";
   private imgUrl: string | undefined;
   private imageElement: HTMLImageElement | undefined;
@@ -47,6 +50,7 @@ export default class Board extends EventDispatcher {
 
   private documentCanvasWrapper: CanvasWrapper;
   private presenceCanvasWrapper: CanvasWrapper;
+  private pinchZoomPrevDiff: number | undefined;
 
   private metadataMap: Map<string, BoardMetadata> = new Map();
 
@@ -82,6 +86,7 @@ export default class Board extends EventDispatcher {
     this.updatePresence = updatePresence;
     this.isToolActivated = false;
     this.initialize();
+    this.pinchZoomPrevDiff = 0;
   }
 
   setImageInfo(info: { x: number; y: number; width: number; height: number }) {
@@ -174,6 +179,11 @@ export default class Board extends EventDispatcher {
     this.presenceCanvasWrapper
       .getCanvas()
       .addEventListener("wheel", this.handleWheel);
+    // this.presenceCanvasWrapper
+    //   .getCanvas()
+    //   .addEventListener("touchstart", () => {
+    //     alert("hi");
+    //   });
     this.addEventListener("renderAll", this.drawAll);
   }
 
@@ -208,6 +218,12 @@ export default class Board extends EventDispatcher {
       removeEvent,
       "mousedown",
       this.onMouseDown
+    );
+    touchy(
+      this.presenceCanvasWrapper.getCanvas(),
+      removeEvent,
+      "mousemove",
+      this.handlePinchZoom
     );
     this.destroyPresenceCanvas();
     this.removeEventListener("renderAll");
@@ -279,40 +295,22 @@ export default class Board extends EventDispatcher {
     throw new TypeError(`Undefined tool: ${tool}`);
   }
 
-  getCanvasPointFromTouch(evt: TouchyEvent) {
-    if (window.TouchEvent && evt instanceof TouchEvent) {
-    } else {
-    }
-  }
-
-  getCanvasPointsFromTouches(evt: TouchyEvent) {
-    const tempArray = [];
-    if (window.TouchEvent && evt instanceof TouchEvent) {
-      if (evt.touches.length > 1) {
-        for (let i = 0; i < evt.touches.length; i++) {
-          const target = evt.touches.item(i)!.target;
-          if (target instanceof HTMLCanvasElement) {
-            const r = this.presenceCanvasWrapper
-              .getCanvas()
-              .getBoundingClientRect();
-            let originY = evt.touches[i].clientY;
-            let originX = evt.touches[i].clientX;
-            const offsetX = evt.touches[i].clientX - r.left;
-            const offsetY = evt.touches[i].clientY - r.top;
-            originY += window.scrollY;
-            originX += window.scrollX;
-            tempArray.push({
-              x: originX - this.panZoom.offset.x,
-              y: originY - this.panZoom.offset.y,
-              offsetX: offsetX,
-              offsetY: offsetY,
-            });
-          }
-        }
-      }
-    } else {
-    }
-    return tempArray;
+  getPointFromTouch(touch: Touch) {
+    let originY;
+    let originX;
+    let offsetX;
+    let offsetY;
+    const r = this.presenceCanvasWrapper.getCanvas().getBoundingClientRect();
+    originY = touch.clientY;
+    originX = touch.clientX;
+    offsetX = touch.clientX - r.left;
+    offsetY = touch.clientY - r.top;
+    return {
+      x: originX - this.panZoom.offset.x,
+      y: originY - this.panZoom.offset.y,
+      offsetX: offsetX,
+      offsetY: offsetY,
+    };
   }
 
   getPointFromTouchyEvent(
@@ -322,16 +320,12 @@ export default class Board extends EventDispatcher {
     let originX;
     let offsetX;
     let offsetY;
-    const r = this.presenceCanvasWrapper.getCanvas().getBoundingClientRect();
-
     if (window.TouchEvent && evt instanceof TouchEvent) {
-      // alert("touchevent");
-      //this is for mobile
+      //this is for tablet or mobile
       let isCanvasTouchIncluded = false;
       let firstCanvasTouchIndex = 0;
       for (let i = 0; i < evt.touches.length; i++) {
         const target = evt.touches.item(i)!.target;
-        // alert(target);
         if (target instanceof HTMLCanvasElement) {
           isCanvasTouchIncluded = true;
           firstCanvasTouchIndex = i;
@@ -339,19 +333,12 @@ export default class Board extends EventDispatcher {
         }
       }
       if (isCanvasTouchIncluded) {
-        originY = evt.touches[firstCanvasTouchIndex].clientY;
-        originX = evt.touches[firstCanvasTouchIndex].clientX;
-        offsetX = evt.touches[firstCanvasTouchIndex].clientX - r.left;
-        offsetY = evt.touches[firstCanvasTouchIndex].clientY - r.top;
-        // alert("number of touches" + tempArray);
+        return this.getPointFromTouch(evt.touches[firstCanvasTouchIndex]);
       } else {
-        originY = evt.touches[0].clientY;
-        originX = evt.touches[0].clientX;
-        offsetX = evt.touches[0].clientX - r.left;
-        offsetY = evt.touches[0].clientY - r.top;
+        return this.getPointFromTouch(evt.touches[0]);
       }
     } else {
-      //this is for PC or pen
+      //this is for PC
       originY = evt.clientY;
       originX = evt.clientX;
       offsetX = evt.offsetX;
@@ -366,6 +353,61 @@ export default class Board extends EventDispatcher {
       offsetY: offsetY,
     };
   }
+
+  handlePinchZoom = (evt: TouchyEvent) => {
+    if (window.TouchEvent && evt instanceof TouchEvent) {
+      const touchCount = evt.touches.length;
+      if (touchCount < 2) {
+        return;
+      }
+      const canvasTouchEventIndexes = [];
+      for (let i = 0; i < touchCount; i++) {
+        const target = evt.touches.item(i)!.target;
+        if (target instanceof HTMLCanvasElement) {
+          canvasTouchEventIndexes.push(i);
+        }
+      }
+      if (canvasTouchEventIndexes.length !== 2) {
+        return;
+      }
+      const firstTouch = evt.touches[canvasTouchEventIndexes[0]];
+      const secondTouch = evt.touches[canvasTouchEventIndexes[1]];
+      const pinchZoomCurrentDiff =
+        Math.abs(firstTouch.clientX - secondTouch.clientX) +
+        Math.abs(firstTouch.clientY - secondTouch.clientY);
+      const firstTouchPoint = this.getPointFromTouch(firstTouch);
+      const secondTouchPoint = this.getPointFromTouch(secondTouch);
+      const touchCenterPos = {
+        x: (firstTouchPoint.offsetX + secondTouchPoint.offsetY) / 2,
+        y: (firstTouchPoint.offsetY + secondTouchPoint.offsetY) / 2,
+      };
+
+      if (!this.pinchZoomPrevDiff) {
+        this.pinchZoomPrevDiff = pinchZoomCurrentDiff;
+        return;
+      }
+
+      const deltaX = this.pinchZoomPrevDiff - pinchZoomCurrentDiff;
+      const zoom = 1 - (deltaX * 2) / this.ZOOM_SENSITIVITY;
+      const newScale = this.panZoom.scale * zoom;
+      if (this.MIN_SCALE > newScale || newScale > this.MAX_SCALE) {
+        return;
+      }
+      const worldPos = getWorldPoint(touchCenterPos, {
+        scale: this.panZoom.scale,
+        offset: this.panZoom.offset,
+      });
+      const newTouchCenterPos = getScreenPoint(worldPos, {
+        scale: newScale,
+        offset: this.panZoom.offset,
+      });
+      const scaleOffset = diffPoints(touchCenterPos, newTouchCenterPos);
+      const offset = addPoints(this.panZoom.offset, scaleOffset);
+      this.updateWrapperPanZoom(newScale, offset);
+      this.updatePanZoomStore!({ ...this.panZoom, scale: newScale });
+      this.pinchZoomPrevDiff = pinchZoomCurrentDiff;
+    }
+  };
 
   handlePanning = (evt: TouchyEvent) => {
     const lastMousePos = this.panPoint.lastMousePos;
@@ -394,15 +436,12 @@ export default class Board extends EventDispatcher {
 
   handleWheel = (e: WheelEvent) => {
     e.preventDefault();
-    const MAX_SCALE = 5;
-    const MIN_SCALE = 0.6;
 
-    const ZOOM_SENSITIVITY = 300;
     if (e.ctrlKey) {
-      const zoom = 1 - e.deltaY / ZOOM_SENSITIVITY;
+      const zoom = 1 - e.deltaY / this.ZOOM_SENSITIVITY;
       const newScale = this.panZoom.scale * zoom;
 
-      if (MIN_SCALE > newScale || newScale > MAX_SCALE) {
+      if (this.MIN_SCALE > newScale || newScale > this.MAX_SCALE) {
         return;
       }
 
@@ -438,6 +477,11 @@ export default class Board extends EventDispatcher {
     );
     this.dragStatus = DragStatus.Drag;
 
+    // if (window.PointerEvent) {
+    //   // Pointer events are supported.
+    //   alert("pointer event!");
+    // }
+
     const point = this.getPointFromTouchyEvent(evt);
 
     if (this.isToolActivated) {
@@ -460,6 +504,12 @@ export default class Board extends EventDispatcher {
         addEvent,
         "mousemove",
         this.handlePanning
+      );
+      touchy(
+        this.presenceCanvasWrapper.getCanvas(),
+        addEvent,
+        "mousemove",
+        this.handlePinchZoom
       );
     }
   }
@@ -500,11 +550,17 @@ export default class Board extends EventDispatcher {
       "mousemove",
       this.handlePanning
     );
+    touchy(
+      this.presenceCanvasWrapper.getCanvas(),
+      removeEvent,
+      "mousemove",
+      this.handlePinchZoom
+    );
     this.dragStatus = DragStatus.Stop;
     this.worker.mouseup((boardMetadata: BoardMetadata) => {
       this.emit("mouseup", boardMetadata);
     });
-
+    this.pinchZoomPrevDiff = undefined;
     this.emit("mouseup");
     this.presenceCanvasWrapper.clear();
   }
@@ -513,6 +569,7 @@ export default class Board extends EventDispatcher {
     this.dragStatus = DragStatus.Stop;
     this.worker.flushTask();
     this.presenceCanvasWrapper.clear();
+    this.pinchZoomPrevDiff = undefined;
     this.emit("mouseout");
   }
 

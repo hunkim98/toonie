@@ -17,19 +17,32 @@ function PressStatusButton() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (buttonRef && buttonRef.current) {
-    }
+    // if (buttonRef && buttonRef.current) {
+    const handleDeactivateTool = () => {
+      dispatch(deactivateTool());
+    };
+    // }
+    // buttonRef.current?.addEventListener("touchstart", function () {
+    //   const handleActivateTool = () => {
+    //     dispatch(activateTool());
+    //     this.removeEventListener("touchstart", handleActivateTool);
+    //   };
+    //   this.addEventListener("touchstart", handleActivateTool);
+    // });
+    // return () => {};
   }, [buttonRef]);
   return (
     <S.Container
       ref={buttonRef}
       draggable="false"
-      onMouseLeave={() => {
+      onMouseLeave={(e) => {
+        e.preventDefault();
         if (!isSpacePressed) {
           dispatch(deactivateTool());
         }
       }}
-      onMouseUp={() => {
+      onMouseUp={(e) => {
+        e.preventDefault();
         if (!isSpacePressed) {
           dispatch(deactivateTool());
         }
@@ -38,11 +51,30 @@ function PressStatusButton() {
         e.preventDefault();
         dispatch(activateTool());
       }}
+      // onPointerDown={(e) => {
+      //   e.preventDefault();
+      //   if (!isSpacePressed) {
+      //     dispatch(deactivateTool());
+      //   }
+      // }}
+      // onPointerUp={(e) => {
+      //   e.preventDefault();
+      //   if (!isSpacePressed) {
+      //     dispatch(deactivateTool());
+      //   }
+      // }}
+      // onTouchCancel={(e) => {
+      //   e.preventDefault();
+      //   if (!isSpacePressed) {
+      //     dispatch(deactivateTool());
+      //   }
+      // }}
       onTouchStart={(e) => {
         e.preventDefault();
         dispatch(activateTool());
       }}
-      onTouchEnd={() => {
+      onTouchEnd={(e) => {
+        e.preventDefault();
         if (!isSpacePressed) {
           dispatch(deactivateTool());
         }

@@ -8,6 +8,11 @@ export const RightContainer = styled.div`
   right: 10px;
   height: 100%;
   z-index: 5;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -o-user-select: none;
 `;
 
 export const LeftContainer = styled.div`
@@ -18,4 +23,9 @@ export const LeftContainer = styled.div`
   left: 10px;
   height: 100%;
   z-index: 5;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -o-user-select: none;
 `;
