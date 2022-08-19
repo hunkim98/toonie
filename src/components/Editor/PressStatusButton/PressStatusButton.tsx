@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
@@ -17,19 +17,7 @@ function PressStatusButton() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useDispatch();
   useEffect(() => {
-    // if (buttonRef && buttonRef.current) {
-    const handleDeactivateTool = () => {
-      dispatch(deactivateTool());
-    };
-    // }
-    // buttonRef.current?.addEventListener("touchstart", function () {
-    //   const handleActivateTool = () => {
-    //     dispatch(activateTool());
-    //     this.removeEventListener("touchstart", handleActivateTool);
-    //   };
-    //   this.addEventListener("touchstart", handleActivateTool);
-    // });
-    // return () => {};
+    return () => {};
   }, [buttonRef]);
   return (
     <S.Container
