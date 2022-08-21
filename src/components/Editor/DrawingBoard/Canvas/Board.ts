@@ -125,16 +125,38 @@ export default class Board extends EventDispatcher {
   initializeImg(imgUrl: string | undefined) {
     if (imgUrl) {
       this.imgUrl = imgUrl;
-      const img = new Image();
-      this.imageElement = img;
-      img.crossOrigin = "Anonymous";
-      img.onload = () => {
-        this.setImageInfo(
-          drawImage(this.documentCanvasWrapper.getContext(), img, this.panZoom)
-        );
-        this.render();
-      };
-      img.src = imgUrl;
+      try {
+        const img = new Image();
+        this.imageElement = img;
+        img.crossOrigin = "Anonymous";
+        img.onload = () => {
+          this.setImageInfo(
+            drawImage(
+              this.documentCanvasWrapper.getContext(),
+              img,
+              this.panZoom
+            )
+          );
+          this.render();
+        };
+        img.src = imgUrl;
+      } catch (err) {
+        //do it again
+        const img = new Image();
+        this.imageElement = img;
+        img.crossOrigin = "Anonymous";
+        img.onload = () => {
+          this.setImageInfo(
+            drawImage(
+              this.documentCanvasWrapper.getContext(),
+              img,
+              this.panZoom
+            )
+          );
+          this.render();
+        };
+        img.src = imgUrl;
+      }
     } else {
       if (imgUrl === undefined) {
         this.imgUrl = undefined;
