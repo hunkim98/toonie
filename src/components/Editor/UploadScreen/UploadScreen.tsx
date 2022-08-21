@@ -27,7 +27,7 @@ const UploadScreen: React.FC<Props> = () => {
       })
       .then((res) => {
         const data = res.data as CloudinaryResponse;
-        const url = data.url;
+        const url = data.secure_url; //secure_url gives us https not http
         dispatch(setImgUrl(url));
         doc?.update((root) => {
           root.imgUrl = url;
