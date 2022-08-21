@@ -89,7 +89,9 @@ export default class Board extends EventDispatcher {
     this.pinchZoomPrevDiff = 0;
   }
 
-  setImageInfo(info: { x: number; y: number; width: number; height: number }) {
+  setImageInfo(
+    info: { x: number; y: number; width: number; height: number } | undefined
+  ) {
     this.imageInfo = info;
   }
 
@@ -125,38 +127,24 @@ export default class Board extends EventDispatcher {
   initializeImg(imgUrl: string | undefined) {
     if (imgUrl) {
       this.imgUrl = imgUrl;
-      try {
-        const img = new Image();
-        this.imageElement = img;
-        img.crossOrigin = "Anonymous";
-        img.onload = () => {
-          this.setImageInfo(
-            drawImage(
-              this.documentCanvasWrapper.getContext(),
-              img,
-              this.panZoom
-            )
-          );
-          this.render();
-        };
-        img.src = imgUrl;
-      } catch (err) {
-        //do it again
-        const img = new Image();
-        this.imageElement = img;
-        img.crossOrigin = "Anonymous";
-        img.onload = () => {
-          this.setImageInfo(
-            drawImage(
-              this.documentCanvasWrapper.getContext(),
-              img,
-              this.panZoom
-            )
-          );
-          this.render();
-        };
-        img.src = imgUrl;
-      }
+      const img = new Image();
+      this.imageElement = img;
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        this.setImageInfo(
+          drawImage(
+            this.documentCanvasWrapper.getContext(),
+            img,
+            this.panZoom,
+            this.imgUrl
+          )
+        );
+        this.render();
+      };
+      img.onerror = (err) => {
+        console.log(err, "image error!");
+      };
+      img.src = imgUrl;
     } else {
       if (imgUrl === undefined) {
         this.imgUrl = undefined;
@@ -668,7 +656,12 @@ export default class Board extends EventDispatcher {
     context.fillRect(0, 0, canvas.width, canvas.height);
     if (this.imageElement) {
       this.setImageInfo(
-        drawImage(wrapper.getContext(), this.imageElement, this.panZoom)
+        drawImage(
+          wrapper.getContext(),
+          this.imageElement,
+          this.panZoom,
+          this.imgUrl
+        )
       );
     }
     for (const shape of shapes) {
@@ -693,7 +686,12 @@ export default class Board extends EventDispatcher {
         offset: { x: 0, y: NavbarHeight },
       };
       if (this.imageElement) {
-        drawImage(imageContext, this.imageElement, customizedPanZoom);
+        drawImage(
+          imageContext,
+          this.imageElement,
+          customizedPanZoom,
+          this.imgUrl
+        );
       }
       const shapes = this.getRoot().shapes;
       for (const shape of shapes) {
