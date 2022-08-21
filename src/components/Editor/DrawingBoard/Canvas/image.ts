@@ -47,6 +47,6 @@ export function drawImage(
       };
       img.src = imgUrl;
     }
-    undefined;
+    return undefined;
   }
 }
