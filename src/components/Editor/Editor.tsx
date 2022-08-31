@@ -10,7 +10,7 @@ import {
 } from "../../store/slices/boardSlices";
 import DrawingBoard from "./DrawingBoard";
 import { PressStatusButton } from "./PressStatusButton";
-import { Sidebars } from "./Sidebars";
+import { Toolbars } from "./Toolbars";
 import * as S from "./styles";
 import { UploadScreen } from "./UploadScreen";
 
@@ -88,11 +88,11 @@ const Editor = () => {
         <UploadScreen />
       ) : (
         <>
-          <Sidebars />
+          <Toolbars />
           <S.BoardContainer ref={divRef}>
             <DrawingBoard width={width} height={height} />
           </S.BoardContainer>
-          <PressStatusButton />
+          {/* <PressStatusButton /> */}
         </>
       )}
     </S.Container>

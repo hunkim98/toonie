@@ -1,18 +1,19 @@
 import React from "react";
+import { Bottom } from "./Bottom";
 import { Left } from "./Left";
 import { Right } from "./Right";
 import * as S from "./styles";
 
-const Sidebars = () => {
+const Toolbars = () => {
   return (
     <>
-      <S.RightContainer
+      {/* <S.RightContainer
         unselectable="on"
         onSelect={() => false}
         onMouseDown={() => false}
       >
         <Right />
-      </S.RightContainer>
+      </S.RightContainer> */}
       <S.LeftContainer
         unselectable="on"
         onSelect={() => false}
@@ -20,8 +21,15 @@ const Sidebars = () => {
       >
         <Left />
       </S.LeftContainer>
+      <S.BottomContainer
+        unselectable="on"
+        onSelect={() => false}
+        onMouseDown={() => false}
+      >
+        <Bottom />
+      </S.BottomContainer>
     </>
   );
 };
 
-export default Sidebars;
+export default Toolbars;

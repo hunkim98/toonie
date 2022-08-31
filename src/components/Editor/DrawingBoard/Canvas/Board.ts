@@ -25,6 +25,7 @@ import { drawImage } from "./image";
 import { drawLine, drawSmoothLine } from "./line";
 import { drawRect } from "./rect";
 import EraserWorker from "./Worker/EraserWorker";
+import PanWorker from "./Worker/PanWorker";
 import PenWorker from "./Worker/PenWorker";
 import RectWorker from "./Worker/RectWorker";
 import Worker, { BoardMetadata } from "./Worker/Worker";
@@ -287,6 +288,9 @@ export default class Board extends EventDispatcher {
   }
 
   createWorker(tool: ToolType) {
+    if (tool === ToolType.Pan) {
+      return new PanWorker(this);
+    }
     if (tool === ToolType.Pen) {
       return new PenWorker(this.updatePresence, this.update, this, {
         color: this.color,
@@ -494,7 +498,7 @@ export default class Board extends EventDispatcher {
 
     const point = this.getPointFromTouchyEvent(evt);
 
-    if (this.isToolActivated) {
+    if (this.worker.type !== ToolType.Pan) {
       this.worker.mousedown(
         point,
         this.panZoom,
@@ -535,7 +539,7 @@ export default class Board extends EventDispatcher {
       return;
     }
 
-    if (this.isToolActivated) {
+    if (this.worker.type !== ToolType.Pan) {
       this.worker.mousemove(
         point,
         this.panZoom,

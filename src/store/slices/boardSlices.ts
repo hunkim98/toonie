@@ -3,6 +3,7 @@ import { NavbarHeight } from "../../components/Navbar/styles";
 import { PanZoom } from "../../types/canvasTypes";
 
 export enum ToolType {
+  Pan = "Pan",
   Pen = "Pen",
   Eraser = "Eraser",
   Rect = "Rect",
@@ -22,7 +23,7 @@ export interface BoardState {
 }
 
 const initialBoardState: BoardState = {
-  toolType: ToolType.Pen,
+  toolType: ToolType.Pan,
   color: "#000000",
   isToolActivated: false,
   isSpacePressed: false,
