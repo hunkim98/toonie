@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store/slices";
 import { ToolType, setTool } from "../../../../store/slices/boardSlices";
@@ -15,6 +15,7 @@ const Bottom = () => {
   const [isMoreToolsOpen, setIsMoreToolsOpen] = useState<boolean>(false);
   const toolType = useSelector((state: RootState) => state.boardState.toolType);
   const dispatch = useDispatch();
+  const wrapperRef = useRef<any>(null);
   useEffect(() => {
     const activatePanEvent = (event: KeyboardEvent) => {
       if (event.code === "Escape") {
@@ -36,17 +37,38 @@ const Bottom = () => {
         dispatch(setTool(ToolType.Eraser));
       }
     };
+    function handleClickOutside(event: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsMoreToolsOpen(false);
+      }
+    }
+
+    window.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("keydown", activatePanEvent);
     window.addEventListener("keydown", activatePenEvent);
     window.addEventListener("keydown", activateRectEvent);
     window.addEventListener("keydown", activateEraserEvent);
     return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("keydown", activatePanEvent);
       window.removeEventListener("keydown", activatePenEvent);
       window.removeEventListener("keydown", activateRectEvent);
       window.removeEventListener("keydown", activateEraserEvent);
     };
-  }, [dispatch]);
+  }, [dispatch, wrapperRef]);
+
+  const onChangeColorClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMoreToolsOpen(false);
+  };
+  const onDownloadClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMoreToolsOpen(false);
+  };
+  const onResetCanvasClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMoreToolsOpen(false);
+  };
   return (
     <>
       <S.PanningButton
@@ -82,13 +104,25 @@ const Bottom = () => {
         <EraserIcon />
       </S.CanvasButton>
       <S.MoreToolsButton
+        ref={wrapperRef}
         isSelected={false}
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault();
           setIsMoreToolsOpen(true);
         }}
       >
         {isMoreToolsOpen && (
-          <S.MoreToolsPopupContainer>hi</S.MoreToolsPopupContainer>
+          <S.MoreToolsPopupContainer>
+            <S.MoreToolOption onClick={onChangeColorClick}>
+              Change color
+            </S.MoreToolOption>
+            <S.MoreToolOption onClick={onDownloadClick}>
+              Download Snapshot
+            </S.MoreToolOption>
+            <S.MoreToolOption color="red" onClick={onResetCanvasClick}>
+              Reset Canvas
+            </S.MoreToolOption>
+          </S.MoreToolsPopupContainer>
         )}
         <MoreToolsIcon />
       </S.MoreToolsButton>
