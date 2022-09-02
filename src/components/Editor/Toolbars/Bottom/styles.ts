@@ -31,6 +31,9 @@ export const MoreToolsButton = styled(CanvasButton)`
   position: relative;
 `;
 
-export const MoreToolsContainer = styled.div`
+export const MoreToolsPopupContainer = styled.div`
+  top: -15px;
+  width: 100px;
+  background-color: white;
   position: absolute;
 `;

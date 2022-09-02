@@ -30,7 +30,7 @@ export const LeftContainer = styled.div`
   -o-user-select: none;
 `;
 
-export const BottomContainer = styled.div`
+export const BottomContainer = styled.div<{ isDrawingActivated: boolean }>`
   pointer-events: none;
   font-size: 2em;
   position: absolute;
@@ -41,10 +41,12 @@ export const BottomContainer = styled.div`
   border-radius: 10px;
   padding: 10px 5px;
   display: flex;
-  background-color: #d9d9d9;
+  background-color: ${({ isDrawingActivated }) =>
+    isDrawingActivated ? "#000000" : "#d9d9d9"};
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
   -o-user-select: none;
+  transition: background-color 0.15s ease;
 `;
