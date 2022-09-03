@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store/slices";
-import { ToolType, setTool } from "../../../../store/slices/boardSlices";
+import {
+  ToolType,
+  setTool,
+  openBrushPopup,
+  setIsDownloadClicked,
+} from "../../../../store/slices/boardSlices";
 import {
   EraserIcon,
   MoreToolsIcon,
@@ -14,6 +19,7 @@ import * as S from "./styles";
 const Bottom = () => {
   const [isMoreToolsOpen, setIsMoreToolsOpen] = useState<boolean>(false);
   const toolType = useSelector((state: RootState) => state.boardState.toolType);
+  const doc = useSelector((state: RootState) => state.docState.doc);
   const dispatch = useDispatch();
   const wrapperRef = useRef<any>(null);
   useEffect(() => {
@@ -59,15 +65,21 @@ const Bottom = () => {
 
   const onChangeColorClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    dispatch(openBrushPopup());
     setIsMoreToolsOpen(false);
   };
   const onDownloadClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsMoreToolsOpen(false);
+    dispatch(setIsDownloadClicked(true));
   };
   const onResetCanvasClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsMoreToolsOpen(false);
+    doc?.update((root) => {
+      root.shapes = [];
+      root.imgUrl = undefined;
+    });
   };
   return (
     <>

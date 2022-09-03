@@ -20,6 +20,7 @@ export interface BoardState {
   strokeWidth: number;
   imgUrl: string | undefined;
   isDownloadClicked: boolean;
+  isBrushPopupOpen: boolean;
 }
 
 const initialBoardState: BoardState = {
@@ -34,6 +35,7 @@ const initialBoardState: BoardState = {
   strokeWidth: StrokeWidthType[0],
   imgUrl: "",
   isDownloadClicked: false,
+  isBrushPopupOpen: false,
 };
 
 const boardSlice = createSlice({
@@ -42,6 +44,12 @@ const boardSlice = createSlice({
   reducers: {
     setTool(state, action: PayloadAction<ToolType>) {
       state.toolType = action.payload;
+    },
+    openBrushPopup(state) {
+      state.isBrushPopupOpen = true;
+    },
+    closeBrushPopup(state) {
+      state.isBrushPopupOpen = false;
     },
     activateTool(state) {
       state.isToolActivated = true;
@@ -80,5 +88,7 @@ export const {
   setImgUrl,
   setPanZoom,
   setIsDownloadClicked,
+  openBrushPopup,
+  closeBrushPopup,
 } = boardSlice.actions;
 export default boardSlice.reducer;

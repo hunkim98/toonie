@@ -5,14 +5,16 @@ interface Props {
   children: React.ReactNode;
   extendDirection: "TOP" | "BOTTOM";
   isVisible: boolean;
-  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  makeVisible: () => void;
+  makeInvisible: () => void;
 }
 
 const Popover = ({
   children,
   extendDirection,
   isVisible,
-  setIsVisible,
+  makeVisible,
+  makeInvisible,
 }: Props) => {
   const wrapperRef = useRef<any>(null);
   useEffect(() => {
@@ -21,7 +23,7 @@ const Popover = ({
      */
     function handleClickOutside(event: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setIsVisible(false);
+        makeInvisible();
         // alert("You clicked outside of me!");
       }
     }
@@ -31,13 +33,13 @@ const Popover = ({
       // Unbind the event listener on clean up
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [wrapperRef, setIsVisible]);
+  }, [wrapperRef, makeInvisible, makeVisible]);
 
   return (
     <S.Container
       isVisible={isVisible}
       onClick={() => {
-        setIsVisible(true);
+        makeVisible();
       }}
       extendDirection={extendDirection}
       ref={wrapperRef}

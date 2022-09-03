@@ -11,17 +11,6 @@ function Left() {
   const dispatch = useDispatch();
   return (
     <>
-      <S.Delete
-        onClick={(e) => {
-          e.preventDefault();
-          doc?.update((root) => {
-            root.shapes = [];
-            root.imgUrl = undefined;
-          });
-        }}
-      >
-        🗑
-      </S.Delete>
       <S.ScaleContainer>
         <S.ZoomIn
           onClick={(e) => {
