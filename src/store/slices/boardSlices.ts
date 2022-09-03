@@ -30,7 +30,7 @@ const initialBoardState: BoardState = {
   isSpacePressed: false,
   panZoom: {
     scale: 1,
-    offset: { x: 0, y: NavbarHeight },
+    offset: { x: 0, y: 0 },
   },
   strokeWidth: StrokeWidthType[0],
   imgUrl: "",

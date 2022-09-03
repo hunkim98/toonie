@@ -417,8 +417,7 @@ export default class Board extends EventDispatcher {
       });
       const scaleOffset = diffPoints(touchCenterPos, newTouchCenterPos);
       const offset = addPoints(this.panZoom.offset, scaleOffset);
-      this.updateWrapperPanZoom(newScale, offset);
-      this.updatePanZoomStore!({ ...this.panZoom, scale: newScale });
+      this.updatePanZoomStore!({ offset, scale: newScale });
       this.pinchZoomPrevDiff = pinchZoomCurrentDiff;
     }
   };
@@ -440,12 +439,10 @@ export default class Board extends EventDispatcher {
   updateWrapperPanZoom(scale: number, offset: Point) {
     this.panZoom.offset = offset;
     this.panZoom.scale = scale;
-    this.presenceCanvasWrapper.setPanZoom({
-      offset,
-    });
-    this.documentCanvasWrapper.setPanZoom({
-      offset,
-    });
+    this.presenceCanvasWrapper.setPanZoom(this.panZoom);
+    this.documentCanvasWrapper.setPanZoom(this.panZoom);
+    console.log(this.panZoom.offset, "hlllloo");
+    this.render();
   }
 
   handleWheel = (e: WheelEvent) => {
@@ -470,14 +467,12 @@ export default class Board extends EventDispatcher {
       });
       const scaleOffset = diffPoints(mousePos, newMousePos);
       const offset = addPoints(this.panZoom.offset, scaleOffset);
-      this.updateWrapperPanZoom(newScale, offset);
-      this.updatePanZoomStore!({ ...this.panZoom, scale: newScale });
+      this.updatePanZoomStore!({ offset, scale: newScale });
     } else {
       const offset = diffPoints(this.panZoom.offset, {
         x: e.deltaX,
         y: e.deltaY,
       });
-      this.updateWrapperPanZoom(this.panZoom.scale, offset);
       this.updatePanZoomStore!({ ...this.panZoom, offset });
     }
   };
@@ -499,8 +494,9 @@ export default class Board extends EventDispatcher {
     const point = this.getPointFromTouchyEvent(evt);
 
     if (this.worker.type !== ToolType.Pan) {
+      console.log("mouse pos on draw", point);
       this.worker.mousedown(
-        point,
+        { x: point.offsetX, y: point.offsetY },
         this.panZoom,
         (boardMetadata: BoardMetadata) => {
           this.emit("mousedown", boardMetadata);
@@ -512,6 +508,7 @@ export default class Board extends EventDispatcher {
         x: point.offsetX,
         y: point.offsetY,
       };
+
       this.panPoint.lastMousePos = mousePos;
       touchy(
         this.presenceCanvasWrapper.getCanvas(),
@@ -541,7 +538,7 @@ export default class Board extends EventDispatcher {
 
     if (this.worker.type !== ToolType.Pan) {
       this.worker.mousemove(
-        point,
+        { x: point.offsetX, y: point.offsetY },
         this.panZoom,
         (boardMetadata: BoardMetadata) => {
           this.emit("mousemove", boardMetadata);
