@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
@@ -8,10 +8,12 @@ import {
 } from "../../../store/slices/boardSlices";
 import { Metadata } from "../../../store/slices/peerSlices";
 import { PanZoom } from "../../../types/canvasTypes";
+import { EditorContext } from "../Context";
 import Board from "./Canvas/Board";
 import { BoardMetadata } from "./Canvas/Worker/Worker";
 
-const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
+const DrawingBoard = () => {
+  const { width, height } = useContext(EditorContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const boardRef = useRef<Board | null>(null);
   const color = useSelector((state: RootState) => state.boardState.color);

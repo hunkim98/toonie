@@ -11,6 +11,7 @@ import {
   getScreenPoint,
   getWorldPoint,
 } from "../../../../utils/canvas";
+import { returnScrollOffsetFromMouseOffset } from "../../../../utils/canvas.zoom";
 import {
   addEvent,
   removeEvent,
@@ -455,18 +456,13 @@ export default class Board extends EventDispatcher {
         return;
       }
 
-      const mousePos = { x: e.offsetX, y: e.offsetY };
-      const worldPos = getWorldPoint(mousePos, {
-        scale: this.panZoom.scale,
-        offset: this.panZoom.offset,
-      });
-      const newMousePos = getScreenPoint(worldPos, {
-        scale: newScale,
-        offset: this.panZoom.offset,
-      });
-      const scaleOffset = diffPoints(mousePos, newMousePos);
-      const offset = addPoints(this.panZoom.offset, scaleOffset);
-      this.updatePanZoomStore!({ offset, scale: newScale });
+      const mouseOffset = { x: e.offsetX, y: e.offsetY };
+      const newOffset = returnScrollOffsetFromMouseOffset(
+        mouseOffset,
+        this.panZoom,
+        newScale
+      );
+      this.updatePanZoomStore!({ offset: newOffset, scale: newScale });
     } else {
       const offset = diffPoints(this.panZoom.offset, {
         x: e.deltaX,

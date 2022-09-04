@@ -12,6 +12,7 @@ import {
   attachDoc,
 } from "../../store/slices/docSlices";
 import { syncPeer } from "../../store/slices/peerSlices";
+import { EditorContextProvider } from "./Context";
 import Editor from "./Editor";
 
 const EditorComponent = ({ docKey }: { docKey: string }) => {
@@ -96,7 +97,11 @@ const EditorComponent = ({ docKey }: { docKey: string }) => {
   if (loading || !client || !doc) {
     return <div>loading</div>;
   }
-  return <Editor />;
+  return (
+    <EditorContextProvider>
+      <Editor />
+    </EditorContextProvider>
+  );
 };
 
 export default EditorComponent;

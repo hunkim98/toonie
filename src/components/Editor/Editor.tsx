@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/slices";
 import { setImgUrl } from "../../store/slices/boardSlices";
@@ -6,10 +6,10 @@ import DrawingBoard from "./DrawingBoard";
 import { Toolbars } from "./Toolbars";
 import * as S from "./styles";
 import { UploadScreen } from "./UploadScreen";
+import { EditorContext } from "./Context";
 
 const Editor = () => {
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
+  const { setWidth, setHeight } = useContext(EditorContext);
   const divRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const doc = useSelector((state: RootState) => state.docState.doc);
@@ -65,7 +65,7 @@ const Editor = () => {
         <>
           <Toolbars />
           <S.BoardContainer ref={divRef}>
-            <DrawingBoard width={width} height={height} />
+            <DrawingBoard />
           </S.BoardContainer>
         </>
       )}
