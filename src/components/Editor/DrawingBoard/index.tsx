@@ -159,7 +159,15 @@ const DrawingBoard = () => {
 
   return (
     <canvas
-      style={{ position: "absolute", zIndex: 0, touchAction: "none" }}
+      style={{
+        position: "absolute",
+        zIndex: 0,
+        touchAction: "none",
+        userSelect: "none",
+        msUserSelect: "none",
+        WebkitUserSelect: "none",
+        WebkitTouchCallout: "none",
+      }}
       ref={canvasRef}
     />
   );

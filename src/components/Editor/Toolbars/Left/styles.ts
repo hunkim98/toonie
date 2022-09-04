@@ -12,6 +12,8 @@ export const ScaleContainer = styled.div`
   flex-direction: column;
   position: relative;
   align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
 `;
 
 const ZoomButton = styled.button`

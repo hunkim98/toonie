@@ -32,7 +32,7 @@ export const MoreToolsButton = styled(CanvasButton)`
 `;
 
 export const MoreToolsPopupContainer = styled.div`
-  width: 180px;
+  width: 200px;
   display: flex;
   flex-direction: column;
   background-color: white;

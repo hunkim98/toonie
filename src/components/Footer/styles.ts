@@ -10,6 +10,11 @@ export const Container = styled(CommonPadding)`
   justify-content: space-between;
   background-color: #f1f1f1;
   height: ${FooterHeight}px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -o-user-select: none;
 `;
 
 export const Copyright = styled.div`
