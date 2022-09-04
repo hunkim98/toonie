@@ -14,11 +14,11 @@ const DocPage = () => {
     return null;
   }
   return (
-    <div className="fillScreen">
+    <>
       <Navbar />
       <Editor docKey={docKey} />
       <Footer />
-    </div>
+    </>
   );
 };
 
