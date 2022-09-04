@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { NavbarHeight } from "../../components/Navbar/styles";
 import { PanZoom } from "../../types/canvasTypes";
 
 export enum ToolType {
+  Pan = "Pan",
   Pen = "Pen",
   Eraser = "Eraser",
   Rect = "Rect",
@@ -13,26 +13,24 @@ export const StrokeWidthType = [3, 5, 10, 20];
 export interface BoardState {
   toolType: ToolType;
   color: string;
-  isToolActivated: boolean;
-  isSpacePressed: boolean;
   panZoom: PanZoom;
   strokeWidth: number;
   imgUrl: string | undefined;
   isDownloadClicked: boolean;
+  isBrushPopupOpen: boolean;
 }
 
 const initialBoardState: BoardState = {
-  toolType: ToolType.Pen,
+  toolType: ToolType.Pan,
   color: "#000000",
-  isToolActivated: false,
-  isSpacePressed: false,
   panZoom: {
     scale: 1,
-    offset: { x: 0, y: NavbarHeight },
+    offset: { x: 0, y: 0 },
   },
   strokeWidth: StrokeWidthType[0],
   imgUrl: "",
   isDownloadClicked: false,
+  isBrushPopupOpen: false,
 };
 
 const boardSlice = createSlice({
@@ -42,17 +40,11 @@ const boardSlice = createSlice({
     setTool(state, action: PayloadAction<ToolType>) {
       state.toolType = action.payload;
     },
-    activateTool(state) {
-      state.isToolActivated = true;
+    openBrushPopup(state) {
+      state.isBrushPopupOpen = true;
     },
-    deactivateTool(state) {
-      state.isToolActivated = false;
-    },
-    activateSpaceKey(state) {
-      state.isSpacePressed = true;
-    },
-    deactivateSpaceKey(state) {
-      state.isSpacePressed = false;
+    closeBrushPopup(state) {
+      state.isBrushPopupOpen = false;
     },
     setPanZoom(state, action: PayloadAction<PanZoom>) {
       state.panZoom = action.payload;
@@ -71,13 +63,11 @@ const boardSlice = createSlice({
 
 export const {
   setTool,
-  activateTool,
-  deactivateTool,
-  activateSpaceKey,
-  deactivateSpaceKey,
   setStrokeWidth,
   setImgUrl,
   setPanZoom,
   setIsDownloadClicked,
+  openBrushPopup,
+  closeBrushPopup,
 } = boardSlice.actions;
 export default boardSlice.reducer;

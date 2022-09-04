@@ -11,6 +11,7 @@ import {
   getScreenPoint,
   getWorldPoint,
 } from "../../../../utils/canvas";
+import { returnScrollOffsetFromMouseOffset } from "../../../../utils/canvas.zoom";
 import {
   addEvent,
   removeEvent,
@@ -25,6 +26,7 @@ import { drawImage } from "./image";
 import { drawLine, drawSmoothLine } from "./line";
 import { drawRect } from "./rect";
 import EraserWorker from "./Worker/EraserWorker";
+import PanWorker from "./Worker/PanWorker";
 import PenWorker from "./Worker/PenWorker";
 import RectWorker from "./Worker/RectWorker";
 import Worker, { BoardMetadata } from "./Worker/Worker";
@@ -287,6 +289,9 @@ export default class Board extends EventDispatcher {
   }
 
   createWorker(tool: ToolType) {
+    if (tool === ToolType.Pan) {
+      return new PanWorker(this);
+    }
     if (tool === ToolType.Pen) {
       return new PenWorker(this.updatePresence, this.update, this, {
         color: this.color,
@@ -413,8 +418,7 @@ export default class Board extends EventDispatcher {
       });
       const scaleOffset = diffPoints(touchCenterPos, newTouchCenterPos);
       const offset = addPoints(this.panZoom.offset, scaleOffset);
-      this.updateWrapperPanZoom(newScale, offset);
-      this.updatePanZoomStore!({ ...this.panZoom, scale: newScale });
+      this.updatePanZoomStore!({ offset, scale: newScale });
       this.pinchZoomPrevDiff = pinchZoomCurrentDiff;
     }
   };
@@ -436,12 +440,9 @@ export default class Board extends EventDispatcher {
   updateWrapperPanZoom(scale: number, offset: Point) {
     this.panZoom.offset = offset;
     this.panZoom.scale = scale;
-    this.presenceCanvasWrapper.setPanZoom({
-      offset,
-    });
-    this.documentCanvasWrapper.setPanZoom({
-      offset,
-    });
+    this.presenceCanvasWrapper.setPanZoom(this.panZoom);
+    this.documentCanvasWrapper.setPanZoom(this.panZoom);
+    this.render();
   }
 
   handleWheel = (e: WheelEvent) => {
@@ -455,25 +456,18 @@ export default class Board extends EventDispatcher {
         return;
       }
 
-      const mousePos = { x: e.offsetX, y: e.offsetY };
-      const worldPos = getWorldPoint(mousePos, {
-        scale: this.panZoom.scale,
-        offset: this.panZoom.offset,
-      });
-      const newMousePos = getScreenPoint(worldPos, {
-        scale: newScale,
-        offset: this.panZoom.offset,
-      });
-      const scaleOffset = diffPoints(mousePos, newMousePos);
-      const offset = addPoints(this.panZoom.offset, scaleOffset);
-      this.updateWrapperPanZoom(newScale, offset);
-      this.updatePanZoomStore!({ ...this.panZoom, scale: newScale });
+      const mouseOffset = { x: e.offsetX, y: e.offsetY };
+      const newOffset = returnScrollOffsetFromMouseOffset(
+        mouseOffset,
+        this.panZoom,
+        newScale
+      );
+      this.updatePanZoomStore!({ offset: newOffset, scale: newScale });
     } else {
       const offset = diffPoints(this.panZoom.offset, {
         x: e.deltaX,
         y: e.deltaY,
       });
-      this.updateWrapperPanZoom(this.panZoom.scale, offset);
       this.updatePanZoomStore!({ ...this.panZoom, offset });
     }
   };
@@ -494,9 +488,9 @@ export default class Board extends EventDispatcher {
 
     const point = this.getPointFromTouchyEvent(evt);
 
-    if (this.isToolActivated) {
+    if (this.worker.type !== ToolType.Pan) {
       this.worker.mousedown(
-        point,
+        { x: point.offsetX, y: point.offsetY },
         this.panZoom,
         (boardMetadata: BoardMetadata) => {
           this.emit("mousedown", boardMetadata);
@@ -508,6 +502,7 @@ export default class Board extends EventDispatcher {
         x: point.offsetX,
         y: point.offsetY,
       };
+
       this.panPoint.lastMousePos = mousePos;
       touchy(
         this.presenceCanvasWrapper.getCanvas(),
@@ -535,9 +530,9 @@ export default class Board extends EventDispatcher {
       return;
     }
 
-    if (this.isToolActivated) {
+    if (this.worker.type !== ToolType.Pan) {
       this.worker.mousemove(
-        point,
+        { x: point.offsetX, y: point.offsetY },
         this.panZoom,
         (boardMetadata: BoardMetadata) => {
           this.emit("mousemove", boardMetadata);

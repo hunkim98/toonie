@@ -10,17 +10,15 @@ import "../App.css";
 const DocPage = () => {
   const params = useParams();
   const docKey = params.docKey;
-
   if (!docKey) {
     return null;
   }
-
   return (
-    <div className="fillScreen">
+    <>
       <Navbar />
       <Editor docKey={docKey} />
       <Footer />
-    </div>
+    </>
   );
 };
 

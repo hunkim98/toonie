@@ -1,4 +1,3 @@
-import { NavbarHeight } from "../components/Navbar/styles";
 import { PanZoom, Point } from "../types/canvasTypes";
 
 export const MAX_SCALE = 5;
@@ -20,17 +19,17 @@ export function getScreenPoint(point: Point, panZoom: PanZoom) {
 
   return {
     x: point.x * scale + offset.x,
-    //you must consider the navbarheight
-    y: point.y * scale + offset.y - NavbarHeight,
+    y: point.y * scale + offset.y,
   };
 }
 
 export function getWorldPoint(point: Point, panZoom: PanZoom) {
+  //world point from e.offsetX, e.offsetY
   const { offset, scale } = panZoom;
 
   return {
     x: (point.x - offset.x) / scale,
-    y: (point.y - offset.y + NavbarHeight) / scale,
+    y: (point.y - offset.y) / scale,
   };
 }
 

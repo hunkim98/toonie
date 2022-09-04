@@ -1,7 +1,7 @@
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import { Box, Root } from "../../../../../store/slices/docSlices";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
-import { scalePoint } from "../../../../../utils/canvas";
+import { getWorldPoint } from "../../../../../utils/canvas";
 import { isInnerBox, isSelectable } from "../../../../../utils/canvas.box";
 import {
   checkLineIntersection,
@@ -34,8 +34,8 @@ class EraserWorker extends Worker {
 
   mousedown(point: Point, panZoom: PanZoom, callback: MouseDownCallback): void {
     this.selectPoint = [
-      scalePoint(point, panZoom.scale),
-      scalePoint(point, panZoom.scale),
+      getWorldPoint(point, panZoom),
+      getWorldPoint(point, panZoom),
     ];
     callback({ eraserPoints: [...this.selectPoint] });
   }
@@ -50,9 +50,9 @@ class EraserWorker extends Worker {
 
       //this should be changed to using metadata
       this.update((root: Root) => {
-        const pointStart = fixEraserPoint(scalePoint(points[0], panZoom.scale));
+        const pointStart = fixEraserPoint(getWorldPoint(points[0], panZoom));
         const pointEnd = fixEraserPoint(
-          scalePoint(points[points.length - 1], panZoom.scale)
+          getWorldPoint(points[points.length - 1], panZoom)
         );
 
         const findAndRemoveShape = (point1: Point, point2: Point) => {

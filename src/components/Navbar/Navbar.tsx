@@ -1,5 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../../store/slices";
+import {
+  closeBrushPopup,
+  openBrushPopup,
+} from "../../store/slices/boardSlices";
 import { Peer } from "../../store/slices/peerSlices";
 import { PopoverContainer } from "../Common/PopoverContainer";
 import { BrushPopover } from "./BrushPopover";
@@ -10,8 +16,10 @@ interface Props {
 }
 
 const Navbar = ({ activePeers, user }: Props) => {
-  const [isBrushPopoverVisible, setIsBrushPopoverVisible] =
-    useState<boolean>(false);
+  const dispatch = useDispatch();
+  const isBrushPopupOpen = useSelector(
+    (state: RootState) => state.boardState.isBrushPopupOpen
+  );
   const navigateTo = useNavigate();
   return (
     <S.Container>
@@ -30,20 +38,23 @@ const Navbar = ({ activePeers, user }: Props) => {
       <S.UserColor
         color={user.metadata.color}
         onClick={() => {
-          setIsBrushPopoverVisible(true);
+          dispatch(openBrushPopup());
         }}
       >
         brush
         <PopoverContainer
-          isVisible={isBrushPopoverVisible}
-          setIsVisible={setIsBrushPopoverVisible}
+          isVisible={isBrushPopupOpen}
+          makeInvisible={() => dispatch(closeBrushPopup())}
+          makeVisible={() => {
+            dispatch(openBrushPopup());
+          }}
           extendDirection="BOTTOM"
         >
           <BrushPopover user={user} />
         </PopoverContainer>
       </S.UserColor>
       <S.PeersControlContainer>
-        <S.ShareButton
+        {/* <S.ShareButton
           onClick={() => {
             const dummy = document.createElement("input"),
               text = window.location.href;
@@ -56,7 +67,7 @@ const Navbar = ({ activePeers, user }: Props) => {
               "The share link has been copied. Please deliver it to your peer!"
             );
           }}
-        ></S.ShareButton>
+        ></S.ShareButton> */}
         <S.PeersContainer>
           {activePeers
             .filter((element, index) => index < 3)

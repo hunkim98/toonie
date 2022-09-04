@@ -5,7 +5,7 @@ import Board from "../Board";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import { adjustRectBox, createRect } from "../rect";
 import { Rect, Root } from "../../../../../store/slices/docSlices";
-import { scalePoint } from "../../../../../utils/canvas";
+import { getWorldPoint } from "../../../../../utils/canvas";
 
 class RectWorker extends Worker {
   type = ToolType.Rect;
@@ -35,10 +35,7 @@ class RectWorker extends Worker {
   }
 
   mousedown(point: Point, panZoom: PanZoom): void {
-    this.previewRect = createRect(
-      scalePoint(point, panZoom.scale),
-      this.options!
-    );
+    this.previewRect = createRect(getWorldPoint(point, panZoom), this.options!);
     // let timeTicket: TimeTicket;
 
     // this.update((root: Root) => {
@@ -53,7 +50,7 @@ class RectWorker extends Worker {
   }
 
   mousemove(point: Point, panZoom: PanZoom, callback: MouseDownCallback) {
-    this.previewRectExtendPoint = scalePoint(point, panZoom.scale);
+    this.previewRectExtendPoint = getWorldPoint(point, panZoom);
     this.previewRect!.box = adjustRectBox(
       this.previewRect!,
       this.previewRectExtendPoint!

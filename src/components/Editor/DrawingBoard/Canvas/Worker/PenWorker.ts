@@ -5,7 +5,7 @@ import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import Board from "../Board";
 import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
 import { compressPoints } from "../../../../../utils/canvas.line";
-import { scalePoint } from "../../../../../utils/canvas";
+import { getWorldPoint } from "../../../../../utils/canvas";
 
 class PenWorker extends Worker {
   type = ToolType.Pen;
@@ -43,17 +43,14 @@ class PenWorker extends Worker {
 
   mousedown(point: Point, panZoom: PanZoom, callback: MouseDownCallback): void {
     this.previewPoints = {
-      points: [
-        scalePoint(point, panZoom.scale),
-        scalePoint(point, panZoom.scale),
-      ],
+      points: [getWorldPoint(point, panZoom), getWorldPoint(point, panZoom)],
       color: this.options!.color,
       strokeWidth: this.options!.strokeWidth,
     };
   }
 
   mousemove(point: Point, panZoom: PanZoom, callback: MouseDownCallback) {
-    this.previewPoints.points.push(scalePoint(point, panZoom.scale));
+    this.previewPoints.points.push(getWorldPoint(point, panZoom));
     callback({ penPoints: { ...this.previewPoints } });
   }
 

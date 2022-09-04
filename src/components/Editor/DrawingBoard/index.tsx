@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
@@ -8,10 +8,12 @@ import {
 } from "../../../store/slices/boardSlices";
 import { Metadata } from "../../../store/slices/peerSlices";
 import { PanZoom } from "../../../types/canvasTypes";
+import { EditorContext } from "../Context";
 import Board from "./Canvas/Board";
 import { BoardMetadata } from "./Canvas/Worker/Worker";
 
-const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
+const DrawingBoard = () => {
+  const { width, height } = useContext(EditorContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const boardRef = useRef<Board | null>(null);
   const color = useSelector((state: RootState) => state.boardState.color);
@@ -23,9 +25,6 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
   const panZoom = useSelector((state: RootState) => state.boardState.panZoom);
   const strokeWidth = useSelector(
     (state: RootState) => state.boardState.strokeWidth
-  );
-  const isToolActivated = useSelector(
-    (state: RootState) => state.boardState.isToolActivated
   );
   const isDownloadClicked = useSelector(
     (state: RootState) => state.boardState.isDownloadClicked
@@ -96,7 +95,6 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
       boardRef.current?.updateMetadata(clientId, {
         board,
       } as Metadata);
-      // console.log("board", board);
       client?.updatePresence("board", board);
     };
 
@@ -145,7 +143,6 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
       return;
     }
     boardRef.current?.updateWrapperPanZoom(panZoom.scale, panZoom.offset);
-    boardRef.current?.drawAll(doc!.getRoot().shapes);
   }, [doc, panZoom]);
 
   useEffect(() => {
@@ -160,17 +157,17 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
     boardRef.current?.setColor(color);
   }, [doc, color]);
 
-  useEffect(() => {
-    if (isToolActivated) {
-      boardRef.current?.activateTools();
-    } else {
-      boardRef.current?.deactivateTools();
-    }
-  }, [doc, isToolActivated]);
-
   return (
     <canvas
-      style={{ position: "absolute", zIndex: 0, touchAction: "none" }}
+      style={{
+        position: "absolute",
+        zIndex: 0,
+        touchAction: "none",
+        userSelect: "none",
+        msUserSelect: "none",
+        WebkitUserSelect: "none",
+        WebkitTouchCallout: "none",
+      }}
       ref={canvasRef}
     />
   );
