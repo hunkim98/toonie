@@ -21,6 +21,8 @@ const ZoomButton = styled.button`
   height: 30px;
   background: none;
   pointer-events: auto;
+  color: black;
+  border: 1px solid black;
 `;
 
 export const ZoomIn = styled(ZoomButton)``;

@@ -1,19 +1,7 @@
 .fillScreen {
   /* min-height: 100vh; */
-  display: flex;
-  flex-direction: column;
-  /* min-height: -webkit-fill-available; */
-  /* height: 100%; */
-  /* width: 100%; */
-  /* position: fixed; */
-  flex: 1;
-}
-
-#root {
-  min-height: 100vh;
-  /* min-height: -webkit-fill-available; */
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
 }
 
 body {
@@ -22,7 +10,7 @@ body {
 }
 
 html {
-  height: -webkit-fill-available;
+  /* height: -webkit-fill-available; */
   margin: 0;
   padding: 0;
 }

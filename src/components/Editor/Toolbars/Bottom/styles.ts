@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import { ThemeColor } from "../../../../styles/common";
+import { device } from "../../../../utils/cssMedia";
 
 export const CanvasButton = styled.div<{ isSelected: boolean }>`
   border: none;
   background: none;
   font-size: 1em;
-  width: 80px;
-  height: 30px;
+  width: 40px;
+  height: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,16 +18,34 @@ export const CanvasButton = styled.div<{ isSelected: boolean }>`
   pointer-events: auto;
   padding: 10px;
   background-color: ${({ isSelected }) => isSelected && ThemeColor};
+  @media ${device.mobileL} {
+    width: 56px;
+    height: 21px;
+  }
+  @media ${device.tablet} {
+    width: 80px;
+    height: 30px;
+  }
 `;
 
 export const PanningButton = styled(CanvasButton)`
-  width: 150px;
+  @media ${device.tablet} {
+    width: 150px;
+  }
 `;
 
 export const MoreToolsButton = styled(CanvasButton)`
   background-color: #f1f1f1;
-  width: 30px;
-  height: 30px;
+  @media ${device.mobileL} {
+    width: 21px;
+    height: 21px;
+  }
+  @media ${device.tablet} {
+    width: 30px;
+    height: 30px;
+  }
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   position: relative;
 `;
