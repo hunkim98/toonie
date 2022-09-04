@@ -81,6 +81,18 @@ const Bottom = () => {
       root.imgUrl = undefined;
     });
   };
+  const onCopyInviteLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const dummy = document.createElement("input"),
+      text = window.location.href;
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+    setIsMoreToolsOpen(false);
+    alert("The share link has been copied. Please send it to your peer!");
+  };
   return (
     <>
       <S.PanningButton
@@ -125,6 +137,9 @@ const Bottom = () => {
       >
         {isMoreToolsOpen && (
           <S.MoreToolsPopupContainer>
+            <S.MoreToolOption onClick={onCopyInviteLinkClick}>
+              ✋ Copy Invite link
+            </S.MoreToolOption>
             <S.MoreToolOption onClick={onChangeColorClick}>
               Change color
             </S.MoreToolOption>

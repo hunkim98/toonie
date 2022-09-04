@@ -55,7 +55,7 @@ const Navbar = ({ activePeers, user }: Props) => {
         </PopoverContainer>
       </S.UserColor>
       <S.PeersControlContainer>
-        <S.ShareButton
+        {/* <S.ShareButton
           onClick={() => {
             const dummy = document.createElement("input"),
               text = window.location.href;
@@ -68,7 +68,7 @@ const Navbar = ({ activePeers, user }: Props) => {
               "The share link has been copied. Please deliver it to your peer!"
             );
           }}
-        ></S.ShareButton>
+        ></S.ShareButton> */}
         <S.PeersContainer>
           {activePeers
             .filter((element, index) => index < 3)

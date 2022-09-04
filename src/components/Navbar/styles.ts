@@ -50,7 +50,7 @@ export const UserColor = styled.div<{ color: string }>`
 `;
 export const PeersControlContainer = styled(SideContainer)`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 `;
 export const ShareButton = styled.button`
@@ -74,8 +74,8 @@ export const ShareButton = styled.button`
   border-radius: 10px;
 `;
 
-const PeersContainerLaptopWidth = 100;
-const PeersContainerMobileWidth = 50;
+const PeersContainerLaptopWidth = 150;
+const PeersContainerMobileWidth = 100;
 
 export const PeersContainer = styled.div`
   position: relative;
