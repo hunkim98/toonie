@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/slices";
 import { setImgUrl } from "../../store/slices/boardSlices";
@@ -56,7 +56,7 @@ const Editor = () => {
     return () => {
       window.removeEventListener("resize", onResize);
     };
-  }, [dispatch]);
+  }, [dispatch, setWidth, setHeight]);
   return (
     <S.Container>
       {imgUrl === undefined ? (

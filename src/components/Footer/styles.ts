@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {
-  CommonPadding,
   CommonSidePaddingMobile,
   CommonSidePaddingLaptop,
 } from "../../styles/common";

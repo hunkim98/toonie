@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { NavbarHeight } from "../../components/Navbar/styles";
 import { PanZoom } from "../../types/canvasTypes";
 
 export enum ToolType {

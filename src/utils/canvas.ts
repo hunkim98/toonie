@@ -1,4 +1,3 @@
-import { NavbarHeight } from "../components/Navbar/styles";
 import { PanZoom, Point } from "../types/canvasTypes";
 
 export const MAX_SCALE = 5;

@@ -5,7 +5,7 @@ import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import Board from "../Board";
 import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
 import { compressPoints } from "../../../../../utils/canvas.line";
-import { getWorldPoint, scalePoint } from "../../../../../utils/canvas";
+import { getWorldPoint } from "../../../../../utils/canvas";
 
 class PenWorker extends Worker {
   type = ToolType.Pen;

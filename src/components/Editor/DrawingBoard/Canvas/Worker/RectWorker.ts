@@ -5,7 +5,7 @@ import Board from "../Board";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import { adjustRectBox, createRect } from "../rect";
 import { Rect, Root } from "../../../../../store/slices/docSlices";
-import { getWorldPoint, scalePoint } from "../../../../../utils/canvas";
+import { getWorldPoint } from "../../../../../utils/canvas";
 
 class RectWorker extends Worker {
   type = ToolType.Rect;
