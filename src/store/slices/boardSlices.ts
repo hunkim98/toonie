@@ -14,8 +14,6 @@ export const StrokeWidthType = [3, 5, 10, 20];
 export interface BoardState {
   toolType: ToolType;
   color: string;
-  isToolActivated: boolean;
-  isSpacePressed: boolean;
   panZoom: PanZoom;
   strokeWidth: number;
   imgUrl: string | undefined;
@@ -26,8 +24,6 @@ export interface BoardState {
 const initialBoardState: BoardState = {
   toolType: ToolType.Pan,
   color: "#000000",
-  isToolActivated: false,
-  isSpacePressed: false,
   panZoom: {
     scale: 1,
     offset: { x: 0, y: 0 },
@@ -51,18 +47,6 @@ const boardSlice = createSlice({
     closeBrushPopup(state) {
       state.isBrushPopupOpen = false;
     },
-    activateTool(state) {
-      state.isToolActivated = true;
-    },
-    deactivateTool(state) {
-      state.isToolActivated = false;
-    },
-    activateSpaceKey(state) {
-      state.isSpacePressed = true;
-    },
-    deactivateSpaceKey(state) {
-      state.isSpacePressed = false;
-    },
     setPanZoom(state, action: PayloadAction<PanZoom>) {
       state.panZoom = action.payload;
     },
@@ -80,10 +64,6 @@ const boardSlice = createSlice({
 
 export const {
   setTool,
-  activateTool,
-  deactivateTool,
-  activateSpaceKey,
-  deactivateSpaceKey,
   setStrokeWidth,
   setImgUrl,
   setPanZoom,

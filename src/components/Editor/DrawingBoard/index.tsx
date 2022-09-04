@@ -24,9 +24,6 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
   const strokeWidth = useSelector(
     (state: RootState) => state.boardState.strokeWidth
   );
-  const isToolActivated = useSelector(
-    (state: RootState) => state.boardState.isToolActivated
-  );
   const isDownloadClicked = useSelector(
     (state: RootState) => state.boardState.isDownloadClicked
   );
@@ -96,7 +93,6 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
       boardRef.current?.updateMetadata(clientId, {
         board,
       } as Metadata);
-      // console.log("board", board);
       client?.updatePresence("board", board);
     };
 
@@ -158,14 +154,6 @@ const DrawingBoard = ({ width, height }: { width: number; height: number }) => {
   useEffect(() => {
     boardRef.current?.setColor(color);
   }, [doc, color]);
-
-  useEffect(() => {
-    if (isToolActivated) {
-      boardRef.current?.activateTools();
-    } else {
-      boardRef.current?.deactivateTools();
-    }
-  }, [doc, isToolActivated]);
 
   return (
     <canvas

@@ -441,7 +441,6 @@ export default class Board extends EventDispatcher {
     this.panZoom.scale = scale;
     this.presenceCanvasWrapper.setPanZoom(this.panZoom);
     this.documentCanvasWrapper.setPanZoom(this.panZoom);
-    console.log(this.panZoom.offset, "hlllloo");
     this.render();
   }
 
@@ -494,7 +493,6 @@ export default class Board extends EventDispatcher {
     const point = this.getPointFromTouchyEvent(evt);
 
     if (this.worker.type !== ToolType.Pan) {
-      console.log("mouse pos on draw", point);
       this.worker.mousedown(
         { x: point.offsetX, y: point.offsetY },
         this.panZoom,

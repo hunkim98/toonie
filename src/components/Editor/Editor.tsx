@@ -1,15 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/slices";
-import {
-  activateSpaceKey,
-  activateTool,
-  deactivateSpaceKey,
-  deactivateTool,
-  setImgUrl,
-} from "../../store/slices/boardSlices";
+import { setImgUrl } from "../../store/slices/boardSlices";
 import DrawingBoard from "./DrawingBoard";
-import { PressStatusButton } from "./PressStatusButton";
 import { Toolbars } from "./Toolbars";
 import * as S from "./styles";
 import { UploadScreen } from "./UploadScreen";
@@ -58,28 +51,10 @@ const Editor = () => {
       setHeight(rect.height);
     };
 
-    const activateToolEvent = (event: KeyboardEvent) => {
-      if (event.code === "Space") {
-        dispatch(activateTool());
-        dispatch(activateSpaceKey());
-      }
-    };
-
-    const deactivateToolEvent = (event: KeyboardEvent) => {
-      if (event.code === "Space") {
-        dispatch(deactivateTool());
-        dispatch(deactivateSpaceKey());
-      }
-    };
-
     onResize();
     window.addEventListener("resize", onResize);
-    window.addEventListener("keydown", activateToolEvent);
-    window.addEventListener("keyup", deactivateToolEvent);
     return () => {
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("keydown", activateToolEvent);
-      window.removeEventListener("keyup", deactivateToolEvent);
     };
   }, [dispatch]);
   return (
@@ -92,7 +67,6 @@ const Editor = () => {
           <S.BoardContainer ref={divRef}>
             <DrawingBoard width={width} height={height} />
           </S.BoardContainer>
-          {/* <PressStatusButton /> */}
         </>
       )}
     </S.Container>
