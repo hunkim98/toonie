@@ -5,7 +5,9 @@ import { NavbarHeight } from "../../Navbar/styles";
 
 export const Container = styled.section`
   display: flex;
-  height: calc(100vh - ${FooterHeight}px - ${NavbarHeight}px);
+  position: absolute;
+  width: 100%;
+  height: calc(100% - ${FooterHeight}px - ${NavbarHeight}px);
   flex-direction: column;
 `;
 
@@ -45,6 +47,7 @@ const Button = styled.button`
 export const Upload = styled(Button)`
   background-color: ${ThemeColor};
   border-radius: 10px;
+  color: black;
 `;
 
 export const StartAsBlank = styled(Button)`
