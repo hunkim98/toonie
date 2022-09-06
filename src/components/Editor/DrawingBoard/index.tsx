@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
@@ -62,7 +62,14 @@ const DrawingBoard = () => {
     const unsubscribe = doc.subscribe((event) => {
       if (event.type === "remote-change") {
         boardRef.current?.drawAll(doc.getRoot().shapes);
+        const imgUrl = doc.getRoot().imgUrl;
+        syncDocImage(imgUrl);
+      } else if (event.type === "local-change") {
+        boardRef.current?.drawAll(doc.getRoot().shapes);
+        const imgUrl = doc.getRoot().imgUrl;
+        syncDocImage(imgUrl);
       }
+      console.log(doc.getRoot().imgUrl, "this is img!");
     });
     return () => {
       unsubscribe();
@@ -74,6 +81,10 @@ const DrawingBoard = () => {
       return () => {};
     }
     //this is for tracking remote change (presence-change)
+
+    const docImgUrl = doc!.getRoot().imgUrl;
+    syncDocImage(docImgUrl);
+
     const unsubscribe = client.subscribe((event) => {
       if (event.type === "peers-changed") {
         const documentKey = doc.getKey();
@@ -116,6 +127,19 @@ const DrawingBoard = () => {
     };
   }, [doc, client, dispatch]);
 
+  const syncDocImage = useCallback((docImgUrl: string | undefined | null) => {
+    if (docImgUrl) {
+      boardRef.current?.initializeImg(docImgUrl);
+      dispatch(setImgUrl(docImgUrl));
+    } else {
+      if (docImgUrl !== "") {
+        dispatch(setImgUrl(undefined));
+      } else {
+        dispatch(setImgUrl(""));
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (!canvasRef.current) {
       return;
@@ -123,18 +147,6 @@ const DrawingBoard = () => {
     boardRef.current?.setWidth(width);
     boardRef.current?.setHeight(height);
     //this has to do with drawing what is in doc
-
-    const docImgUrl = doc!.getRoot().imgUrl;
-    if (docImgUrl) {
-      boardRef.current?.initializeImg(docImgUrl);
-      dispatch(setImgUrl(docImgUrl));
-    } else {
-      if (docImgUrl === undefined) {
-        dispatch(setImgUrl(undefined));
-      } else {
-        dispatch(setImgUrl(""));
-      }
-    }
     boardRef.current?.drawAll(doc!.getRoot().shapes);
   }, [doc, width, height, dispatch]);
 
