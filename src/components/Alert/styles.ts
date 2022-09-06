@@ -11,11 +11,14 @@ export const AlertBackground = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
+  /* padding: 0 20px; */
+  z-index: 5;
 `;
 
 export const AlertContainer = styled.div`
   background-color: white;
+  margin: 15px;
+  border-radius: 15px;
   padding: 15px;
   display: flex;
   flex-direction: column;
@@ -25,12 +28,15 @@ export const AlertContainer = styled.div`
 `;
 
 export const AlertMessage = styled.div`
+  width: 80%;
   align-self: center;
   padding-top: 10px;
   padding-bottom: 20px;
-  font-size: 1.2em;
+  font-size: 1.5em;
   word-break: keep-all;
-  line-height: 1.3em;
+  line-height: 1.4em;
+  text-align: center;
+  font-weight: bold;
 `;
 
 export const AlertButtonsContainer = styled.div`
@@ -53,4 +59,5 @@ export const AlertButton = styled.button`
   padding: 15px 0;
   font-size: 1em;
   flex: 1 0;
+  font-weight: bold;
 `;

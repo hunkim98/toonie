@@ -1,3 +1,4 @@
+import useAlert from "components/Alert/useAlert";
 import { useCallback, useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
@@ -13,6 +14,7 @@ import Board from "./Canvas/Board";
 import { BoardMetadata } from "./Canvas/Worker/Worker";
 
 const DrawingBoard = () => {
+  const alert = useAlert();
   const { width, height } = useContext(EditorContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const boardRef = useRef<Board | null>(null);
@@ -131,6 +133,7 @@ const DrawingBoard = () => {
     if (docImgUrl) {
       boardRef.current?.initializeImg(docImgUrl);
       dispatch(setImgUrl(docImgUrl));
+      alert.close();
     } else {
       if (docImgUrl !== "") {
         dispatch(setImgUrl(undefined));
