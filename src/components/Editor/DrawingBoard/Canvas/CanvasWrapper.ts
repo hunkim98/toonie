@@ -1,4 +1,4 @@
-import { PanZoom } from "../../../../types/canvasTypes";
+import { PanZoom } from "types/canvasTypes";
 
 export default class CanvasWrapper {
   private canvas: HTMLCanvasElement;
