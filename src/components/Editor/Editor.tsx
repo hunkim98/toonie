@@ -1,22 +1,43 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/slices";
-import { setImgUrl } from "../../store/slices/boardSlices";
 import DrawingBoard from "./DrawingBoard";
 import { Toolbars } from "./Toolbars";
 import * as S from "./styles";
-import { UploadScreen } from "./UploadScreen";
 import { EditorContext } from "./Context";
 import useAlert from "components/Alert/useAlert";
 import { ThemeColor } from "styles/common";
+import React from "react";
+import { AlertType } from "components/Alert/AlertContext";
 
 const Editor = () => {
   const alert = useAlert();
-  const { setWidth, setHeight } = useContext(EditorContext);
+  const { setWidth, setHeight, uploadImage } = useContext(EditorContext);
   const divRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const doc = useSelector((state: RootState) => state.docState.doc);
-  const imgUrl = useSelector((state: RootState) => state.boardState.imgUrl);
+  const hiddenFileInput = useRef<HTMLInputElement>(null);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileUploaded = event.target.files![0];
+    alert.open({
+      message: "The image is being uploaded...",
+      type: AlertType.LOADING,
+    });
+    uploadImage(fileUploaded)
+      .then(() => {
+        alert.close();
+      })
+      .catch(() => {
+        alert.close();
+      });
+  };
+
+  const handleClick = () => {
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.click();
+    }
+  };
 
   useEffect(() => {
     if (!doc) {
@@ -26,11 +47,11 @@ const Editor = () => {
     if (!imgOriginal) {
       alert.open({
         message:
-          "The document does not seem to have an image! Would you like to upload an image?",
+          "This document does not seem to have an image to review on! Would you like to upload an image?",
         buttons: [
           {
             label: "Upload Image",
-            onClick: () => {},
+            onClick: handleClick,
             style: { backgroundColor: ThemeColor },
           },
           {
@@ -40,6 +61,8 @@ const Editor = () => {
             },
           },
         ],
+        description:
+          "Toonie is a collaborative space for reviewing images together",
       });
     }
   }, [doc]);
@@ -65,6 +88,14 @@ const Editor = () => {
       {/* {imgUrl === undefined ? (
         <UploadScreen />
       ) : ( */}
+
+      <input
+        type="file"
+        accept="image/*"
+        ref={hiddenFileInput}
+        onChange={handleChange}
+        style={{ display: "none" }}
+      ></input>
       <Toolbars />
       <S.BoardContainer ref={divRef}>
         <DrawingBoard />

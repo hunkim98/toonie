@@ -1,63 +1,22 @@
+import {
+  ModalBackground,
+  ModalButton,
+  ModalButtonsContainer,
+  ModalContainer,
+  ModalDescription,
+  ModalMessage,
+} from "components/Modal/styles";
 import styled from "styled-components";
 import { device } from "../../utils/cssMedia";
 
-export const AlertBackground = styled.div`
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* padding: 0 20px; */
-  z-index: 5;
-`;
+export const AlertBackground = styled(ModalBackground)``;
 
-export const AlertContainer = styled.div`
-  background-color: white;
-  margin: 15px;
-  border-radius: 15px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 600px;
-  align-items: center;
-`;
+export const AlertContainer = styled(ModalContainer)``;
 
-export const AlertMessage = styled.div`
-  width: 80%;
-  align-self: center;
-  padding-top: 10px;
-  padding-bottom: 20px;
-  font-size: 1.5em;
-  word-break: keep-all;
-  line-height: 1.4em;
-  text-align: center;
-  font-weight: bold;
-`;
+export const AlertMessage = styled(ModalMessage)``;
 
-export const AlertButtonsContainer = styled.div`
-  display: flex;
-  padding: 20px 0;
-  width: 100%;
-  max-width: 460px;
-  flex-direction: column;
-  @media ${device.laptop} {
-    flex-direction: row;
-  }
-`;
+export const AlertButtonsContainer = styled(ModalButtonsContainer)``;
 
-export const AlertButton = styled.button`
-  cursor: pointer;
-  color: black;
-  background: none;
-  border: none;
-  margin-bottom: 10px;
-  padding: 15px 0;
-  font-size: 1em;
-  flex: 1 0;
-  font-weight: bold;
-`;
+export const AlertButton = styled(ModalButton)``;
+
+export const AlertDescription = styled(ModalDescription)``;

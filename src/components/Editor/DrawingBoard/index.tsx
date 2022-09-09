@@ -71,7 +71,6 @@ const DrawingBoard = () => {
         const imgUrl = doc.getRoot().imgUrl;
         syncDocImage(imgUrl);
       }
-      console.log(doc.getRoot().imgUrl, "this is img!");
     });
     return () => {
       unsubscribe();

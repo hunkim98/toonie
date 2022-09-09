@@ -9,6 +9,10 @@ import { createPortal } from "react-dom";
 import { IoCloseOutline } from "react-icons/io5";
 import * as S from "./styles";
 
+export enum AlertType {
+  NOTIFICATION = "NOTIFICATION",
+  LOADING = "LOADING",
+}
 export interface AlertButtonProps {
   label: string;
   onClick: Function;
@@ -17,7 +21,9 @@ export interface AlertButtonProps {
 
 export interface AlertProps {
   message: string;
+  description?: string;
   buttons?: AlertButtonProps[];
+  type?: AlertType;
 }
 
 interface AlertContextProps {
@@ -33,18 +39,14 @@ interface Props {
 
 const AlertContextProvider = ({ children }: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [modal, setModal] = useState<{
-    message: string;
-    buttons?: AlertButtonProps[];
-  }>();
-  const open = ({
-    message,
-    buttons,
-  }: {
-    message: string;
-    buttons?: AlertButtonProps[];
-  }) => {
-    setModal({ message, buttons });
+  const [modal, setModal] = useState<AlertProps>();
+  const open = ({ message, buttons, description, type }: AlertProps) => {
+    setModal({
+      message,
+      buttons,
+      description,
+      type: !type ? AlertType.NOTIFICATION : type,
+    });
   };
 
   const close = () => {
@@ -87,34 +89,61 @@ const AlertContextProvider = ({ children }: Props) => {
               />
 
               <S.AlertMessage>{modal.message}</S.AlertMessage>
-              <S.AlertButtonsContainer>
-                {modal.buttons ? (
-                  modal.buttons.map((element) => {
-                    return (
-                      <S.AlertButton
-                        key={element.label}
-                        onClick={() => element.onClick()}
-                        style={
-                          element.style
-                            ? element.style
-                            : { backgroundColor: "#DCDCDC" }
-                        }
-                      >
-                        {element.label}
-                      </S.AlertButton>
-                    );
-                  })
-                ) : (
-                  <S.AlertButton
-                    onClick={() => {
-                      setIsOpen(false);
-                    }}
-                    style={{ backgroundColor: "#DCDCDC" }}
-                  >
-                    Yes
-                  </S.AlertButton>
-                )}
-              </S.AlertButtonsContainer>
+              {modal.type === AlertType.NOTIFICATION ? (
+                <S.AlertButtonsContainer>
+                  {modal.buttons ? (
+                    modal.buttons.map((element) => {
+                      return (
+                        <S.AlertButton
+                          key={element.label}
+                          onClick={() => element.onClick()}
+                          style={
+                            element.style
+                              ? element.style
+                              : { backgroundColor: "#DCDCDC" }
+                          }
+                        >
+                          {element.label}
+                        </S.AlertButton>
+                      );
+                    })
+                  ) : (
+                    <S.AlertButton
+                      onClick={() => {
+                        setIsOpen(false);
+                      }}
+                      style={{ backgroundColor: "#DCDCDC" }}
+                    >
+                      Yes
+                    </S.AlertButton>
+                  )}
+                </S.AlertButtonsContainer>
+              ) : (
+                <div
+                  style={{
+                    alignSelf: "center",
+                    paddingBottom: 20,
+                  }}
+                >
+                  <div className="lds-spinner">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+              )}
+              {modal.type === AlertType.NOTIFICATION && (
+                <S.AlertDescription>{modal.description}</S.AlertDescription>
+              )}
             </S.AlertContainer>
           </S.AlertBackground>,
           rootBody
