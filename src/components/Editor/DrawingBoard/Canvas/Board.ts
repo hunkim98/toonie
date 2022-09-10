@@ -678,7 +678,7 @@ export default class Board extends EventDispatcher {
       const imageContext = imageCanvas.getContext("2d")!;
       const customizedPanZoom = {
         scale: this.panZoom.scale,
-        offset: { x: 0, y: NavbarHeight },
+        offset: { x: 0, y: 0 },
       };
       if (this.imageElement) {
         drawImage(
