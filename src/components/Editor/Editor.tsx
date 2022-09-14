@@ -43,8 +43,8 @@ const Editor = () => {
     if (!doc) {
       return () => {};
     }
-    const imgOriginal = doc.getRoot().imgUrl;
-    if (!imgOriginal) {
+    const images = doc.getRoot().images;
+    if (!images || images.length === 0) {
       alert.open({
         message:
           "This document does not seem to have an image to review on! Would you like to upload an image?",

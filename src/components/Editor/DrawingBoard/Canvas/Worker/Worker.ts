@@ -1,12 +1,7 @@
 import { TimeTicket } from "yorkie-js-sdk";
 import { ToolType } from "../../../../../store/slices/boardSlices";
-import {
-  Root,
-  Shape,
-  Point,
-  Rect,
-} from "../../../../../store/slices/docSlices";
-import { PanZoom } from "../../../../../types/canvasTypes";
+import { Root, Shape, Rect } from "../../../../../store/slices/docSlices";
+import { PanZoom, Point } from "../../../../../types/canvasTypes";
 
 export type Options = { color: string; strokeWidth: number };
 

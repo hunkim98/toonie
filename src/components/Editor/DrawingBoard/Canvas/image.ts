@@ -1,5 +1,8 @@
-import { PanZoom } from "../../../../types/canvasTypes";
-import { getScreenPoint } from "../../../../utils/canvas";
+import { ImageElement } from "store/slices/docSlices";
+import { PanZoom, Point } from "types/canvasTypes";
+import { getScreenPoint } from "utils/canvas";
+
+export const maxImageSideLength = 1000;
 
 export function drawImage(
   context: CanvasRenderingContext2D,
@@ -48,5 +51,37 @@ export function drawImage(
       img.src = imgUrl;
     }
     return undefined;
+  }
+}
+
+export function drawImageElement(
+  context: CanvasRenderingContext2D,
+  HTMLImageElement: HTMLImageElement,
+  panZoom: PanZoom,
+  position: Point
+) {
+  if (HTMLImageElement.complete) {
+    const screenPos = getScreenPoint(position, panZoom);
+    let imageWidth = HTMLImageElement.naturalWidth;
+    let imageHeight = HTMLImageElement.naturalHeight;
+    const isWidthLonger = imageWidth > imageHeight;
+    if (isWidthLonger) {
+      if (imageWidth > maxImageSideLength) {
+        imageHeight = (maxImageSideLength * imageHeight) / imageWidth;
+        imageWidth = maxImageSideLength;
+      }
+    } else {
+      if (imageHeight > maxImageSideLength) {
+        imageWidth = (maxImageSideLength * imageWidth) / imageHeight;
+        imageHeight = maxImageSideLength;
+      }
+    }
+    context.drawImage(
+      HTMLImageElement,
+      screenPos.x,
+      screenPos.y,
+      imageWidth * panZoom.scale,
+      imageHeight * panZoom.scale
+    );
   }
 }

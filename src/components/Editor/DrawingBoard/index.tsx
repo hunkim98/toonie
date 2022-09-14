@@ -63,13 +63,27 @@ const DrawingBoard = () => {
     }
     const unsubscribe = doc.subscribe((event) => {
       if (event.type === "remote-change") {
+        for (const changeInfo of event.value) {
+          for (const path of changeInfo.paths) {
+            if (path.startsWith(`$.images`)) {
+              boardRef.current?.setImages(doc.getRoot().images);
+            }
+          }
+        }
         boardRef.current?.drawAll(doc.getRoot().shapes);
-        const imgUrl = doc.getRoot().imgUrl;
-        syncDocImage(imgUrl);
+        // const imgUrl = doc.getRoot().imgUrl;
+        // syncDocImage(imgUrl);
       } else if (event.type === "local-change") {
+        for (const changeInfo of event.value) {
+          for (const path of changeInfo.paths) {
+            if (path.startsWith(`$.images`)) {
+              boardRef.current?.setImages(doc.getRoot().images);
+            }
+          }
+        }
         boardRef.current?.drawAll(doc.getRoot().shapes);
-        const imgUrl = doc.getRoot().imgUrl;
-        syncDocImage(imgUrl);
+        // const imgUrl = doc.getRoot().imgUrl;
+        // syncDocImage(imgUrl);
       }
     });
     return () => {
@@ -83,8 +97,8 @@ const DrawingBoard = () => {
     }
     //this is for tracking remote change (presence-change)
 
-    const docImgUrl = doc!.getRoot().imgUrl;
-    syncDocImage(docImgUrl);
+    // const docImgUrl = doc!.getRoot().imgUrl;
+    // syncDocImage(docImgUrl);
 
     const unsubscribe = client.subscribe((event) => {
       if (event.type === "peers-changed") {
@@ -128,19 +142,19 @@ const DrawingBoard = () => {
     };
   }, [doc, client, dispatch]);
 
-  const syncDocImage = useCallback((docImgUrl: string | undefined | null) => {
-    if (docImgUrl) {
-      boardRef.current?.initializeImg(docImgUrl);
-      dispatch(setImgUrl(docImgUrl));
-      alert.close();
-    } else {
-      if (docImgUrl !== "") {
-        dispatch(setImgUrl(undefined));
-      } else {
-        dispatch(setImgUrl(""));
-      }
-    }
-  }, []);
+  // const syncDocImage = useCallback((docImgUrl: string | undefined | null) => {
+  //   if (docImgUrl) {
+  //     boardRef.current?.initializeImg(docImgUrl);
+  //     dispatch(setImgUrl(docImgUrl));
+  //     alert.close();
+  //   } else {
+  //     if (docImgUrl !== "") {
+  //       dispatch(setImgUrl(undefined));
+  //     } else {
+  //       dispatch(setImgUrl(""));
+  //     }
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (!canvasRef.current) {

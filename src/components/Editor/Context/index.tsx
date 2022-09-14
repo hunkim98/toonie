@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { createContext, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/slices";
+import { ImageElement, Root } from "store/slices/docSlices";
 import { CloudinaryResponse } from "utils/cloudinary.dto";
 
 interface Props {
@@ -43,7 +44,12 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
           const data = res.data as CloudinaryResponse;
           const url = data.secure_url; //secure_url gives us https not http
           doc?.update((root) => {
-            root.imgUrl = url;
+            const imagesCount = root.images.length;
+            root.images.push({
+              url,
+              //vertical aligning
+              position: { x: 0, y: imagesCount * 1000 },
+            });
           });
         });
     },
