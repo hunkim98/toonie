@@ -163,6 +163,7 @@ const DrawingBoard = () => {
     boardRef.current?.setWidth(width);
     boardRef.current?.setHeight(height);
     //this has to do with drawing what is in doc
+    boardRef.current?.setImages(doc!.getRoot().images);
     boardRef.current?.drawAll(doc!.getRoot().shapes);
   }, [doc, width, height, dispatch]);
 

@@ -108,6 +108,7 @@ export default class Board extends EventDispatcher {
           docImage.position
         );
         this.images.push({ ...docImage, HTMLImageElement: imageObject });
+        this.render();
       };
       // imageObject.onerror = () => {
       //   imageObject = new Image();

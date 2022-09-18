@@ -10,6 +10,8 @@ import { ThemeColor } from "styles/common";
 import React from "react";
 import { AlertType } from "components/Alert/AlertContext";
 
+const MAXIMUM_FILE_UPLOADS = 5;
+
 const Editor = () => {
   const alert = useAlert();
   const { setWidth, setHeight, uploadImage } = useContext(EditorContext);
@@ -20,22 +22,26 @@ const Editor = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const filesArray = event.target.files!;
-    alert.open({
-      message: "The image is being uploaded...",
-      type: AlertType.LOADING,
-    });
-    Promise.all(
-      Array.from(filesArray).map((file) => {
-        return uploadImage(file);
-      })
-    )
-      .then(() => {
-        alert.close();
-      })
-      .catch((err) => {
-        alert.close();
-        console.log(err);
+    if (filesArray.length < MAXIMUM_FILE_UPLOADS) {
+      alert.open({
+        message: "The image is being uploaded...",
+        type: AlertType.LOADING,
       });
+      Promise.all(
+        Array.from(filesArray).map((file) => {
+          return uploadImage(file);
+        })
+      )
+        .then(() => {
+          alert.close();
+        })
+        .catch((err) => {
+          alert.close();
+          console.log(err);
+        });
+    } else {
+      alert.open({ message: "You cannot upload more than 5 files!" });
+    }
   };
 
   const handleClick = () => {
