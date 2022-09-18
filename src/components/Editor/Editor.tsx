@@ -19,17 +19,22 @@ const Editor = () => {
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileUploaded = event.target.files![0];
+    const filesArray = event.target.files!;
     alert.open({
       message: "The image is being uploaded...",
       type: AlertType.LOADING,
     });
-    uploadImage(fileUploaded)
+    Promise.all(
+      Array.from(filesArray).map((file) => {
+        return uploadImage(file);
+      })
+    )
       .then(() => {
         alert.close();
       })
-      .catch(() => {
+      .catch((err) => {
         alert.close();
+        console.log(err);
       });
   };
 
@@ -91,6 +96,7 @@ const Editor = () => {
 
       <input
         type="file"
+        multiple
         accept="image/*"
         ref={hiddenFileInput}
         onChange={handleChange}
