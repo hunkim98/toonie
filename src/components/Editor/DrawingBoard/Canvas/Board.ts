@@ -94,7 +94,7 @@ export default class Board extends EventDispatcher {
 
   setImages(docImages: ImageElement[]) {
     //initialize the array
-    this.HTMLImageElements = [];
+    this.images = [];
     //add image to the elements
     for (const docImage of docImages) {
       let imageObject = new Image();
@@ -108,7 +108,7 @@ export default class Board extends EventDispatcher {
           docImage.position
         );
         this.images.push({ ...docImage, HTMLImageElement: imageObject });
-        this.render();
+        this.drawShapes();
       };
       // imageObject.onerror = () => {
       //   imageObject = new Image();
@@ -163,7 +163,7 @@ export default class Board extends EventDispatcher {
             this.imgUrl
           )
         );
-        this.render();
+        this.drawShapes();
       };
       img.onerror = (err) => {
         console.log(err, "image error!");
@@ -464,7 +464,7 @@ export default class Board extends EventDispatcher {
     this.panZoom.scale = scale;
     this.presenceCanvasWrapper.setPanZoom(this.panZoom);
     this.documentCanvasWrapper.setPanZoom(this.panZoom);
-    this.render();
+    this.drawShapes();
   }
 
   handleWheel = (e: WheelEvent) => {
@@ -656,7 +656,7 @@ export default class Board extends EventDispatcher {
     return false;
   }
 
-  render() {
+  drawShapes() {
     this.drawAll(this.getRoot().shapes);
   }
 
@@ -679,16 +679,16 @@ export default class Board extends EventDispatcher {
         image.position
       );
     }
-    if (this.imageElement) {
-      this.setImageInfo(
-        drawImage(
-          wrapper.getContext(),
-          this.imageElement,
-          this.panZoom,
-          this.imgUrl
-        )
-      );
-    }
+    // if (this.imageElement) {
+    //   this.setImageInfo(
+    //     drawImage(
+    //       wrapper.getContext(),
+    //       this.imageElement,
+    //       this.panZoom,
+    //       this.imgUrl
+    //     )
+    //   );
+    // }
 
     for (const shape of shapes) {
       if (shape.type === "line") {

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ToolButton } from "../../../../styles/common";
+import { ThemeColor, ToolButton } from "../../../../styles/common";
 
 export const Delete = styled(ToolButton)`
   background-color: black;
@@ -44,7 +44,19 @@ export const ImagesButton = styled.div`
   border-radius: 50%;
   background-color: #d9d9d9;
   pointer-events: auto;
-  cursor: pointer;
+`;
+
+export const ImagePlusButton = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: white;
 `;
 
 export const ImagesLayerPopup = styled.div`

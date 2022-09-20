@@ -78,7 +78,7 @@ const Bottom = () => {
     setIsMoreToolsOpen(false);
     doc?.update((root) => {
       root.shapes = [];
-      root.imgUrl = undefined;
+      root.images = [];
     });
   };
   const onCopyInviteLinkClick = (e: React.MouseEvent) => {
@@ -143,9 +143,9 @@ const Bottom = () => {
             <S.MoreToolOption onClick={onChangeColorClick}>
               Change color
             </S.MoreToolOption>
-            <S.MoreToolOption onClick={onDownloadClick}>
+            {/* <S.MoreToolOption onClick={onDownloadClick}>
               Download Snapshot
-            </S.MoreToolOption>
+            </S.MoreToolOption> */}
             <S.MoreToolOption color="red" onClick={onResetCanvasClick}>
               Reset Canvas
             </S.MoreToolOption>

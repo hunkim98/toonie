@@ -46,6 +46,7 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
           doc?.update((root) => {
             const imagesCount = root.images.length;
             root.images.push({
+              name: file.name,
               url,
               //vertical aligning
               position: { x: 0, y: imagesCount * 1000 },

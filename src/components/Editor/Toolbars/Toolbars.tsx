@@ -10,7 +10,6 @@ const Toolbars = () => {
   const isDrawingActivated = useSelector(
     (state: RootState) => state.boardState.toolType !== ToolType.Pan
   );
-  console.log("hihi");
 
   return (
     <>
