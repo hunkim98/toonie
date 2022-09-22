@@ -1,4 +1,4 @@
-import { ImageElement, Images, Shape } from "store/slices/docSlices";
+import { ImageElement, Shape } from "store/slices/docSlices";
 import {
   StrokeWidthType,
   ToolType,
@@ -19,7 +19,6 @@ import {
   TouchyEvent,
 } from "../../../../utils/dom";
 import EventDispatcher from "../../../../utils/eventDispatcher";
-import { NavbarHeight } from "../../../Navbar/styles";
 import CanvasWrapper from "./CanvasWrapper";
 import { drawEraser } from "./eraser";
 import { drawImage, drawImageElement } from "./image";

@@ -1,9 +1,7 @@
-import useAlert from "components/Alert/useAlert";
-import { useCallback, useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
-  setImgUrl,
   setIsDownloadClicked,
   setPanZoom,
 } from "../../../store/slices/boardSlices";
@@ -14,7 +12,6 @@ import Board from "./Canvas/Board";
 import { BoardMetadata } from "./Canvas/Worker/Worker";
 
 const DrawingBoard = () => {
-  const alert = useAlert();
   const { width, height } = useContext(EditorContext);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const boardRef = useRef<Board | null>(null);

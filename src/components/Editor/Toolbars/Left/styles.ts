@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ThemeColor, ToolButton } from "../../../../styles/common";
+import { ToolButton } from "../../../../styles/common";
 
 export const Delete = styled(ToolButton)`
   background-color: black;

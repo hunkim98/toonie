@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/slices";
 import DrawingBoard from "./DrawingBoard";
@@ -10,11 +10,10 @@ import { ThemeColor } from "styles/common";
 import React from "react";
 import { AlertType } from "components/Alert/AlertContext";
 
-const MAXIMUM_FILE_UPLOADS = 5;
-
 const Editor = () => {
   const alert = useAlert();
-  const { setWidth, setHeight, uploadImage } = useContext(EditorContext);
+  const { setWidth, setHeight, uploadImage, MAXIMUM_FILE_UPLOADS } =
+    useContext(EditorContext);
   const divRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const doc = useSelector((state: RootState) => state.docState.doc);
@@ -24,7 +23,7 @@ const Editor = () => {
     const filesArray = event.target.files!;
     if (filesArray.length < MAXIMUM_FILE_UPLOADS) {
       alert.open({
-        message: "The image is being uploaded...",
+        message: "The images is being uploaded...",
         type: AlertType.LOADING,
       });
       Promise.all(
@@ -76,6 +75,7 @@ const Editor = () => {
           "Toonie is a collaborative space for reviewing images together",
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doc]);
 
   useEffect(() => {

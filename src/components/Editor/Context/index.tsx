@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { createContext, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/slices";
-import { ImageElement, Root } from "store/slices/docSlices";
 import { CloudinaryResponse } from "utils/cloudinary.dto";
 import { maxImageSideLength } from "../DrawingBoard/Canvas/image";
 
@@ -18,6 +17,7 @@ interface EditorContextElements {
   setWidth: React.Dispatch<React.SetStateAction<number>>;
   setHeight: React.Dispatch<React.SetStateAction<number>>;
   uploadImage: (file: File) => Promise<void>;
+  MAXIMUM_FILE_UPLOADS: number;
 }
 const EditorContext = createContext<EditorContextElements>(
   {} as EditorContextElements
@@ -26,6 +26,7 @@ const EditorContext = createContext<EditorContextElements>(
 const EditorContextProvider: React.FC<Props> = ({ children }) => {
   const [width, setWidth] = useState<number>(0);
   const [height, setHeight] = useState<number>(0);
+  const MAXIMUM_FILE_UPLOADS = useMemo(() => 5, []);
   const doc = useSelector((state: RootState) => state.docState.doc);
   const cloudinary_url = useMemo(
     () =>
@@ -44,7 +45,6 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
         .then((res) => {
           const data = res.data as CloudinaryResponse;
           const url = data.secure_url; //secure_url gives us https not http
-          var reader = new FileReader();
           const img = new Image();
           img.src = data.secure_url;
           img.onload = () => {
@@ -77,11 +77,18 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
           };
         });
     },
-    [doc]
+    [doc, cloudinary_url]
   );
   return (
     <EditorContext.Provider
-      value={{ width, height, setWidth, setHeight, uploadImage }}
+      value={{
+        width,
+        height,
+        setWidth,
+        setHeight,
+        uploadImage,
+        MAXIMUM_FILE_UPLOADS,
+      }}
     >
       {children}
     </EditorContext.Provider>

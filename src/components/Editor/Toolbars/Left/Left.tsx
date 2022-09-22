@@ -1,6 +1,6 @@
 import { AlertType } from "components/Alert/AlertContext";
 import useAlert from "components/Alert/useAlert";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ThemeColor } from "styles/common";
 import { RootState } from "../../../../store/slices";
@@ -14,7 +14,8 @@ import * as S from "./styles";
 
 function Left() {
   const alert = useAlert();
-  const { width, height, uploadImage } = useContext(EditorContext);
+  const { width, height, uploadImage, MAXIMUM_FILE_UPLOADS } =
+    useContext(EditorContext);
   const hiddenFileInput = useRef<HTMLInputElement>(null);
   const panZoom = useSelector((state: RootState) => state.boardState.panZoom);
   const wrapperRef = useRef<any>(null);
@@ -45,20 +46,27 @@ function Left() {
   // }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileUploaded = event.target.files![0];
-    alert.open({
-      message: "The image is being uploaded...",
-      type: AlertType.LOADING,
-    });
-    uploadImage(fileUploaded)
-      .then(() => {
-        alert.close();
-        setIsImagesLayerOpen(false);
-      })
-      .catch(() => {
-        alert.close();
-        setIsImagesLayerOpen(false);
+    const filesArray = event.target.files!;
+    if (filesArray.length < MAXIMUM_FILE_UPLOADS) {
+      alert.open({
+        message: "The images is being uploaded...",
+        type: AlertType.LOADING,
       });
+      Promise.all(
+        Array.from(filesArray).map((file) => {
+          return uploadImage(file);
+        })
+      )
+        .then(() => {
+          alert.close();
+        })
+        .catch((err) => {
+          alert.close();
+          console.log(err);
+        });
+    } else {
+      alert.open({ message: "You cannot upload more than 5 files!" });
+    }
   };
   return (
     <>

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  CSSProperties,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, CSSProperties, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { IoCloseOutline } from "react-icons/io5";
 import * as S from "./styles";

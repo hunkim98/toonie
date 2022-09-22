@@ -1,14 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import * as S from "./styles";
-import useAlert from "components/Alert/useAlert";
 import { EditorContext } from "components/Editor/Context";
-import { AlertType } from "components/Alert/AlertContext";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store/slices";
 import { ImageElement } from "store/slices/docSlices";
 import { setPanZoom } from "store/slices/boardSlices";
-import { returnScrollOffsetFromMouseOffset } from "utils/canvas.zoom";
-import { diffPoints, getScreenPoint, getWorldPoint } from "utils/canvas";
 
 interface Props {
   inputRef: React.RefObject<HTMLInputElement>;
@@ -48,7 +44,7 @@ const ImagesLayerPopup: React.FC<Props> = ({
     return () => {
       window.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [wrapperRef]);
+  }, [wrapperRef, setIsImagesLayerOpen]);
 
   useEffect(() => {
     if (!doc) {
@@ -86,12 +82,6 @@ const ImagesLayerPopup: React.FC<Props> = ({
             <S.Layer key={index}>
               <S.ImageName
                 onClick={() => {
-                  const middlePoint = returnScrollOffsetFromMouseOffset(
-                    { x: width / 2, y: height / 2 },
-                    panZoom,
-                    panZoom.scale
-                  );
-
                   dispatch(
                     setPanZoom({
                       offset: {

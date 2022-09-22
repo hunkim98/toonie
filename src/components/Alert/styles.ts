@@ -7,7 +7,6 @@ import {
   ModalMessage,
 } from "components/Modal/styles";
 import styled from "styled-components";
-import { device } from "../../utils/cssMedia";
 
 export const AlertBackground = styled(ModalBackground)``;
 

@@ -5,7 +5,7 @@ import {
   ToolType,
   setTool,
   openBrushPopup,
-  setIsDownloadClicked,
+  // setIsDownloadClicked,
 } from "../../../../store/slices/boardSlices";
 import {
   EraserIcon,
@@ -68,11 +68,12 @@ const Bottom = () => {
     dispatch(openBrushPopup());
     setIsMoreToolsOpen(false);
   };
-  const onDownloadClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMoreToolsOpen(false);
-    dispatch(setIsDownloadClicked(true));
-  };
+  // TODO: download selected image (popup)
+  // const onDownloadClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   setIsMoreToolsOpen(false);
+  //   dispatch(setIsDownloadClicked(true));
+  // };
   const onResetCanvasClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsMoreToolsOpen(false);

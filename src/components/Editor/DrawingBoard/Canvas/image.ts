@@ -1,4 +1,3 @@
-import { ImageElement } from "store/slices/docSlices";
 import { PanZoom, Point } from "types/canvasTypes";
 import { getScreenPoint } from "utils/canvas";
 
