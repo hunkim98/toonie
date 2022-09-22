@@ -142,20 +142,6 @@ const DrawingBoard = () => {
     };
   }, [doc, client, dispatch]);
 
-  // const syncDocImage = useCallback((docImgUrl: string | undefined | null) => {
-  //   if (docImgUrl) {
-  //     boardRef.current?.initializeImg(docImgUrl);
-  //     dispatch(setImgUrl(docImgUrl));
-  //     alert.close();
-  //   } else {
-  //     if (docImgUrl !== "") {
-  //       dispatch(setImgUrl(undefined));
-  //     } else {
-  //       dispatch(setImgUrl(""));
-  //     }
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (!canvasRef.current) {
       return;

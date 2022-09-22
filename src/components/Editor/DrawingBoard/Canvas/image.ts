@@ -58,30 +58,18 @@ export function drawImageElement(
   context: CanvasRenderingContext2D,
   HTMLImageElement: HTMLImageElement,
   panZoom: PanZoom,
-  position: Point
+  position: Point,
+  width: number,
+  height: number
 ) {
   if (HTMLImageElement.complete) {
     const screenPos = getScreenPoint(position, panZoom);
-    let imageWidth = HTMLImageElement.naturalWidth;
-    let imageHeight = HTMLImageElement.naturalHeight;
-    const isWidthLonger = imageWidth > imageHeight;
-    if (isWidthLonger) {
-      if (imageWidth > maxImageSideLength) {
-        imageHeight = (maxImageSideLength * imageHeight) / imageWidth;
-        imageWidth = maxImageSideLength;
-      }
-    } else {
-      if (imageHeight > maxImageSideLength) {
-        imageWidth = (maxImageSideLength * imageWidth) / imageHeight;
-        imageHeight = maxImageSideLength;
-      }
-    }
     context.drawImage(
       HTMLImageElement,
       screenPos.x,
       screenPos.y,
-      imageWidth * panZoom.scale,
-      imageHeight * panZoom.scale
+      width * panZoom.scale,
+      height * panZoom.scale
     );
   }
 }

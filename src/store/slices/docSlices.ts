@@ -55,6 +55,8 @@ export type ToonieDoc = {
 export type ImageElement = {
   name: string;
   url: string;
+  width: number;
+  height: number;
   position: Point;
 };
 

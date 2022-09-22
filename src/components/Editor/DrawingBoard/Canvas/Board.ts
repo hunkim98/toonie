@@ -105,7 +105,9 @@ export default class Board extends EventDispatcher {
           this.documentCanvasWrapper.getContext(),
           imageObject,
           this.panZoom,
-          docImage.position
+          docImage.position,
+          docImage.width,
+          docImage.height
         );
         this.images.push({ ...docImage, HTMLImageElement: imageObject });
         this.drawShapes();
@@ -146,36 +148,6 @@ export default class Board extends EventDispatcher {
 
     this.documentCanvasWrapper.getCanvas().parentNode?.appendChild(canvas);
     return wrapper;
-  }
-
-  initializeImg(imgUrl: string | undefined) {
-    if (imgUrl) {
-      this.imgUrl = imgUrl;
-      const img = new Image();
-      this.imageElement = img;
-      img.crossOrigin = "Anonymous";
-      img.onload = () => {
-        this.setImageInfo(
-          drawImage(
-            this.documentCanvasWrapper.getContext(),
-            img,
-            this.panZoom,
-            this.imgUrl
-          )
-        );
-        this.drawShapes();
-      };
-      img.onerror = (err) => {
-        console.log(err, "image error!");
-      };
-      img.src = imgUrl;
-    } else {
-      if (imgUrl === undefined) {
-        this.imgUrl = undefined;
-      } else {
-        this.imgUrl = "";
-      }
-    }
   }
 
   initialize() {
@@ -676,19 +648,11 @@ export default class Board extends EventDispatcher {
         wrapper.getContext(),
         image.HTMLImageElement,
         this.panZoom,
-        image.position
+        image.position,
+        image.width,
+        image.height
       );
     }
-    // if (this.imageElement) {
-    //   this.setImageInfo(
-    //     drawImage(
-    //       wrapper.getContext(),
-    //       this.imageElement,
-    //       this.panZoom,
-    //       this.imgUrl
-    //     )
-    //   );
-    // }
 
     for (const shape of shapes) {
       if (shape.type === "line") {

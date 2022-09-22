@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "store/slices";
 import { ImageElement, Root } from "store/slices/docSlices";
 import { CloudinaryResponse } from "utils/cloudinary.dto";
+import { maxImageSideLength } from "../DrawingBoard/Canvas/image";
 
 interface Props {
   //Starting from React 18 children prop is implicityl removed
@@ -43,15 +44,37 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
         .then((res) => {
           const data = res.data as CloudinaryResponse;
           const url = data.secure_url; //secure_url gives us https not http
-          doc?.update((root) => {
-            const imagesCount = root.images.length;
-            root.images.push({
-              name: file.name,
-              url,
-              //vertical aligning
-              position: { x: 0, y: imagesCount * 1000 },
+          var reader = new FileReader();
+          const img = new Image();
+          img.src = data.secure_url;
+          img.onload = () => {
+            doc?.update((root) => {
+              let imageWidth = img.naturalWidth;
+              let imageHeight = img.naturalHeight;
+              const isWidthLonger = imageWidth > imageHeight;
+              if (isWidthLonger) {
+                if (imageWidth > maxImageSideLength) {
+                  imageHeight = (maxImageSideLength * imageHeight) / imageWidth;
+                  imageWidth = maxImageSideLength;
+                }
+              } else {
+                if (imageHeight > maxImageSideLength) {
+                  imageWidth = (maxImageSideLength * imageWidth) / imageHeight;
+                  imageHeight = maxImageSideLength;
+                }
+              }
+
+              const imagesCount = root.images.length;
+              root.images.push({
+                name: file.name,
+                url,
+                width: imageWidth,
+                height: imageHeight,
+                //vertical aligning
+                position: { x: 0, y: imagesCount * 1000 },
+              });
             });
-          });
+          };
         });
     },
     [doc]

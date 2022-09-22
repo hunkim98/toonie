@@ -20,6 +20,7 @@ const ImagesLayerPopup: React.FC<Props> = ({
   inputRef,
 }) => {
   const wrapperRef = useRef<any>(null);
+  const { width, height } = useContext(EditorContext);
   const panZoom = useSelector((state: RootState) => state.boardState.panZoom);
   const dispatch = useDispatch();
   const doc = useSelector((state: RootState) => state.docState.doc);
@@ -85,11 +86,23 @@ const ImagesLayerPopup: React.FC<Props> = ({
             <S.Layer key={index}>
               <S.ImageName
                 onClick={() => {
+                  const middlePoint = returnScrollOffsetFromMouseOffset(
+                    { x: width / 2, y: height / 2 },
+                    panZoom,
+                    panZoom.scale
+                  );
+
                   dispatch(
                     setPanZoom({
                       offset: {
-                        x: image.position.x,
-                        y: -image.position.y * panZoom.scale,
+                        x:
+                          image.position.x * panZoom.scale +
+                          width / 2 -
+                          (image.width * panZoom.scale) / 2,
+                        y:
+                          -image.position.y * panZoom.scale +
+                          height / 2 -
+                          (image.height * panZoom.scale) / 2,
                       },
                       scale: panZoom.scale,
                     })
