@@ -35,6 +35,10 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
   );
   const uploadImage = useCallback(
     async (file: File) => {
+      console.log(file.size, file.name);
+      if (file.size > 3 * 1000000) {
+        throw new Error("File size cannot exceed 3MB");
+      }
       var fd = new FormData();
       fd.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET_NAME!);
       fd.append("file", file);

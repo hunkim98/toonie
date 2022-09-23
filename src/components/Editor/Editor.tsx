@@ -35,7 +35,7 @@ const Editor = () => {
           alert.close();
         })
         .catch((err) => {
-          alert.close();
+          alert.open({ message: err.message });
           console.log(err);
         });
     } else {
@@ -94,6 +94,7 @@ const Editor = () => {
       window.removeEventListener("resize", onResize);
     };
   }, [dispatch, setWidth, setHeight]);
+
   return (
     <S.Container>
       {/* {imgUrl === undefined ? (
