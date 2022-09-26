@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
@@ -41,6 +41,18 @@ const DrawingBoard = () => {
       return () => {};
     }
 
+    let doubleTouchStartTimeStamp = 0;
+    const disableDoubleTouchZoom = (event: TouchEvent) => {
+      const now = +new Date();
+      if (doubleTouchStartTimeStamp + 500 > now) {
+        event.preventDefault();
+      }
+      doubleTouchStartTimeStamp = now;
+    };
+
+    const currentCanvasRef = canvasRef.current;
+    currentCanvasRef.addEventListener("touchstart", disableDoubleTouchZoom);
+
     const board = new Board(
       canvasRef.current,
       doc!.update.bind(doc),
@@ -50,6 +62,10 @@ const DrawingBoard = () => {
     boardRef.current = board;
 
     return () => {
+      currentCanvasRef.removeEventListener(
+        "touchstart",
+        disableDoubleTouchZoom
+      );
       board.destroy();
     };
   }, [doc, client]);
@@ -132,6 +148,7 @@ const DrawingBoard = () => {
 
     return () => {
       unsubscribe();
+
       boardRef.current?.removeEventListener("mousemove", handleUpdateMeta);
       boardRef.current?.removeEventListener("mousedown", handleUpdateMeta);
       boardRef.current?.removeEventListener("mouseout", handleUpdateMeta);

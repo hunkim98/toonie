@@ -17,7 +17,7 @@ export default class CanvasWrapper {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.context = canvas.getContext("2d")!;
-    this.canvas.style.touchAction = "none";
+    this.canvas.style.touchAction = "manipulation";
     this.canvas.style.userSelect = "none";
 
     this.lineWidth = 30;
