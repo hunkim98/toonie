@@ -4,6 +4,7 @@ import App from "./App";
 import { Provider } from "react-redux";
 import reportWebVitals from "./reportWebVitals";
 import { store } from "./store/configureStore";
+import { AlertContextProvider } from "components/Alert/AlertContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <Provider store={store}>
-    <App />
+    <AlertContextProvider>
+      <App />
+    </AlertContextProvider>
   </Provider>
 );
 

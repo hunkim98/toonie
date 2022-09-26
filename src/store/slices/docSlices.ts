@@ -3,14 +3,11 @@ import yorkie, { Client, Document, TimeTicket } from "yorkie-js-sdk";
 import { Metadata } from "./peerSlices";
 import randomColor from "randomcolor";
 import anonymous from "anonymous-animals-gen";
-
-export type Point = {
-  y: number;
-  x: number;
-};
+import { Point } from "types/canvasTypes";
 
 export interface Root {
   shapes: Shapes & Array<Shape>;
+  images: Images & Array<ImageElement>;
 }
 
 export interface BaseShape {
@@ -52,6 +49,15 @@ export type ToonieDoc = {
   profiles: Record<string, string>;
   shapes: Array<Shape>;
   imgUrl: string | undefined;
+  images: ImageElement[];
+};
+
+export type ImageElement = {
+  name: string;
+  url: string;
+  width: number;
+  height: number;
+  position: Point;
 };
 
 export interface Shapes {
@@ -62,6 +68,16 @@ export interface Shapes {
   length: number;
   [index: number]: Shape;
   [Symbol.iterator](): IterableIterator<Shape>;
+}
+
+export interface Images {
+  push(image: ImageElement): number;
+  getLast(): ImageElement;
+  getElementByID(createdAt: TimeTicket): ImageElement;
+  deleteByID(createdAt: TimeTicket): ImageElement;
+  length: number;
+  [index: number]: ImageElement;
+  [Symbol.iterator](): IterableIterator<ImageElement>;
 }
 
 // export interface Root {
@@ -134,6 +150,9 @@ export const attachDoc = createAsyncThunk<
       // board
       if (!root.shapes) {
         root.shapes = [];
+      }
+      if (!root.images) {
+        root.images = [];
       }
     });
     await client.sync();

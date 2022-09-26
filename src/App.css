@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 0;
+  touch-action: manipulation;
 }
 
 html {
@@ -11,5 +12,11 @@ html {
 
 * {
   user-select: none;
-  -webkit-user-select: none;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-user-callout: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-drag: none;
+  -webkit-user-modify: none;
+  -webkit-highlight: none;
 }

@@ -1,8 +1,7 @@
-import { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import {
-  setImgUrl,
   setIsDownloadClicked,
   setPanZoom,
 } from "../../../store/slices/boardSlices";
@@ -42,6 +41,18 @@ const DrawingBoard = () => {
       return () => {};
     }
 
+    let doubleTouchStartTimeStamp = 0;
+    const disableDoubleTouchZoom = (event: TouchEvent) => {
+      const now = +new Date();
+      if (doubleTouchStartTimeStamp + 500 > now) {
+        event.preventDefault();
+      }
+      doubleTouchStartTimeStamp = now;
+    };
+
+    const currentCanvasRef = canvasRef.current;
+    currentCanvasRef.addEventListener("touchstart", disableDoubleTouchZoom);
+
     const board = new Board(
       canvasRef.current,
       doc!.update.bind(doc),
@@ -51,6 +62,10 @@ const DrawingBoard = () => {
     boardRef.current = board;
 
     return () => {
+      currentCanvasRef.removeEventListener(
+        "touchstart",
+        disableDoubleTouchZoom
+      );
       board.destroy();
     };
   }, [doc, client]);
@@ -61,7 +76,27 @@ const DrawingBoard = () => {
     }
     const unsubscribe = doc.subscribe((event) => {
       if (event.type === "remote-change") {
+        for (const changeInfo of event.value) {
+          for (const path of changeInfo.paths) {
+            if (path.startsWith(`$.images`)) {
+              boardRef.current?.setImages(doc.getRoot().images);
+            }
+          }
+        }
         boardRef.current?.drawAll(doc.getRoot().shapes);
+        // const imgUrl = doc.getRoot().imgUrl;
+        // syncDocImage(imgUrl);
+      } else if (event.type === "local-change") {
+        for (const changeInfo of event.value) {
+          for (const path of changeInfo.paths) {
+            if (path.startsWith(`$.images`)) {
+              boardRef.current?.setImages(doc.getRoot().images);
+            }
+          }
+        }
+        boardRef.current?.drawAll(doc.getRoot().shapes);
+        // const imgUrl = doc.getRoot().imgUrl;
+        // syncDocImage(imgUrl);
       }
     });
     return () => {
@@ -74,6 +109,10 @@ const DrawingBoard = () => {
       return () => {};
     }
     //this is for tracking remote change (presence-change)
+
+    // const docImgUrl = doc!.getRoot().imgUrl;
+    // syncDocImage(docImgUrl);
+
     const unsubscribe = client.subscribe((event) => {
       if (event.type === "peers-changed") {
         const documentKey = doc.getKey();
@@ -109,6 +148,7 @@ const DrawingBoard = () => {
 
     return () => {
       unsubscribe();
+
       boardRef.current?.removeEventListener("mousemove", handleUpdateMeta);
       boardRef.current?.removeEventListener("mousedown", handleUpdateMeta);
       boardRef.current?.removeEventListener("mouseout", handleUpdateMeta);
@@ -123,18 +163,7 @@ const DrawingBoard = () => {
     boardRef.current?.setWidth(width);
     boardRef.current?.setHeight(height);
     //this has to do with drawing what is in doc
-
-    const docImgUrl = doc!.getRoot().imgUrl;
-    if (docImgUrl) {
-      boardRef.current?.initializeImg(docImgUrl);
-      dispatch(setImgUrl(docImgUrl));
-    } else {
-      if (docImgUrl === undefined) {
-        dispatch(setImgUrl(undefined));
-      } else {
-        dispatch(setImgUrl(""));
-      }
-    }
+    boardRef.current?.setImages(doc!.getRoot().images);
     boardRef.current?.drawAll(doc!.getRoot().shapes);
   }, [doc, width, height, dispatch]);
 

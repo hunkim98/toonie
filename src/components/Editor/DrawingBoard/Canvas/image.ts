@@ -1,5 +1,9 @@
-import { PanZoom } from "../../../../types/canvasTypes";
-import { getScreenPoint } from "../../../../utils/canvas";
+import { PanZoom, Point } from "types/canvasTypes";
+import { getScreenPoint } from "utils/canvas";
+
+export const maxImageSideLength = 1000;
+
+export const imageBetweenDistance = 100;
 
 export function drawImage(
   context: CanvasRenderingContext2D,
@@ -48,5 +52,25 @@ export function drawImage(
       img.src = imgUrl;
     }
     return undefined;
+  }
+}
+
+export function drawImageElement(
+  context: CanvasRenderingContext2D,
+  HTMLImageElement: HTMLImageElement,
+  panZoom: PanZoom,
+  position: Point,
+  width: number,
+  height: number
+) {
+  if (HTMLImageElement.complete) {
+    const screenPos = getScreenPoint(position, panZoom);
+    context.drawImage(
+      HTMLImageElement,
+      screenPos.x,
+      screenPos.y,
+      width * panZoom.scale,
+      height * panZoom.scale
+    );
   }
 }

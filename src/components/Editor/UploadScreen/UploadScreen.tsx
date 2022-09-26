@@ -47,7 +47,7 @@ const UploadScreen: React.FC<Props> = () => {
     return uploadImgToServer(file);
   });
   fileRejections.map((file) =>
-    alert(`${file.file.name}의 용량이 3MB를 초과합니다`)
+    alert(`The file size of ${file.file.name}is over 3MB`)
   );
 
   return (

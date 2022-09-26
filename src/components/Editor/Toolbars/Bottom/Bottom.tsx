@@ -5,7 +5,7 @@ import {
   ToolType,
   setTool,
   openBrushPopup,
-  setIsDownloadClicked,
+  // setIsDownloadClicked,
 } from "../../../../store/slices/boardSlices";
 import {
   EraserIcon,
@@ -68,17 +68,18 @@ const Bottom = () => {
     dispatch(openBrushPopup());
     setIsMoreToolsOpen(false);
   };
-  const onDownloadClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMoreToolsOpen(false);
-    dispatch(setIsDownloadClicked(true));
-  };
+  // TODO: download selected image (popup)
+  // const onDownloadClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   setIsMoreToolsOpen(false);
+  //   dispatch(setIsDownloadClicked(true));
+  // };
   const onResetCanvasClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsMoreToolsOpen(false);
     doc?.update((root) => {
       root.shapes = [];
-      root.imgUrl = undefined;
+      root.images = [];
     });
   };
   const onCopyInviteLinkClick = (e: React.MouseEvent) => {
@@ -143,9 +144,9 @@ const Bottom = () => {
             <S.MoreToolOption onClick={onChangeColorClick}>
               Change color
             </S.MoreToolOption>
-            <S.MoreToolOption onClick={onDownloadClick}>
+            {/* <S.MoreToolOption onClick={onDownloadClick}>
               Download Snapshot
-            </S.MoreToolOption>
+            </S.MoreToolOption> */}
             <S.MoreToolOption color="red" onClick={onResetCanvasClick}>
               Reset Canvas
             </S.MoreToolOption>
