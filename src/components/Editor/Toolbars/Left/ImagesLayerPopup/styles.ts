@@ -65,6 +65,7 @@ export const Remove = styled.button`
 
 export const UploadButton = styled.button`
   pointer-events: auto;
+  width: 100%;
   height: 30px;
   font-size: 0.5em;
   font-weight: bold;

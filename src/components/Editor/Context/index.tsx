@@ -3,7 +3,10 @@ import React, { createContext, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/slices";
 import { CloudinaryResponse } from "utils/cloudinary.dto";
-import { maxImageSideLength } from "../DrawingBoard/Canvas/image";
+import {
+  imageBetweenDistance,
+  maxImageSideLength,
+} from "../DrawingBoard/Canvas/image";
 
 interface Props {
   //Starting from React 18 children prop is implicityl removed
@@ -69,13 +72,30 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
               }
 
               const imagesCount = root.images.length;
+              let imageYPosition = 0;
+              for (let i = 0; i < imagesCount; i++) {
+                const firstImageYPosition = root.images[i].position.y;
+                const secondImageYPosition =
+                  i + 1 >= imagesCount ? null : root.images[i + 1].position.y;
+                if (
+                  !secondImageYPosition ||
+                  secondImageYPosition - firstImageYPosition >
+                    maxImageSideLength + 2 * imageBetweenDistance
+                ) {
+                  imageYPosition =
+                    firstImageYPosition +
+                    root.images[i].height +
+                    imageBetweenDistance;
+                  break;
+                }
+              }
               root.images.push({
                 name: file.name,
                 url,
                 width: imageWidth,
                 height: imageHeight,
                 //vertical aligning
-                position: { x: 0, y: imagesCount * 1000 },
+                position: { x: 0, y: imageYPosition },
               });
             });
           };

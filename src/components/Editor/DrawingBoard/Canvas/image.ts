@@ -3,6 +3,8 @@ import { getScreenPoint } from "utils/canvas";
 
 export const maxImageSideLength = 1000;
 
+export const imageBetweenDistance = 100;
+
 export function drawImage(
   context: CanvasRenderingContext2D,
   image: HTMLImageElement,
