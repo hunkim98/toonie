@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { device } from "../utils/cssMedia";
 
 export const CaveatFont = styled.div`
-  @import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Space+Mono&display=swap");
   font-family: "Caveat", cursive;
 `;
 
