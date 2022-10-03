@@ -120,9 +120,6 @@ const DrawingBoard = () => {
 
         for (const peerKey of Object.keys(changedPeers)) {
           boardRef.current?.updateMetadata(peerKey, changedPeers[peerKey]);
-          if (client.getID() === peerKey) {
-            boardRef.current?.setColor(changedPeers[peerKey].color);
-          }
         }
       }
     });

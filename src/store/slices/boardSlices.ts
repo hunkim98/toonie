@@ -58,6 +58,9 @@ const boardSlice = createSlice({
     setIsDownloadClicked(state, action: PayloadAction<boolean>) {
       state.isDownloadClicked = action.payload;
     },
+    setColor(state, action: PayloadAction<string>) {
+      state.color = action.payload;
+    },
   },
 });
 
@@ -69,5 +72,6 @@ export const {
   setIsDownloadClicked,
   openBrushPopup,
   closeBrushPopup,
+  setColor,
 } = boardSlice.actions;
 export default boardSlice.reducer;
