@@ -4,6 +4,7 @@ import { Metadata } from "./peerSlices";
 import randomColor from "randomcolor";
 import anonymous from "anonymous-animals-gen";
 import { Point } from "types/canvasTypes";
+import { setColor } from "./boardSlices";
 
 export interface Root {
   shapes: Shapes & Array<Shape>;
@@ -104,14 +105,17 @@ export const activateClient = createAsyncThunk<
 >("doc/activate", async (_: undefined, thunkApi) => {
   try {
     const { name } = anonymous.generate();
+    const userColor = randomColor();
     const options = {
       apiKey: "",
       presence: {
         username: name,
-        color: randomColor(),
+        color: userColor,
         board: "",
       },
     };
+    //initialize color
+    thunkApi.dispatch(setColor(userColor));
 
     if (`${process.env.REACT_APP_YORKIE_API_KEY}`) {
       options.apiKey = `${process.env.REACT_APP_YORKIE_API_KEY}`;
@@ -138,11 +142,11 @@ export const attachDoc = createAsyncThunk<
     await client.attach(doc);
 
     doc.update((root) => {
-      const userId = client.getID()!;
-      if (!root.profiles) {
-        root.profiles = {};
-        root.profiles[userId] = randomColor();
-      }
+      // const userId = client.getID()!;
+      // if (!root.profiles) {
+      //   root.profiles = {};
+      //   root.profiles[userId] = randomColor();
+      // }
       // codeEditor
       //   if (!root.content) {
       //     root.content = new yorkie.Text();

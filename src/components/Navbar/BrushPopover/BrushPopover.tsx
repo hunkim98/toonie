@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import * as S from "./styles";
 import { ChromePicker, ColorChangeHandler, ColorResult } from "react-color";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/slices";
 import { Peer } from "../../../store/slices/peerSlices";
 import {
+  setColor,
   setStrokeWidth,
   StrokeWidthType,
 } from "../../../store/slices/boardSlices";
@@ -15,21 +15,15 @@ interface Props {
 
 const BrushPopover = ({ user }: Props) => {
   const dispatch = useDispatch();
-  const [brushColor, setBrushColor] = useState(user!.metadata.color);
   const client = useSelector((state: RootState) => state.docState.client);
   const doc = useSelector((state: RootState) => state.docState.doc);
   const strokeWidth = useSelector(
     (state: RootState) => state.boardState.strokeWidth
   );
   const onChangeColor: ColorChangeHandler = (color: ColorResult) => {
-    setBrushColor(color.hex);
+    dispatch(setColor(color.hex));
+    client?.updatePresence("color", color.hex);
   };
-  useEffect(() => {
-    const handleUpdateColor = (color: string) => {
-      client?.updatePresence("color", color);
-    };
-    handleUpdateColor(brushColor);
-  }, [doc, brushColor, client]);
 
   const sizes = StrokeWidthType;
 
@@ -45,7 +39,7 @@ const BrushPopover = ({ user }: Props) => {
       <S.Arrow />
       <ChromePicker
         // color={user.metadata.color}
-        color={brushColor}
+        color={user!.metadata.color}
         onChangeComplete={onChangeColor}
         disableAlpha={true}
         styles={{
