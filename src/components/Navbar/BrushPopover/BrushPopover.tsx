@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import * as S from "./styles";
 import { ChromePicker, ColorChangeHandler, ColorResult } from "react-color";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,11 +30,6 @@ const BrushPopover = ({ user }: Props) => {
   const onChangeStrokeSize = (size: number) => {
     dispatch(setStrokeWidth(size));
   };
-
-  useEffect(() => {
-    //initialize color
-    dispatch(setColor(user!.metadata.color));
-  }, [dispatch, user]);
 
   if (!user || !client || !doc) {
     return null;
