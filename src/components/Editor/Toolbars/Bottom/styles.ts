@@ -7,24 +7,28 @@ export const CanvasButton = styled.div<{ isSelected: boolean }>`
   background: none;
   font-size: 1em;
   width: 40px;
-  height: 15px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 15px;
-  margin: 0 5px;
+  margin: 0 4px;
   background-color: #f1f1f1;
   cursor: pointer;
   pointer-events: auto;
-  padding: 10px;
+  padding: 5px;
   background-color: ${({ isSelected }) => isSelected && ThemeColor};
   @media ${device.mobileL} {
     width: 56px;
-    height: 21px;
+    height: 25px;
+    padding: 7px;
+    margin: 0 5px;
   }
   @media ${device.tablet} {
     width: 80px;
     height: 30px;
+    padding: 10px;
+    margin: 0 5px;
   }
 `;
 
@@ -44,8 +48,8 @@ export const MoreToolsButton = styled(CanvasButton)`
     width: 30px;
     height: 30px;
   }
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   position: relative;
 `;

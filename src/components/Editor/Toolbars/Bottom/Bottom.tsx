@@ -12,6 +12,7 @@ import {
   MoreToolsIcon,
   PanningIcon,
   PenIcon,
+  PointerIcon,
   RectangleIcon,
 } from "../icons";
 import * as S from "./styles";
@@ -104,6 +105,7 @@ const Bottom = () => {
       >
         <PanningIcon />
       </S.PanningButton>
+
       <S.CanvasButton
         isSelected={toolType === ToolType.Pen}
         onClick={() => {
@@ -127,6 +129,14 @@ const Bottom = () => {
         }}
       >
         <EraserIcon />
+      </S.CanvasButton>
+      <S.CanvasButton
+        isSelected={toolType === ToolType.Pointer}
+        onClick={() => {
+          dispatch(setTool(ToolType.Pointer));
+        }}
+      >
+        <PointerIcon />
       </S.CanvasButton>
       <S.MoreToolsButton
         ref={wrapperRef}

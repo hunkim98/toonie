@@ -10,6 +10,7 @@ import {
   diffPoints,
   getScreenPoint,
   getWorldPoint,
+  scalePoint,
 } from "../../../../utils/canvas";
 import { returnScrollOffsetFromMouseOffset } from "../../../../utils/canvas.zoom";
 import {
@@ -21,12 +22,13 @@ import {
 import EventDispatcher from "../../../../utils/eventDispatcher";
 import CanvasWrapper from "./CanvasWrapper";
 import { drawEraser } from "./eraser";
-import { drawImage, drawImageElement } from "./image";
+import { drawImageElement } from "./image";
 import { drawLine, drawSmoothLine } from "./line";
 import { drawRect } from "./rect";
 import EraserWorker from "./Worker/EraserWorker";
 import PanWorker from "./Worker/PanWorker";
 import PenWorker from "./Worker/PenWorker";
+import PointerWorker from "./Worker/PointerWorker";
 import RectWorker from "./Worker/RectWorker";
 import Worker, { BoardMetadata } from "./Worker/Worker";
 
@@ -300,6 +302,9 @@ export default class Board extends EventDispatcher {
         strokeWidth: this.strokeWidth,
       });
     }
+    if (tool === ToolType.Pointer) {
+      return new PointerWorker(this);
+    }
     throw new TypeError(`Undefined tool: ${tool}`);
   }
 
@@ -480,21 +485,13 @@ export default class Board extends EventDispatcher {
     // }
 
     const point = this.getPointFromTouchyEvent(evt);
+    const mousePos = {
+      x: point.offsetX,
+      y: point.offsetY,
+    };
 
-    if (this.worker.type !== ToolType.Pan) {
-      this.worker.mousedown(
-        { x: point.offsetX, y: point.offsetY },
-        this.panZoom,
-        (boardMetadata: BoardMetadata) => {
-          this.emit("mousedown", boardMetadata);
-        }
-      );
-    } else {
+    if (this.worker.type === ToolType.Pan) {
       // this part is necessary for panning
-      const mousePos = {
-        x: point.offsetX,
-        y: point.offsetY,
-      };
 
       this.panPoint.lastMousePos = mousePos;
       touchy(
@@ -509,7 +506,64 @@ export default class Board extends EventDispatcher {
         "mousemove",
         this.handlePinchZoom
       );
+    } else if (this.worker.type === ToolType.Pointer) {
+      const isInsideImage = this.handlePointerSelect(evt);
+      if (!isInsideImage) {
+        this.panPoint.lastMousePos = mousePos;
+        touchy(
+          this.presenceCanvasWrapper.getCanvas(),
+          addEvent,
+          "mousemove",
+          this.handlePanning
+        );
+        touchy(
+          this.presenceCanvasWrapper.getCanvas(),
+          addEvent,
+          "mousemove",
+          this.handlePinchZoom
+        );
+      }
+    } else {
+      this.worker.mousedown(
+        { x: point.offsetX, y: point.offsetY },
+        this.panZoom,
+        (boardMetadata: BoardMetadata) => {
+          this.emit("mousedown", boardMetadata);
+        }
+      );
     }
+  }
+
+  handlePointerSelect(evt: TouchyEvent) {
+    const pointerOffset = { x: evt.offsetX, y: evt.offsetY };
+
+    const screenPoint = getWorldPoint(pointerOffset, this.panZoom);
+    for (const image of this.images) {
+      const leftTopPointOfImage = getWorldPoint(
+        getScreenPoint(image.position, this.panZoom),
+        this.panZoom
+      );
+      const rightBottomOfImage = getWorldPoint(
+        getScreenPoint(
+          {
+            x: image.position.x + image.width,
+            y: image.position.y + image.height,
+          },
+          this.panZoom
+        ),
+        this.panZoom
+      );
+      if (
+        screenPoint.x > leftTopPointOfImage.x &&
+        screenPoint.x < rightBottomOfImage.x &&
+        screenPoint.y > leftTopPointOfImage.y &&
+        screenPoint.y < rightBottomOfImage.y
+      ) {
+        console.log("is in image");
+        return true;
+      }
+    }
+    return false;
   }
 
   onMouseMove(evt: TouchyEvent) {
@@ -523,6 +577,11 @@ export default class Board extends EventDispatcher {
       return;
     }
 
+    if (this.worker.type === ToolType.Pointer) {
+      this.handleMouseMoveSelectMode(evt);
+      return;
+    }
+
     if (this.worker.type !== ToolType.Pan) {
       this.worker.mousemove(
         { x: point.offsetX, y: point.offsetY },
@@ -531,8 +590,11 @@ export default class Board extends EventDispatcher {
           this.emit("mousemove", boardMetadata);
         }
       );
-    } else {
     }
+  }
+
+  handleMouseMoveSelectMode(evt: TouchyEvent) {
+    // console.log("pointer");
   }
 
   onMouseUp() {
@@ -675,12 +737,12 @@ export default class Board extends EventDispatcher {
         offset: { x: 0, y: 0 },
       };
       if (this.imageElement) {
-        drawImage(
-          imageContext,
-          this.imageElement,
-          customizedPanZoom,
-          this.imgUrl
-        );
+        // drawImage(
+        //   imageContext,
+        //   this.imageElement,
+        //   customizedPanZoom,
+        //   this.imgUrl
+        // );
       }
       const shapes = this.getRoot().shapes;
       for (const shape of shapes) {

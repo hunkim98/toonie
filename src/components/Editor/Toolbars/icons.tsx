@@ -129,3 +129,17 @@ export const PlusIcon = (props: SVGProps<SVGSVGElement>) => (
     <path d="M26 0C11.664 0 0 11.663 0 26s11.664 26 26 26 26-11.663 26-26S40.336 0 26 0zm12.5 28H28v11a2 2 0 0 1-4 0V28H13.5a2 2 0 0 1 0-4H24V14a2 2 0 0 1 4 0v10h10.5a2 2 0 0 1 0 4z" />
   </svg>
 );
+
+export const PointerIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={"80%"}
+    height={"80%"}
+    viewBox="0 0 295.688 295.688"
+    enableBackground="new 0 0 295.688 295.688"
+    xmlSpace="preserve"
+    {...props}
+  >
+    <path d="M291.294 239.713 189.603 138.024l74.055-31.949a15 15 0 0 0-1.393-28.066L19.554.707A15.001 15.001 0 0 0 .708 19.552l77.303 242.713a14.998 14.998 0 0 0 28.065 1.393l31.949-74.054 101.69 101.69a14.997 14.997 0 0 0 21.21 0l30.367-30.368c5.86-5.858 5.86-15.355.002-21.213z" />
+  </svg>
+);

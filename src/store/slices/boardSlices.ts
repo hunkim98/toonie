@@ -6,6 +6,7 @@ export enum ToolType {
   Pen = "Pen",
   Eraser = "Eraser",
   Rect = "Rect",
+  Pointer = "Pointer",
 }
 
 export const StrokeWidthType = [3, 5, 10, 20];
