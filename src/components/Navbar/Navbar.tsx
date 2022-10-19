@@ -89,7 +89,7 @@ const Navbar = ({ activePeers, user }: Props) => {
               peerCount={activePeers.length}
               style={{ color: "black", boxShadow: `0 0 0 2px #000 inset` }}
             >
-              {"..."}
+              +{activePeers.length - 3}
             </S.PeerStatus>
           )}
         </S.PeersContainer>
