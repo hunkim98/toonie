@@ -19,6 +19,10 @@ class PanWorker extends Worker {
     this.board = board;
   }
 
+  shouldAllowPanning(): boolean {
+    return true;
+  }
+
   mousedown(point: Point, panZoom: PanZoom) {
     return;
   }

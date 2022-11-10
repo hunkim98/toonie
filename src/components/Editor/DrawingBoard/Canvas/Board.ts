@@ -308,6 +308,10 @@ export default class Board extends EventDispatcher {
     throw new TypeError(`Undefined tool: ${tool}`);
   }
 
+  getImages() {
+    return this.images;
+  }
+
   getPointFromTouch(touch: Touch) {
     let originY;
     let originX;
@@ -490,9 +494,7 @@ export default class Board extends EventDispatcher {
       y: point.offsetY,
     };
 
-    if (this.worker.type === ToolType.Pan) {
-      // this part is necessary for panning
-
+    if (this.worker.shouldAllowPanning(evt, this.panZoom)) {
       this.panPoint.lastMousePos = mousePos;
       touchy(
         this.presenceCanvasWrapper.getCanvas(),
@@ -506,64 +508,73 @@ export default class Board extends EventDispatcher {
         "mousemove",
         this.handlePinchZoom
       );
-    } else if (this.worker.type === ToolType.Pointer) {
-      const isInsideImage = this.handlePointerSelect(evt);
-      if (!isInsideImage) {
-        this.panPoint.lastMousePos = mousePos;
-        touchy(
-          this.presenceCanvasWrapper.getCanvas(),
-          addEvent,
-          "mousemove",
-          this.handlePanning
-        );
-        touchy(
-          this.presenceCanvasWrapper.getCanvas(),
-          addEvent,
-          "mousemove",
-          this.handlePinchZoom
-        );
-      }
-    } else {
-      this.worker.mousedown(
-        { x: point.offsetX, y: point.offsetY },
-        this.panZoom,
-        (boardMetadata: BoardMetadata) => {
-          this.emit("mousedown", boardMetadata);
-        }
-      );
     }
+    // if (this.worker.type === ToolType.Pan) {
+    //   // this part is necessary for panning
+
+    //   this.panPoint.lastMousePos = mousePos;
+    //   touchy(
+    //     this.presenceCanvasWrapper.getCanvas(),
+    //     addEvent,
+    //     "mousemove",
+    //     this.handlePanning
+    //   );
+    //   touchy(
+    //     this.presenceCanvasWrapper.getCanvas(),
+    //     addEvent,
+    //     "mousemove",
+    //     this.handlePinchZoom
+    //   );
+    // } else if (this.worker.type === ToolType.Pointer) {
+    //   const isInsideImage = this.findImageTargetIndex(evt);
+    //   if (isInsideImage === undefined) {
+    //     this.panPoint.lastMousePos = mousePos;
+    //     touchy(
+    //       this.presenceCanvasWrapper.getCanvas(),
+    //       addEvent,
+    //       "mousemove",
+    //       this.handlePanning
+    //     );
+    //     touchy(
+    //       this.presenceCanvasWrapper.getCanvas(),
+    //       addEvent,
+    //       "mousemove",
+    //       this.handlePinchZoom
+    //     );
+    //   }
+    // }
+    this.worker.mousedown(
+      { x: point.offsetX, y: point.offsetY },
+      this.panZoom,
+      (boardMetadata: BoardMetadata) => {
+        this.emit("mousedown", boardMetadata);
+      }
+    );
   }
 
-  handlePointerSelect(evt: TouchyEvent) {
+  findImageTargetIndex(evt: TouchyEvent): number | undefined {
     const pointerOffset = { x: evt.offsetX, y: evt.offsetY };
-
     const screenPoint = getWorldPoint(pointerOffset, this.panZoom);
-    for (const image of this.images) {
-      const leftTopPointOfImage = getWorldPoint(
-        getScreenPoint(image.position, this.panZoom),
-        this.panZoom
-      );
-      const rightBottomOfImage = getWorldPoint(
-        getScreenPoint(
-          {
-            x: image.position.x + image.width,
-            y: image.position.y + image.height,
-          },
-          this.panZoom
-        ),
-        this.panZoom
-      );
+    for (let i = 0; i < this.images.length; i++) {
+      const image = this.images[i];
+      const leftTopPointOfImage = {
+        x: image.position.x,
+        y: image.position.y,
+      };
+      const rightBottomOfImage = {
+        x: image.position.x + image.width,
+        y: image.position.y + image.height,
+      };
       if (
         screenPoint.x > leftTopPointOfImage.x &&
         screenPoint.x < rightBottomOfImage.x &&
         screenPoint.y > leftTopPointOfImage.y &&
         screenPoint.y < rightBottomOfImage.y
       ) {
-        console.log("is in image");
-        return true;
+        return i;
       }
     }
-    return false;
+    return undefined;
   }
 
   onMouseMove(evt: TouchyEvent) {

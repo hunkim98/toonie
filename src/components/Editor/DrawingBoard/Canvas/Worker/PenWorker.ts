@@ -41,6 +41,10 @@ class PenWorker extends Worker {
     };
   }
 
+  shouldAllowPanning(): boolean {
+    return false;
+  }
+
   mousedown(point: Point, panZoom: PanZoom, callback: MouseDownCallback): void {
     this.previewPoints = {
       points: [getWorldPoint(point, panZoom), getWorldPoint(point, panZoom)],

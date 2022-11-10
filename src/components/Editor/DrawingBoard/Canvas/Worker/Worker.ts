@@ -30,6 +30,8 @@ abstract class Worker {
 
   abstract updatePresence: Function;
 
+  abstract shouldAllowPanning(point: Point, panZoom: PanZoom): boolean;
+
   abstract mousedown(
     point: Point,
     panZoom: PanZoom,

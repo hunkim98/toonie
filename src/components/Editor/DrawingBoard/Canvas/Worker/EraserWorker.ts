@@ -32,6 +32,10 @@ class EraserWorker extends Worker {
     this.board = board;
   }
 
+  shouldAllowPanning(point: Point, panZoom: PanZoom): boolean {
+    return false;
+  }
+
   mousedown(point: Point, panZoom: PanZoom, callback: MouseDownCallback): void {
     this.selectPoint = [
       getWorldPoint(point, panZoom),

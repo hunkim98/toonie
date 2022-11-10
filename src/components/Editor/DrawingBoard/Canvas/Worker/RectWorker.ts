@@ -34,6 +34,9 @@ class RectWorker extends Worker {
     this.board = board;
   }
 
+  shouldAllowPanning(point: Point, panZoom: PanZoom): boolean {
+    return false;
+  }
   mousedown(point: Point, panZoom: PanZoom): void {
     this.previewRect = createRect(getWorldPoint(point, panZoom), this.options!);
     // let timeTicket: TimeTicket;
