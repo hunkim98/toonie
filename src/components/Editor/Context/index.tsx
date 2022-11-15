@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { createContext, useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "store/slices";
+import { ImageElement, Images, Root } from "store/slices/docSlices";
 import { CloudinaryResponse } from "utils/cloudinary.dto";
 import {
   imageBetweenDistance,
@@ -89,6 +90,7 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
                   break;
                 }
               }
+
               root.images.push({
                 name: file.name,
                 url,
@@ -96,7 +98,7 @@ const EditorContextProvider: React.FC<Props> = ({ children }) => {
                 height: imageHeight,
                 //vertical aligning
                 position: { x: 0, y: imageYPosition },
-              });
+              } as ImageElement);
             });
           };
         });

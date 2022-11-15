@@ -3,8 +3,9 @@ import * as S from "./styles";
 import { EditorContext } from "components/Editor/Context";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store/slices";
-import { ImageElement } from "store/slices/docSlices";
+import { ImageElement, Images } from "store/slices/docSlices";
 import { setPanZoom } from "store/slices/boardSlices";
+import { Root } from "react-dom/client";
 
 interface Props {
   inputRef: React.RefObject<HTMLInputElement>;

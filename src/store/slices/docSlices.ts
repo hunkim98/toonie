@@ -50,7 +50,7 @@ export type ToonieDoc = {
   profiles: Record<string, string>;
   shapes: Array<Shape>;
   imgUrl: string | undefined;
-  images: ImageElement[];
+  images: Array<ImageElement>;
 };
 
 export type ImageElement = {
@@ -59,6 +59,7 @@ export type ImageElement = {
   width: number;
   height: number;
   position: Point;
+  getID(): TimeTicket;
 };
 
 export interface Shapes {

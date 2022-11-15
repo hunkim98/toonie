@@ -10,7 +10,6 @@ import {
   diffPoints,
   getScreenPoint,
   getWorldPoint,
-  scalePoint,
 } from "../../../../utils/canvas";
 import { returnScrollOffsetFromMouseOffset } from "../../../../utils/canvas.zoom";
 import {
@@ -303,7 +302,7 @@ export default class Board extends EventDispatcher {
       });
     }
     if (tool === ToolType.Pointer) {
-      return new PointerWorker(this);
+      return new PointerWorker(this.update, this);
     }
     throw new TypeError(`Undefined tool: ${tool}`);
   }
