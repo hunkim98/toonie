@@ -4,7 +4,7 @@ import { TimeTicket } from "yorkie-js-sdk";
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import Board from "../Board";
-import Worker from "./Worker";
+import Worker, { MouseMoveCallback } from "./Worker";
 
 class PointerWorker extends Worker {
   type = ToolType.Pointer;
@@ -15,9 +15,15 @@ class PointerWorker extends Worker {
 
   board: Board;
 
-  selectedImageId: TimeTicket | null = null;
+  selectedElementId: TimeTicket | null = null;
+
+  targetImage: ImageElement | null = null;
 
   selectedImageIndex: number | null = null;
+
+  mouseStartPoint: Point = { x: 0, y: 0 };
+
+  pointOffset: Point = { x: 0, y: 0 };
 
   constructor(update: Function, board: Board) {
     super();
@@ -27,14 +33,15 @@ class PointerWorker extends Worker {
   }
 
   shouldAllowPanning(point: Point, panZoom: PanZoom): boolean {
-    const image = this.findTarget(point, panZoom);
+    const image = this.findImageTarget(point, panZoom);
     if (image) {
+      this.targetImage = image;
       return false;
     }
     return true;
   }
 
-  findTarget(point: Point, panZoom: PanZoom): ImageElement | undefined {
+  findImageTarget(point: Point, panZoom: PanZoom): ImageElement | undefined {
     const currentWorldPoint = getWorldPoint(point, panZoom);
     let target;
     this.update((root: Root) => {
@@ -54,8 +61,14 @@ class PointerWorker extends Worker {
           currentWorldPoint.y > leftTopPointOfImage.y &&
           currentWorldPoint.y < rightBottomOfImage.y
         ) {
-          console.log(this.selectedImageIndex, "image id");
-          target = image;
+          // }
+          // console.log(this.selectedImageIndex, "image id");
+          this.selectedElementId = image.getID();
+          if (this.selectedElementId !== null) {
+            this.deleteImageByID(root, this.selectedElementId);
+            console.log("this is id", this.selectedElementId);
+            target = image;
+          }
         }
       }
     });
@@ -65,23 +78,34 @@ class PointerWorker extends Worker {
   mousedown(point: Point, panZoom: PanZoom) {
     // console.log(point);
     // this.findTarget(point, panZoom);
-    if (this.selectedImageIndex !== null) {
-      console.log("hihi");
-      this.update((root: Root) => {
-        // console.log(root.images);
-        for (const image of root.images) {
-          console.log(image.getID(), image.name);
-        }
+    console.log(this.targetImage);
+    this.mouseStartPoint = getWorldPoint(point, panZoom);
+    return;
+  }
+
+  mousemove(point: Point, panZoom: PanZoom, callback: MouseMoveCallback) {
+    if (this.targetImage) {
+      const currentWorldPoint = getWorldPoint(point, panZoom);
+      this.pointOffset = {
+        x: currentWorldPoint.x - this.mouseStartPoint.x,
+        y: currentWorldPoint.y - this.mouseStartPoint.y,
+      };
+      callback({
+        imageElement: {
+          ...this.targetImage,
+          position: {
+            x: this.targetImage.position.x + this.pointOffset.x,
+            y: this.targetImage.position.y + this.pointOffset.y,
+          },
+        },
       });
     }
     return;
   }
 
-  mousemove(point: Point, panZoom: PanZoom) {
-    return;
-  }
-
   mouseup() {
+    this.targetImage = null;
+    this.pointOffset = { x: 0, y: 0 };
     return;
   }
 

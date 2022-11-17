@@ -1,5 +1,10 @@
 import { TimeTicket } from "yorkie-js-sdk";
-import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
+import Worker, {
+  MouseDownCallback,
+  MouseMoveCallback,
+  MouseUpCallback,
+  Options,
+} from "./Worker";
 import { ToolType } from "../../../../../store/slices/boardSlices";
 import Board from "../Board";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
@@ -52,7 +57,7 @@ class RectWorker extends Worker {
     // this.createID = timeTicket!;
   }
 
-  mousemove(point: Point, panZoom: PanZoom, callback: MouseDownCallback) {
+  mousemove(point: Point, panZoom: PanZoom, callback: MouseMoveCallback) {
     this.previewRectExtendPoint = getWorldPoint(point, panZoom);
     this.previewRect!.box = adjustRectBox(
       this.previewRect!,

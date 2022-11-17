@@ -3,7 +3,12 @@ import { ToolType } from "../../../../../store/slices/boardSlices";
 import { Line, Root } from "../../../../../store/slices/docSlices";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
 import Board from "../Board";
-import Worker, { MouseDownCallback, MouseUpCallback, Options } from "./Worker";
+import Worker, {
+  MouseDownCallback,
+  MouseMoveCallback,
+  MouseUpCallback,
+  Options,
+} from "./Worker";
 import { compressPoints } from "../../../../../utils/canvas.line";
 import { getWorldPoint } from "../../../../../utils/canvas";
 
@@ -53,7 +58,7 @@ class PenWorker extends Worker {
     };
   }
 
-  mousemove(point: Point, panZoom: PanZoom, callback: MouseDownCallback) {
+  mousemove(point: Point, panZoom: PanZoom, callback: MouseMoveCallback) {
     this.previewPoints.points.push(getWorldPoint(point, panZoom));
     callback({ penPoints: { ...this.previewPoints } });
   }

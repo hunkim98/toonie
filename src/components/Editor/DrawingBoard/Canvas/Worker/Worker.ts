@@ -1,6 +1,11 @@
 import { TimeTicket } from "yorkie-js-sdk";
 import { ToolType } from "../../../../../store/slices/boardSlices";
-import { Root, Shape, Rect } from "../../../../../store/slices/docSlices";
+import {
+  Root,
+  Shape,
+  Rect,
+  ImageElement,
+} from "../../../../../store/slices/docSlices";
 import { PanZoom, Point } from "../../../../../types/canvasTypes";
 
 export type Options = { color: string; strokeWidth: number };
@@ -9,6 +14,7 @@ export type BoardMetadata = {
   eraserPoints?: Point[];
   penPoints?: { points: Point[]; color: string; strokeWidth: number };
   rectShape?: Rect;
+  imageElement?: ImageElement;
 };
 
 export type MouseDownCallback = (boardMetadata: BoardMetadata) => void;
@@ -52,14 +58,18 @@ abstract class Worker {
     return root.shapes.getElementByID(createID);
   }
 
-  deleteByID(root: Root, createID: TimeTicket): Shape | undefined {
+  deleteShapeByID(root: Root, createID: TimeTicket): Shape | undefined {
     return root.shapes.deleteByID(createID);
+  }
+
+  deleteImageByID(root: Root, createID: TimeTicket): ImageElement | undefined {
+    return root.images.deleteByID(createID);
   }
 
   clearAll() {
     this.update((root: Root) => {
       for (const shape of root.shapes) {
-        this.deleteByID(root, shape.getID());
+        this.deleteShapeByID(root, shape.getID());
       }
     });
   }

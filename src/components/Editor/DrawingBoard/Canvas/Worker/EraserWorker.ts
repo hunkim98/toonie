@@ -66,19 +66,19 @@ class EraserWorker extends Worker {
             }
             if (isSelectable(shape)) {
               if (isInnerBox(shape.box, point2)) {
-                this.deleteByID(root, shape.getID());
+                this.deleteShapeByID(root, shape.getID());
               }
             } else {
               for (let i = 1; i < shape.points.length; i += 1) {
                 const shapePoint1 = shape.points[i - 1];
                 const shapePoint2 = shape.points[i];
                 if (isInnerBox(this.eraserBox(point2), shapePoint2)) {
-                  this.deleteByID(root, shape.getID());
+                  this.deleteShapeByID(root, shape.getID());
                   break;
                 }
 
                 if (isInnerBox(this.eraserBox(point1), shapePoint2)) {
-                  this.deleteByID(root, shape.getID());
+                  this.deleteShapeByID(root, shape.getID());
                   break;
                 }
 
@@ -89,7 +89,7 @@ class EraserWorker extends Worker {
                   shapePoint2
                 );
                 if (result.onLine1 && result.onLine2) {
-                  this.deleteByID(root, shape.getID());
+                  this.deleteShapeByID(root, shape.getID());
                   break;
                 }
               }

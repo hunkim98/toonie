@@ -45,6 +45,9 @@ export default class Board extends EventDispatcher {
   private HTMLImageElements: HTMLImageElement[] = [];
   private images: (ImageElement & { HTMLImageElement: HTMLImageElement })[] =
     [];
+  private presenceImages: (ImageElement & {
+    HTMLImageElement: HTMLImageElement;
+  })[] = [];
   private imageElement: HTMLImageElement | undefined;
   private strokeWidth: number = StrokeWidthType[0];
   private dragStatus: DragStatus = DragStatus.Stop;
@@ -218,6 +221,12 @@ export default class Board extends EventDispatcher {
       removeEvent,
       "mouseout",
       this.onMouseOut
+    );
+    touchy(
+      this.presenceCanvasWrapper.getCanvas(),
+      removeEvent,
+      "mousemove",
+      this.onMouseMove
     );
     touchy(
       this.presenceCanvasWrapper.getCanvas(),
@@ -482,11 +491,6 @@ export default class Board extends EventDispatcher {
     );
     this.dragStatus = DragStatus.Drag;
 
-    // if (window.PointerEvent) {
-    //   // Pointer events are supported.
-    //   alert("pointer event!");
-    // }
-
     const point = this.getPointFromTouchyEvent(evt);
     const mousePos = {
       x: point.offsetX,
@@ -508,40 +512,6 @@ export default class Board extends EventDispatcher {
         this.handlePinchZoom
       );
     }
-    // if (this.worker.type === ToolType.Pan) {
-    //   // this part is necessary for panning
-
-    //   this.panPoint.lastMousePos = mousePos;
-    //   touchy(
-    //     this.presenceCanvasWrapper.getCanvas(),
-    //     addEvent,
-    //     "mousemove",
-    //     this.handlePanning
-    //   );
-    //   touchy(
-    //     this.presenceCanvasWrapper.getCanvas(),
-    //     addEvent,
-    //     "mousemove",
-    //     this.handlePinchZoom
-    //   );
-    // } else if (this.worker.type === ToolType.Pointer) {
-    //   const isInsideImage = this.findImageTargetIndex(evt);
-    //   if (isInsideImage === undefined) {
-    //     this.panPoint.lastMousePos = mousePos;
-    //     touchy(
-    //       this.presenceCanvasWrapper.getCanvas(),
-    //       addEvent,
-    //       "mousemove",
-    //       this.handlePanning
-    //     );
-    //     touchy(
-    //       this.presenceCanvasWrapper.getCanvas(),
-    //       addEvent,
-    //       "mousemove",
-    //       this.handlePinchZoom
-    //     );
-    //   }
-    // }
     this.worker.mousedown(
       { x: point.offsetX, y: point.offsetY },
       this.panZoom,
@@ -587,24 +557,13 @@ export default class Board extends EventDispatcher {
       return;
     }
 
-    if (this.worker.type === ToolType.Pointer) {
-      this.handleMouseMoveSelectMode(evt);
-      return;
-    }
-
-    if (this.worker.type !== ToolType.Pan) {
-      this.worker.mousemove(
-        { x: point.offsetX, y: point.offsetY },
-        this.panZoom,
-        (boardMetadata: BoardMetadata) => {
-          this.emit("mousemove", boardMetadata);
-        }
-      );
-    }
-  }
-
-  handleMouseMoveSelectMode(evt: TouchyEvent) {
-    // console.log("pointer");
+    this.worker.mousemove(
+      { x: point.offsetX, y: point.offsetY },
+      this.panZoom,
+      (boardMetadata: BoardMetadata) => {
+        this.emit("mousemove", boardMetadata);
+      }
+    );
   }
 
   onMouseUp() {
@@ -632,7 +591,7 @@ export default class Board extends EventDispatcher {
     });
     this.pinchZoomPrevDiff = undefined;
     this.emit("mouseup");
-    this.presenceCanvasWrapper.clear();
+    // this.presenceCanvasWrapper.clear();
   }
 
   onMouseOut() {
@@ -648,8 +607,9 @@ export default class Board extends EventDispatcher {
     //anything can be passed to board meta data
     this.metadataMap.set(peerKey, JSON.parse(metadata.board || "{}"));
     this.presenceCanvasWrapper.clear();
-    for (const boardMetadata of Array.from(this.metadataMap.values())) {
-      const { eraserPoints, penPoints, rectShape } = boardMetadata;
+    for (const boardMetadata of this.metadataMap.values()) {
+      const { eraserPoints, penPoints, rectShape, imageElement } =
+        boardMetadata;
       if (eraserPoints) {
         if (eraserPoints.length === 0) {
         } else {
@@ -684,6 +644,26 @@ export default class Board extends EventDispatcher {
           this.panZoom
         );
       }
+
+      if (imageElement) {
+        let imageObject = new Image();
+        imageObject.crossOrigin = "Anonymous";
+        imageObject.src = imageElement.url;
+        imageObject.onload = () => {
+          //draw image
+          drawImageElement(
+            this.presenceCanvasWrapper.getContext(),
+            imageObject,
+            this.panZoom,
+            imageElement.position,
+            imageElement.width,
+            imageElement.height
+          );
+        };
+      }
+      // if (!eraserPoints && !penPoints && !rectShape && !imageElement) {
+      //   this.clear(this.presenceCanvasWrapper);
+      // }
     }
   }
 
