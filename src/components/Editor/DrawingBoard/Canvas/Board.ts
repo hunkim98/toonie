@@ -646,20 +646,37 @@ export default class Board extends EventDispatcher {
       }
 
       if (imageElement) {
-        let imageObject = new Image();
-        imageObject.crossOrigin = "Anonymous";
-        imageObject.src = imageElement.url;
-        imageObject.onload = () => {
-          //draw image
-          drawImageElement(
-            this.presenceCanvasWrapper.getContext(),
-            imageObject,
-            this.panZoom,
-            imageElement.position,
-            imageElement.width,
-            imageElement.height
-          );
+        let presenceImageElement: ImageElement & {
+          HTMLImageElement: HTMLImageElement;
         };
+        const existingPresenceImageIndex = this.presenceImages.findIndex(
+          (element) => element.url === imageElement.url
+        );
+        if (existingPresenceImageIndex === -1) {
+          let imageObject = new Image();
+          imageObject.crossOrigin = "Anonymous";
+          imageObject.src = imageElement.url;
+          presenceImageElement = {
+            ...imageElement,
+            HTMLImageElement: imageObject,
+          };
+          this.presenceImages.push({
+            ...imageElement,
+            HTMLImageElement: imageObject,
+          });
+          return;
+        }
+        presenceImageElement = this.presenceImages[existingPresenceImageIndex];
+
+        //draw image
+        drawImageElement(
+          this.presenceCanvasWrapper.getContext(),
+          presenceImageElement.HTMLImageElement,
+          this.panZoom,
+          imageElement.position,
+          imageElement.width,
+          imageElement.height
+        );
       }
       // if (!eraserPoints && !penPoints && !rectShape && !imageElement) {
       //   this.clear(this.presenceCanvasWrapper);
