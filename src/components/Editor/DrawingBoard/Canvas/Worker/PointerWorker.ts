@@ -104,6 +104,21 @@ class PointerWorker extends Worker {
   }
 
   mouseup() {
+    if (this.targetImage) {
+      this.update((root: Root) => {
+        // let timeTicket: TimeTicket;
+        root.images.push({
+          ...this.targetImage!,
+          position: {
+            x: this.targetImage!.position.x + this.pointOffset.x,
+            y: this.targetImage!.position.y + this.pointOffset.y,
+          },
+        });
+        // const lastImage = root.images.getLast();
+        // timeTicket = lastImage.getID();
+        this.board.drawAll(root.shapes);
+      });
+    }
     this.targetImage = null;
     this.pointOffset = { x: 0, y: 0 };
     return;
