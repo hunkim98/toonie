@@ -66,6 +66,7 @@ class PointerWorker extends Worker {
           this.selectedElementId = image.getID();
           if (this.selectedElementId !== null) {
             this.deleteImageByID(root, this.selectedElementId);
+
             console.log("this is id", this.selectedElementId);
             target = image;
           }

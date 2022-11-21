@@ -669,13 +669,12 @@ export default class Board extends EventDispatcher {
         presenceImageElement = this.presenceImages[existingPresenceImageIndex];
 
         //draw image
-        drawImageElement(
-          this.presenceCanvasWrapper.getContext(),
+        this.drawImage(
           presenceImageElement.HTMLImageElement,
-          this.panZoom,
           imageElement.position,
           imageElement.width,
-          imageElement.height
+          imageElement.height,
+          this.presenceCanvasWrapper
         );
       }
       // if (!eraserPoints && !penPoints && !rectShape && !imageElement) {
@@ -694,6 +693,23 @@ export default class Board extends EventDispatcher {
       return true;
     }
     return false;
+  }
+
+  drawImage(
+    htmlImageElement: HTMLImageElement,
+    position: Point,
+    width: number,
+    height: number,
+    wrapper: CanvasWrapper = this.presenceCanvasWrapper
+  ) {
+    drawImageElement(
+      wrapper.getContext(),
+      htmlImageElement,
+      this.panZoom,
+      position,
+      width,
+      height
+    );
   }
 
   drawShapes() {
